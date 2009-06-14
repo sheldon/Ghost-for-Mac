@@ -27,16 +27,16 @@
 	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
 }
 
-- (NSString *)ghostDir {
-	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"ghost"];
+- (NSString *)getGhostDir {
+	return ghostDir;
 }
 
-- (NSString *)configDir {
-	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"configs"];
+- (NSString *)getConfigDir {
+	return configDir;
 }
 
-- (NSString *)libDir {
-	return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"lib"];
+- (NSString *)getLibDir {
+	return libDir;
 }
 
 - (void)start {
@@ -49,9 +49,9 @@
 	// displays what the user wants to search on
 	ghost=[[TaskWrapper alloc]
 		   initWithController:self
-		   execpath:[[self ghostDir] stringByAppendingPathComponent: @"ghost++"]
-		   workdir:[self ghostDir]
-		   environment:[NSDictionary dictionaryWithObjectsAndKeys: [self libDir], @"DYLD_FALLBACK_LIBRARY_PATH", nil]
+		   execpath:[[self getGhostDir] stringByAppendingPathComponent: @"ghost++"]
+		   workdir:[self getGhostDir]
+		   environment:[NSDictionary dictionaryWithObjectsAndKeys: [self getLibDir], @"DYLD_FALLBACK_LIBRARY_PATH", nil]
 		   //TODO: set argument for config file
 		   arguments:[NSArray arrayWithObjects: [configSelector title],nil]];
 	
@@ -80,10 +80,38 @@
 	}
 }
 
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
 	// set badge as dock icon
 	[[NSApp dockTile] setContentView: badge];
+	/*[NSApp beginSheet: progressPanel
+	   modalForWindow: mainWindow
+		modalDelegate: self
+	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+		  contextInfo: nil];*/
+	//[NSApp runModal:progressPanel];
+	
+	/*check for necessary files*/
+	NSString *appSupportDir = [self applicationSupportFolder];
+	NSString *resDir = [[NSBundle mainBundle] resourcePath];
+	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
+	
+	if (prefs != nil) {
+		//[prefs objectForKey:@"Client"];
+	} else {
+		NSLog(@"Could not read version.plist!");
+	}
+	NSFileManager *fm = [NSFileManager defaultManager];
+	if ([fm contentsOfDirectoryAtPath:configDir error:nil] == nil) {
+		[fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[configDir stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
+	}
+	
 	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
 		[self start];
 }
@@ -131,13 +159,21 @@
 {
 	[super init];
 	self.running = NO;
+	
+    //BOOL fileExists = [fm fileExistsAtPath:someWhere];
+	NSString *appSupportDir = [self applicationSupportFolder];
+	NSString *resDir = [[NSBundle mainBundle] resourcePath];
+	libDir = [resDir stringByAppendingPathComponent: @"lib"];
+	configDir = [appSupportDir stringByAppendingPathComponent: @"config"];
+	ghostDir = [appSupportDir stringByAppendingPathComponent: @"ghost"];
+	
 	[[NSNotificationCenter defaultCenter]
 	 addObserver:self
 	 selector:@selector(doTerminate:)
 	 name:NSApplicationWillTerminateNotification
 	 object:NSApp];
 		
-	NSArray *enumerator  = [[NSFileManager defaultManager] directoryContentsAtPath: [self configDir]];
+	NSArray *enumerator  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getConfigDir]];
 	cfgfiles = [[NSMutableArray alloc] init];
 	int i;
 	int pathcount;

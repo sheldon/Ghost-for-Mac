@@ -19,6 +19,7 @@
 #import <Cocoa/Cocoa.h>
 #import "TaskWrapper.h"
 #import "BadgeView.h"
+#import "GHostConfig.h"
 
 @interface GHostController : NSObject <TaskWrapperController> {
 	
@@ -26,16 +27,23 @@
     IBOutlet id startStopButton;
     IBOutlet id configSelector;
 	IBOutlet NSWindow *mainWindow;
+	IBOutlet NSPanel *progressPanel;
+	IBOutlet NSPanel *newConfigPanel;
 	TaskWrapper *ghost;
 	IBOutlet BadgeView	*badge;
+	IBOutlet GHostConfig *config;
+	IBOutlet NSTextView *configEditor;
 	NSMutableArray *cfgfiles;
 	IBOutlet NSButton *autoScrollCheckbox;
 	BOOL running;
+	NSString *configDir;
+	NSString *ghostDir;
+	NSString *libDir;
 }
 @property BOOL running;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 //- (NSString*)getDir;
-- (NSString *)configDir;
-- (NSString *)ghostDir;
+- (NSString *)getConfigDir;
+- (NSString *)getGhostDir;
 @end

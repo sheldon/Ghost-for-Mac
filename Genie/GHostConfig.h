@@ -20,8 +20,13 @@
 
 
 @interface GHostConfig : NSObject {
+	NSString *fullPath;
 	NSString *name;
-	NSDictionary *settings;
+	NSString *content;
 }
-@property NSDictionary* settings;
+- (void)loadFile:(NSString*)path;
+- (void)revertFile;
+- (void)saveFile;
+@property(retain) NSString *content;
+@property(retain) NSString *name;
 @end

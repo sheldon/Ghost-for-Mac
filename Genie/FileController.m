@@ -20,7 +20,7 @@
 
 @implementation FileController
 - (void)checkGHostInstall {
-	NSString *target = [ghostController ghostDir];
+	NSString *target = [ghostController getGhostDir];
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 	//if ([ws file
 }

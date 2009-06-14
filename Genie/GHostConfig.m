@@ -20,10 +20,38 @@
 
 
 @implementation GHostConfig
-@synthesize settings;
-- (id)init {
+@synthesize content;
+@synthesize name;
+/*- (id)init {
 	if ([super init]) {
 		settings = [NSDictionary dictionaryWithObjectsAndKeys: @"6969", @"rcon_port", nil];
+	}
+	return self;
+}*/
+- (void)loadFile:(NSString*)path
+{
+	NSError *err;
+	NSLog(@"Trying to load config file %@", path);
+	//NSStringEncoding *enc = [NSStringEncoding
+	fullPath = path;
+	self.name = [path lastPathComponent];
+	self.content = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:&err];
+}
+
+- (void)saveFile
+{
+	[content writeToFile:fullPath atomically:YES encoding:NSASCIIStringEncoding error:nil];
+}
+
+- (void)revertFile
+{
+	self.content = [NSString stringWithContentsOfFile:fullPath encoding:NSASCIIStringEncoding error:nil];
+}
+
+- (id)initWithFile:(NSString*)path
+{
+	if ([super init]) {
+		[self loadFile:path];
 	}
 	return self;
 }

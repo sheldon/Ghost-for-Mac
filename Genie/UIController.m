@@ -24,8 +24,9 @@
 	//				[[configSelector selectedItem] title],
 	//				@"OK", @"Cancel", /*ThirdButtonHere:*/nil
 	//				/*, args for a printf-style msg go here */);
-	NSString* file = [[ghostController configDir] stringByAppendingPathComponent: [[configSelector selectedItem] title]];
-	[textEdit readRTFDFromFile: file];
+	[config loadFile:[[ghostController getConfigDir] stringByAppendingPathComponent: [[configSelector selectedItem] title]]];
+	//NSString* file = [[ghostController configDir] stringByAppendingPathComponent: [[configSelector selectedItem] title]];
+	//[textEdit readRTFDFromFile: file];
 	/*NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	if (![workspace openFile:file])
 		NSRunAlertPanel(@"File Error", 
@@ -38,12 +39,33 @@
     
 }
 
+- (IBAction)newConfigAccept:(id)sender {
+	[NSApp endSheet:newConfigPanel returnCode:NSOKButton];
+}
+	
+- (IBAction)newConfigCancel:(id)sender {
+	[NSApp endSheet:newConfigPanel returnCode:NSCancelButton];
+}
+
 - (IBAction)openGhostDir:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [ghostController ghostDir]]];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [ghostController getGhostDir]]];
 }
 
 - (IBAction)openConfigDir:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [ghostController configDir]]];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [ghostController getConfigDir]]];
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+}
+
+- (IBAction)newConfig:(id)sender {
+	[NSApp beginSheet: newConfigPanel
+	   modalForWindow: mainWindow
+		modalDelegate: self
+	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+		  contextInfo: nil];
 }
 
 // handle enter event from command input
@@ -54,5 +76,13 @@
 		
 	}
 	return YES;
+}
+
+- (IBAction)revertConfig:(id)sender {
+    [config revertFile];
+}
+
+- (IBAction)saveConfig:(id)sender {
+    [config saveFile];
 }
 @end
