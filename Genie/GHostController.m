@@ -49,9 +49,9 @@
 	// displays what the user wants to search on
 	ghost=[[TaskWrapper alloc]
 		   initWithController:self
-		   execpath:[[self getGhostDir] stringByAppendingPathComponent: @"ghost++"]
-		   workdir:[self getGhostDir]
-		   environment:[NSDictionary dictionaryWithObjectsAndKeys: [self getLibDir], @"DYLD_FALLBACK_LIBRARY_PATH", nil]
+		   execpath:[[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"bin"] stringByAppendingPathComponent: @"ghost++"]
+		   workdir:ghostDir
+		   environment:[NSDictionary dictionaryWithObjectsAndKeys: libDir, @"DYLD_FALLBACK_LIBRARY_PATH", nil]
 		   //TODO: set argument for config file
 		   arguments:[NSArray arrayWithObjects: [configSelector title],nil]];
 	
@@ -89,19 +89,20 @@
 	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
 	// set badge as dock icon
 	[[NSApp dockTile] setContentView: badge];
-	/*[NSApp beginSheet: progressPanel
+	[NSApp beginSheet: progressPanel
 	   modalForWindow: mainWindow
 		modalDelegate: self
 	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-		  contextInfo: nil];*/
-	//[NSApp runModal:progressPanel];
+		  contextInfo: nil];
 	
 	/*check for necessary files*/
+	NSError *error;
 	NSString *appSupportDir = [self applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
 	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
 	
 	if (prefs != nil) {
+		//TODO: check GHost core version?
 		//[prefs objectForKey:@"Client"];
 	} else {
 		NSLog(@"Could not read version.plist!");
@@ -111,6 +112,35 @@
 		[fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:nil];
 		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[configDir stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
 	}
+	if ([fm contentsOfDirectoryAtPath:ghostDir error:nil] == nil) {
+		[fm createDirectoryAtPath:ghostDir withIntermediateDirectories:YES attributes:nil error:nil];
+		/*[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"savegames"] withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"maps"] withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"replays"] withIntermediateDirectories:YES attributes:nil error:nil];
+		NSString *from = [NSString pathWithComponents:[NSArray arrayWithObjects:resDir,@"defaults",@"ghost",@"mapcfgs",nil]];
+		NSString *to = [ghostDir stringByAppendingPathComponent:@"mapcfgs"];
+		if (![fm copyItemAtPath:from toPath:to error:&error])
+			NSLog(@"Error: %@\n\tTrying to copy '%@' to '%@'", error, from, to);*/
+		
+		/*to = ghostDir;
+		NSArray *miscfiles = [NSArray arrayWithObjects:@"",nil];
+		NSEnumerator *e = [miscfiles objectEnumerator];
+		while(from = [e nextObject]) {
+			if (![fm copyItemAtPath:[]from toPath:to error:nil])
+				NSLog(@"Error: %@\n\tTrying to copy '%@' to '%@'", error, from, to);
+		}*/
+		NSString *from = [NSString pathWithComponents:[NSArray arrayWithObjects:resDir,@"defaults",@"ghost",nil]];
+		NSString *to = ghostDir;
+		NSString *file;
+		NSArray *miscfiles  = [[NSFileManager defaultManager] directoryContentsAtPath: from];
+		NSEnumerator *e = [miscfiles objectEnumerator];
+		while(file = [e nextObject]) {
+			if (![fm copyItemAtPath:[from stringByAppendingPathComponent:file] toPath:[to stringByAppendingPathComponent:file] error:&error])
+				NSLog(@"Error: %@\n\tTrying to copy file '%@' from '%@' to '%@'", error, file, from, to);
+		}
+	}
+	
+	[NSApp endSheet:progressPanel returnCode:0];
 	
 	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
 		[self start];
