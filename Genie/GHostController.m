@@ -1,10 +1,46 @@
+/*
+ This file is part of Genie.
+ Copyright 2009 Lucas Romero
+ 
+ Genie is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ Genie is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with Genie.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #import "GHostController.h"
 #import "BadgeView.h"
 
 @implementation GHostController
-- (IBAction)startStop:(id)sender {
-	if (!isRunning) {
-    //[startButton setTitle:@"Running..."];
+@synthesize running;
+- (NSString *)applicationSupportFolder {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
+	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
+}
+
+- (NSString *)ghostDir {
+	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"ghost"];
+}
+
+- (NSString *)configDir {
+	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"configs"];
+}
+
+- (NSString *)libDir {
+	return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"lib"];
+}
+
+- (void)start {
+	//[startButton setTitle:@"Running..."];
 	if (ghost!=nil)
         [ghost release];
 	// Let's allocate memory for and initialize a new TaskWrapper object, passing
@@ -13,35 +49,95 @@
 	// displays what the user wants to search on
 	ghost=[[TaskWrapper alloc]
 		   initWithController:self
-		   execpath:[[self getDir] stringByAppendingPathComponent: @"ghost++"]
-		   workdir:[self getDir]
-		   environment:[NSDictionary dictionaryWithObjectsAndKeys: @"../lib:../lib/gcc43:../lib/mysql5/mysql:..:.", @"DYLD_FALLBACK_LIBRARY_PATH", nil]
+		   execpath:[[self ghostDir] stringByAppendingPathComponent: @"ghost++"]
+		   workdir:[self ghostDir]
+		   environment:[NSDictionary dictionaryWithObjectsAndKeys: [self libDir], @"DYLD_FALLBACK_LIBRARY_PATH", nil]
+		   //TODO: set argument for config file
 		   arguments:[NSArray arrayWithObjects: [configSelector title],nil]];
-		   
-	//[[ghost getProcess] setLaunchPath:[applicationResourcesWrapperPath stringByAppendingString: @"/bin"];
-	//[[ghost getProcess] setCurrentDirectoryPath: [applicationResourcesWrapperPath stringByAppendingString: @"/bin/"]];
-	//[[ghost getProcess] setArguments:[NSArray arrayWithObject:[configSelector stringValue]]];
-	
 	
 	// kick off the process asynchronously
 	[ghost startProcess];
-    } else {
-		[ghost stopProcess];
-		// Release the memory for this wrapper object
-		[ghost release];
-		ghost=nil;
+	
+}
+- (void)stop {
+	[ghost stopProcess];
+	// Release the memory for this wrapper object
+	[ghost release];
+	ghost=nil;
+}
+- (IBAction)restart:(id)sender {
+	[self stop];
+	[self start];
+}
+
+
+
+- (IBAction)startStop:(id)sender {
+	if (running) {
+			[self stop];
+        } else {
+			[self start];
 	}
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
+	// set badge as dock icon
+	[[NSApp dockTile] setContentView: badge];
+	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
+		[self start];
+}
+
+- (void) dealloc
+{
+	[self stop];
+    [badge release];
+    [super dealloc];
+}
+
+
+
+- (void)doTerminate:(NSNotification *)note
+{
+	[self stop];
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+	if (!self.running || NSRunAlertPanel(@"Application Exit", @"GHost++ is still running, are you sure you want to exit?", @"No", @"Yes", nil) == NSAlertAlternateReturn)
+		return YES;
+	else
+		return NO;
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag {
+    if (![NSApp keyWindow]) {
+		// show main window
+		[mainWindow orderFront: mainWindow];
+	}
+    return YES;
+}
+
+- (BOOL)windowShouldClose:(id)window
+{
+	if (window == mainWindow) {
+		// hide if main window
+		[mainWindow orderOut:window];
+		return NO;
+	}
+	return NO;
 }
 
 - (id)init
 {
 	[super init];
-	isRunning=NO;
-	badge = [[BadgeView alloc] init];
-	[[NSApp dockTile] setContentView: badge];
-	
-	
-	NSArray *enumerator  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getDir]];
+	self.running = NO;
+	[[NSNotificationCenter defaultCenter]
+	 addObserver:self
+	 selector:@selector(doTerminate:)
+	 name:NSApplicationWillTerminateNotification
+	 object:NSApp];
+		
+	NSArray *enumerator  = [[NSFileManager defaultManager] directoryContentsAtPath: [self configDir]];
 	cfgfiles = [[NSMutableArray alloc] init];
 	int i;
 	int pathcount;
@@ -55,17 +151,7 @@
 		NSLog(@"%@ - %@", item, [[item pathExtension] lowercaseString]);
 		if ([[item pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
 			[cfgfiles addObject: item];
-		//NSLog("%s\n" , item);
 	}
-
-	//cfgfiles = [[NSMutableArray alloc] initWithArray: enumerator/*[enumerator filterUsingSelector:@selector(hasSuffix:), @".cfg", nil]*/];
-		
-	//NSLog(cfgfiles);
-	
-	/*while ((file = [enumerator nextObject])) {
-		// do stuff
-		NSLog(file);
-	}*/
 	return self;
 }
 
@@ -82,7 +168,8 @@
     // the view to the just pasted text.  We don't want to scroll right now,
     // because of a bug in Mac OS X version 10.1 that causes scrolling in the context
     // of a text storage update to starve the app of events
-    [self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
+	if ([autoScrollCheckbox state] == NSOnState)
+		[self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
 }
 
 // This routine is called after adding new results to the text view's backing store.
@@ -97,12 +184,9 @@
 // to the ProcessController protocol.
 - (void)processStarted
 {
-    isRunning=YES;
+	self.running = YES;
 	[startStopButton setLabel:@"Stop"];
 	[startStopButton setImage: [NSImage imageNamed: @"NSStopProgressFreestandingTemplate"]];
-	[badge setRunning: YES];
-    // clear the results
-    //[resultsTextField setString:@""];
 }
 
 // A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
@@ -110,15 +194,14 @@
 // to the ProcessController protocol.
 - (void)processFinished:(int)terminationStatus
 {
-    isRunning=NO;
-	[badge setRunning: NO];
+	self.running = NO;
 	[startStopButton setLabel:@"Start"];
 	[startStopButton setImage: [NSImage imageNamed: @"NSRightFacingTriangleTemplate"]];
-	[self appendOutput:@"GHost++ terminated"];
+	[self appendOutput:@"GHost++ terminated\n"];
 }
 
-- (NSString*)getDir
+/*- (NSString*)getDir
 {
 	return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"bin"];
-}
+}*/
 @end

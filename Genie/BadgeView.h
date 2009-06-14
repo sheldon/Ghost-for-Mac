@@ -26,16 +26,10 @@
 
 @interface BadgeView : NSView
 {
-    
     NSDictionary * fAttributes;
-    
-    //CGFloat fDownloadRate, fUploadRate;
-    BOOL fRunning;
+    BOOL running;
 }
-
-//- (id) initWithFrame: (NSRect) frame lib: (tr_session *) lib;
-
-//- (BOOL) setRatesWithDownload: (CGFloat) downloadRate upload: (CGFloat) uploadRate;
-- (void) setRunning: (BOOL)running;
+@property BOOL running;
+//- (void) setRunning: (BOOL)running;
 
 @end

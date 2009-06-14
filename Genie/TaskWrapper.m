@@ -81,9 +81,6 @@
 // Here's where we actually kick off the process via an NSTask.
 - (void) startProcess
 {
-    // We first let the controller know that we are starting
-    [controller processStarted];
-
     task = [[NSTask alloc] init];
     // The output of stdout and stderr is sent to a pipe so that we can catch it later
     // and send it along to the controller; notice that we don't bother to do anything with stdin,
@@ -124,9 +121,20 @@
     // us via the callback registered above when we signed up as an observer.  The file handle will
     // send a NSFileHandleReadCompletionNotification when it has data that is available.
     [[[task standardOutput] fileHandleForReading] readInBackgroundAndNotify];
-
+	BOOL started=YES;
     // launch the task asynchronously
-    [task launch];
+	@try {
+		[task launch];
+	}
+	@catch (NSException *e) {
+		started=NO;
+	}
+	// let the controller know that we are starting
+    if (started)
+		[controller processStarted];
+	else {
+		[self stopProcess];
+	}
 }
 
 - (void)checkATaskStatus:(NSNotification *)aNotification {
@@ -151,8 +159,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object: nil];
 	
     // Make sure the task has actually stopped!
-	if ([task isRunning])
-		[task terminate];
+	[task terminate];
 
    while ((data = [[[task standardOutput] fileHandleForReading] availableData]) && [data length])
    {

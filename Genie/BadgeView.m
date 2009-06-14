@@ -28,18 +28,18 @@
 #define BETWEEN_PADDING 2.0f
 
 @interface BadgeView (Private)
-
+- (void) update;
 - (void) badge: (NSImage *) badge string: (NSString *) string atHeight: (CGFloat) height adjustForQuit: (BOOL) quit;
 
 @end
 
 @implementation BadgeView
-
+//@synthesize running;
 - (id) init
 {
 	if ((self = [super initWithFrame: [[[NSApp dockTile] contentView] frame]]))
     {
-		fRunning = NO;
+		//self.running = false;
 	}
 	return self;
 }
@@ -74,42 +74,31 @@
     return YES;
 }*/
 
-- (void) setRunning: (BOOL)running
+- (void) setRunning:(BOOL)run
 {
-    fRunning = running;
+    running = run;
 	[self update];
 }
-
+- (BOOL) running
+{
+	return running;
+}
 
 
 - (void) drawRect: (NSRect) rect
 {
     [[NSApp applicationIconImage] drawInRect: rect fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
     
-    if (fRunning)
+    if (running)
     {
 		[self badge: [NSImage imageNamed: @"GreenBanner.png"] string: @"Running" atHeight: 0.0f adjustForQuit: NO];
 		return;
 		
-        NSImage * quitBadge = [NSImage imageNamed: @"QuitBadge.png"];
+        /*NSImage * quitBadge = [NSImage imageNamed: @"QuitBadge.png"];
         [self badge: quitBadge string: NSLocalizedString(@"Quitting", "Dock Badger -> quit")
                 atHeight: (rect.size.height - [quitBadge size].height) * 0.5f adjustForQuit: YES];
-        return;
+        return;*/
     }
-    
-    /*const BOOL upload = fUploadRate >= 0.1f,
-            download = fDownloadRate >= 0.1f;
-    CGFloat bottom = 0.0f;
-    if (upload)
-    {
-        NSImage * uploadBadge = [NSImage imageNamed: @"UploadBadge.png"];
-        [self badge: uploadBadge string: [NSString stringForSpeedAbbrev: fUploadRate] atHeight: bottom adjustForQuit: NO];
-        if (download)
-            bottom += [uploadBadge size].height + BETWEEN_PADDING; //download rate above upload rate
-    }
-    if (download)
-        [self badge: [NSImage imageNamed: @"DownloadBadge.png"] string: [NSString stringForSpeedAbbrev: fDownloadRate]
-                atHeight: bottom adjustForQuit: NO];*/
 }
 
 @end
