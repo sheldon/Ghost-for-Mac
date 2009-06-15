@@ -33,7 +33,7 @@
 	IBOutlet BadgeView	*badge;
 	IBOutlet GHostConfig *config;
 	IBOutlet NSTextView *configEditor;
-	NSMutableArray *cfgfiles;
+	NSArray *cfgfiles;
 	IBOutlet NSButton *autoScrollCheckbox;
 	BOOL running;
 	NSString *configDir;
@@ -41,9 +41,11 @@
 	NSString *libDir;
 }
 @property BOOL running;
+@property(retain) NSArray *cfgfiles;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 //- (NSString*)getDir;
 - (NSString *)getConfigDir;
 - (NSString *)getGhostDir;
+- (NSString *)applicationSupportFolder;
 @end

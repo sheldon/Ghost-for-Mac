@@ -5,6 +5,11 @@
       <link>http://ghost4mac.googlecode.com/svn/trunk/Genie/Appcast.xml</link>
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
+
+		<item>
+			<title>Version 0.2 (almost useable!)</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.2.zip" sparkle:version="0.2" length="6696681" type="application/octet-stream" sparkle:dsaSignature="MC4CFQCABVYphrgyEglYdm5w4kQiipcfQwIVAJEqZZNRplH5R7Uqqdm/ANa5auFD" />
+		</item>
          <item>
             <title>Version 0.1 (initial release)</title>
             <enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.1.zip" sparkle:version="0.1" length="7383187" type="application/octet-stream" sparkle:dsaSignature="MCwCFGnhrHCiXL7D18oy1noiAIybADvdAhQsVTPgKHw8IrmjFh7PBi/gJg5XoA==" />

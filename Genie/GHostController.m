@@ -21,6 +21,7 @@
 
 @implementation GHostController
 @synthesize running;
+@synthesize cfgfiles;
 - (NSString *)applicationSupportFolder {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
@@ -53,7 +54,7 @@
 		   workdir:ghostDir
 		   environment:[NSDictionary dictionaryWithObjectsAndKeys: libDir, @"DYLD_FALLBACK_LIBRARY_PATH", nil]
 		   //TODO: set argument for config file
-		   arguments:[NSArray arrayWithObjects: [configSelector title],nil]];
+		   arguments:[NSArray arrayWithObjects: [configDir stringByAppendingPathComponent:[configSelector title]],nil]];
 	
 	// kick off the process asynchronously
 	[ghost startProcess];
@@ -112,35 +113,105 @@
 		[fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:nil];
 		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[configDir stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
 	}
+	// check core directory
 	if ([fm contentsOfDirectoryAtPath:ghostDir error:nil] == nil) {
+		// create core directory
 		[fm createDirectoryAtPath:ghostDir withIntermediateDirectories:YES attributes:nil error:nil];
-		/*[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"savegames"] withIntermediateDirectories:YES attributes:nil error:nil];
-		[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"maps"] withIntermediateDirectories:YES attributes:nil error:nil];
-		[fm createDirectoryAtPath:[ghostDir stringByAppendingPathComponent:@"replays"] withIntermediateDirectories:YES attributes:nil error:nil];
-		NSString *from = [NSString pathWithComponents:[NSArray arrayWithObjects:resDir,@"defaults",@"ghost",@"mapcfgs",nil]];
-		NSString *to = [ghostDir stringByAppendingPathComponent:@"mapcfgs"];
-		if (![fm copyItemAtPath:from toPath:to error:&error])
-			NSLog(@"Error: %@\n\tTrying to copy '%@' to '%@'", error, from, to);*/
-		
-		/*to = ghostDir;
-		NSArray *miscfiles = [NSArray arrayWithObjects:@"",nil];
-		NSEnumerator *e = [miscfiles objectEnumerator];
-		while(from = [e nextObject]) {
-			if (![fm copyItemAtPath:[]from toPath:to error:nil])
-				NSLog(@"Error: %@\n\tTrying to copy '%@' to '%@'", error, from, to);
-		}*/
 		NSString *from = [NSString pathWithComponents:[NSArray arrayWithObjects:resDir,@"defaults",@"ghost",nil]];
 		NSString *to = ghostDir;
-		NSString *file;
 		NSArray *miscfiles  = [[NSFileManager defaultManager] directoryContentsAtPath: from];
-		NSEnumerator *e = [miscfiles objectEnumerator];
-		while(file = [e nextObject]) {
+		// copy required files
+		for(NSString* file in miscfiles) {
 			if (![fm copyItemAtPath:[from stringByAppendingPathComponent:file] toPath:[to stringByAppendingPathComponent:file] error:&error])
 				NSLog(@"Error: %@\n\tTrying to copy file '%@' from '%@' to '%@'", error, file, from, to);
 		}
 	}
+	/* create links for dylibs */
+	NSDictionary *lnFiles = [NSDictionary dictionaryWithObjectsAndKeys:	@"libgmp.3.4.4.dylib",@"libgmp.3.dylib",@"libmysqlclient.16.0.0.dylib",@"libmysqlclient.16.dylib",@"libz.1.2.3.dylib",@"libz.1.dylib",nil];
+	for (NSString* key in lnFiles) {
+		if (![fm createSymbolicLinkAtPath:[libDir stringByAppendingPathComponent:key] withDestinationPath:[libDir stringByAppendingPathComponent:[lnFiles objectForKey:key]] error:&error])
+			NSLog(@"Error: %@\n\tTrying linking '%@' -> '%@'", error, [lnFiles objectForKey:key], key);
+	}
 	
+	
+	NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"war3.exe",@"Storm.dll",@"game.dll",@"War3Patch.mpq",nil];
+	NSMutableArray *filesNotFound = [NSMutableArray arrayWithArray:requiredFiles];
+	
+	// create directory to hold warcraft 3 windows files
+	NSString *war3dir = [appSupportDir stringByAppendingPathComponent:@"war3files"];
+	[fm createDirectoryAtPath:war3dir withIntermediateDirectories:YES attributes:nil error:nil];
+	NSArray *existingFiles = [fm contentsOfDirectoryAtPath:war3dir error:nil];
+	for (NSString *file in requiredFiles) {
+		if ([existingFiles containsObject:file])
+			[filesNotFound removeObject:file];
+	}
+	
+	if ([filesNotFound count] > 0 && NSRunAlertPanelRelativeToWindow(@"Required files missing!",
+													 @"Some files that are required to run GHost have not been installed yet.\nThe files missing are:\n%@\nDo you want to install them now?",
+													 @"Yes", @"No", nil,progressPanel, filesNotFound) == NSAlertDefaultReturn) {
+		[requiredFiles setArray:filesNotFound];
+		// Create the File Open Dialog class.
+		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+		[openDlg setTitle:@"Select Windows Wacraft 3 Installation"];
+		// Disable the selection of files in the dialog.
+		[openDlg setCanChooseFiles:NO];
+		
+		[openDlg setAllowsMultipleSelection:NO];
+		
+		//[openDlg setAllowedFileTypes:[NSArray arrayWithArray:requiredFiles]];
+		
+		// Enable the selection of directories in the dialog.
+		[openDlg setCanChooseDirectories:YES];
+		
+		BOOL abort = YES;
+		// retry selection if required files are missing
+		do {
+			// Display the dialog.  If the OK button was pressed,
+			// process the files.
+			if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+			{
+				// Get an array containing the full filenames of all
+				// files and directories selected.
+				NSArray* files = [fm contentsOfDirectoryAtPath:[openDlg filename] error:nil];
+				
+				// Loop through all the files and process them.
+				for( NSString *file in requiredFiles )
+				{
+					if ([files containsObject:file])
+						[filesNotFound removeObject:file];
+				}
+				// copy required files
+				for(NSString* file in requiredFiles) {
+					if (![filesNotFound containsObject:file] && ![fm copyItemAtPath:[[openDlg filename] stringByAppendingPathComponent:file] toPath:[war3dir stringByAppendingPathComponent:file] error:&error]) {
+						NSAlert *errorDlg = [NSAlert alertWithError:error];
+						[errorDlg runModal];
+					}
+				}
+				
+				if ([filesNotFound count] > 0) {
+					NSAlert *alert = [NSAlert alertWithMessageText:@"Missing files!" defaultButton:@"Retry" alternateButton:@"Abort" otherButton:nil informativeTextWithFormat:@"Some required files were not present at the location you specified.\nThe missing files are:\n%@",filesNotFound];
+					NSInteger result = [alert runModal];
+					if (result == NSAlertDefaultReturn) {
+						// User didn't click ok
+						abort = NO;
+					}
+				}
+			}
+		} while (!abort);
+	}
 	[NSApp endSheet:progressPanel returnCode:0];
+	
+	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getConfigDir]];
+	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
+	
+	for(NSString *cfg in configs)
+	{
+		NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
+		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
+			[tmpcfgfiles addObject: cfg];
+	}
+	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
+	
 	
 	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
 		[self start];
@@ -203,21 +274,6 @@
 	 name:NSApplicationWillTerminateNotification
 	 object:NSApp];
 		
-	NSArray *enumerator  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getConfigDir]];
-	cfgfiles = [[NSMutableArray alloc] init];
-	int i;
-	int pathcount;
-	pathcount = [enumerator count];
-	
-	NSLog(@"pathcount %d", pathcount);
-	
-	for(i = 0; i < pathcount; i++)
-	{
-		NSString *item = [enumerator objectAtIndex:i];
-		NSLog(@"%@ - %@", item, [[item pathExtension] lowercaseString]);
-		if ([[item pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
-			[cfgfiles addObject: item];
-	}
 	return self;
 }
 

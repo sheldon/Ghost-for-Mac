@@ -61,11 +61,12 @@
 }
 
 - (IBAction)newConfig:(id)sender {
-	[NSApp beginSheet: newConfigPanel
+	NSRunAlertPanelRelativeToWindow(@"Oops!", @"Features not available yet", @"OK", @"Too bad", @"It's not that hard!", mainWindow);
+	/*[NSApp beginSheet: newConfigPanel
 	   modalForWindow: mainWindow
 		modalDelegate: self
 	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-		  contextInfo: nil];
+		  contextInfo: nil];*/
 }
 
 // handle enter event from command input
@@ -84,5 +85,13 @@
 
 - (IBAction)saveConfig:(id)sender {
     [config saveFile];
+}
+
+- (IBAction)clearAppSupport:(id)sender {
+	if (NSRunCriticalAlertPanelRelativeToWindow(@"Are you sure?", @"You are about to TRASH ALL GHost configuration files and your GHost database. The files will be moved to your trash and can be recovered from there.\n\nAre you REALLY sure you want to do this?", @"No", @"Yes, I want to trash everything", nil, prefWindow) == NSAlertAlternateReturn) {
+		FSRef ref;
+		FSPathMakeRef( (const UInt8 *)[[ghostController applicationSupportFolder] fileSystemRepresentation], &ref, NULL );
+		FSMoveObjectToTrashSync(&ref, NULL, kFSFileOperationDoNotMoveAcrossVolumes);
+	}
 }
 @end

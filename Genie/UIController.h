@@ -22,6 +22,7 @@
 @interface UIController : NSObject {
     IBOutlet id configSelector;
 	IBOutlet NSWindow *mainWindow;
+	IBOutlet NSWindow *prefWindow;
     IBOutlet GHostController *ghostController;
     IBOutlet NSTextView *textEdit;
 	IBOutlet GHostConfig *config;
@@ -38,4 +39,5 @@
 - (IBAction)saveConfig:(id)sender;
 - (IBAction)newConfigAccept:(id)sender;
 - (IBAction)newConfigCancel:(id)sender;
+- (IBAction)clearAppSupport:(id)sender;
 @end

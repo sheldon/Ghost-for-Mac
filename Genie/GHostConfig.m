@@ -40,7 +40,9 @@
 
 - (void)saveFile
 {
-	[content writeToFile:fullPath atomically:YES encoding:NSASCIIStringEncoding error:nil];
+	NSError *error;
+	if (![content writeToFile:fullPath atomically:YES encoding:NSASCIIStringEncoding error:&error])
+		NSLog(@"Error writing config: %@", error);
 }
 
 - (void)revertFile
