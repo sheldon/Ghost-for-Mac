@@ -39,9 +39,14 @@
 	NSString *configDir;
 	NSString *ghostDir;
 	NSString *libDir;
+	NSMutableArray *lines;
+	IBOutlet NSTableView *consoleTable;
+	IBOutlet NSArrayController *listController;
+	IBOutlet NSProgressIndicator *progressBar;
 }
 @property BOOL running;
 @property(retain) NSArray *cfgfiles;
+@property(retain) NSMutableArray *lines;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 //- (NSString*)getDir;

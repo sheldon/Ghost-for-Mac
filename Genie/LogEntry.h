@@ -18,15 +18,18 @@
 
 #import <Cocoa/Cocoa.h>
 
-
-@interface GHostConfig : NSObject {
-	NSString *fullPath;
-	NSString *name;
-	NSString *content;
+@interface LogEntry : NSObject {
+	NSImage *image;
+	NSString *sender;
+	NSDate *date;
+	NSString *text;
 }
-- (void)loadFile:(NSString*)path;
-- (void)revertFile;
-- (void)saveFile;
-@property(copy) NSString *content;
-@property(copy) NSString *name;
+@property(copy) NSImage* image;
+@property(copy) NSString* sender;
+@property(copy) NSString* text;
+@property(copy) NSDate*	date;
+
+//- (id)initWithText:(NSString*)newText sender:(NSString*)newSender date:(NSDate*)newDate image:(NSString*)newImage;
++ (id)logEntryWithLine:(NSString*)line;
++ (id)logEntryWithText:(NSString*)text sender:(NSString*)sender date:(NSDate*)date image:(NSImage*)image;
 @end

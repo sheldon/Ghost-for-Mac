@@ -18,10 +18,12 @@
 
 #import "GHostController.h"
 #import "BadgeView.h"
+#import "LogEntry.h"
 
 @implementation GHostController
 @synthesize running;
 @synthesize cfgfiles;
+@synthesize lines;
 - (NSString *)applicationSupportFolder {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
@@ -60,6 +62,30 @@
 	[ghost startProcess];
 	
 }
+
+- (int)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [lines count];
+}
+
+- (id)tableView:(NSTableView *)tableView
+objectValueForTableColumn:(NSTableColumn *)tableColumn
+			row:(int)row
+{
+	NSString *col = [tableColumn identifier];
+	LogEntry *log = [lines objectAtIndex:row];
+	if ([col isEqualToString:@"image"])
+		return [log image];
+	if ([col isEqualToString:@"text"])
+		return [log text];
+	if ([col isEqualToString:@"time"])
+		//return @"test";
+		return [log date];
+	if ([col isEqualToString:@"sender"])
+		return [log sender];
+    return @"";
+}
+
 - (void)stop {
 	[ghost stopProcess];
 	// Release the memory for this wrapper object
@@ -86,16 +112,7 @@
     [sheet orderOut:self];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification {
-	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
-	// set badge as dock icon
-	[[NSApp dockTile] setContentView: badge];
-	[NSApp beginSheet: progressPanel
-	   modalForWindow: mainWindow
-		modalDelegate: self
-	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-		  contextInfo: nil];
-	
+- (void)copyFilesAsync:(id)arg {
 	/*check for necessary files*/
 	NSError *error;
 	NSString *appSupportDir = [self applicationSupportFolder];
@@ -147,8 +164,8 @@
 	}
 	
 	if ([filesNotFound count] > 0 && NSRunAlertPanelRelativeToWindow(@"Required files missing!",
-													 @"Some files that are required to run GHost have not been installed yet.\nThe files missing are:\n%@\nDo you want to install them now?",
-													 @"Yes", @"No", nil,progressPanel, filesNotFound) == NSAlertDefaultReturn) {
+																	 @"Some files that are required to run GHost have not been installed yet.\nThe files missing are:\n%@\nDo you want to install them now?",
+																	 @"Yes", @"No", nil,progressPanel, filesNotFound) == NSAlertDefaultReturn) {
 		[requiredFiles setArray:filesNotFound];
 		// Create the File Open Dialog class.
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
@@ -199,7 +216,7 @@
 			}
 		} while (!abort);
 	}
-	[NSApp endSheet:progressPanel returnCode:0];
+	
 	
 	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getConfigDir]];
 	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
@@ -215,6 +232,20 @@
 	
 	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
 		[self start];
+	[NSApp endSheet:progressPanel returnCode:0];
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
+	// set badge as dock icon
+	[[NSApp dockTile] setContentView: badge];
+	[progressBar startAnimation:self];
+	[NSApp beginSheet: progressPanel
+	   modalForWindow: mainWindow
+		modalDelegate: self
+	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+		  contextInfo: nil];
+	[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
 }
 
 - (void) dealloc
@@ -260,7 +291,7 @@
 {
 	[super init];
 	self.running = NO;
-	
+	lines = [NSMutableArray array];
     //BOOL fileExists = [fm fileExistsAtPath:someWhere];
 	NSString *appSupportDir = [self applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
@@ -284,14 +315,24 @@
 {
     // add the string (a chunk of the results from locate) to the NSTextView's
     // backing store, in the form of an attributed string
-    [[logView textStorage] appendAttributedString: [[[NSAttributedString alloc]
-															  initWithString: output] autorelease]];
+    //[[logView textStorage] appendAttributedString: [[[NSAttributedString alloc]
+															  //initWithString: output] autorelease]];
     // setup a selector to be called the next time through the event loop to scroll
     // the view to the just pasted text.  We don't want to scroll right now,
     // because of a bug in Mac OS X version 10.1 that causes scrolling in the context
     // of a text storage update to starve the app of events
-	if ([autoScrollCheckbox state] == NSOnState)
+	if ([autoScrollCheckbox state] == NSOnState) {
 		[self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
+		// Zum letzen Eintrag scrollen
+		
+	}
+
+	NSInteger count = [[listController arrangedObjects] count];
+	[listController addObject:[LogEntry logEntryWithLine:output]];
+	NSInteger newcount = [[listController arrangedObjects] count];
+	if ([autoScrollCheckbox state] == NSOnState && newcount != count) {
+		[consoleTable scrollRowToVisible:newcount - 1];
+	}
 }
 
 // This routine is called after adding new results to the text view's backing store.

@@ -32,7 +32,6 @@
 		A029D9B30FE1C7CC00DEA71D /* GHostRemoteServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B20FE1C7CC00DEA71D /* GHostRemoteServer.m */; };
 		A029D9B60FE1C7E000DEA71D /* GHostLocalServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B50FE1C7E000DEA71D /* GHostLocalServer.m */; };
 		A029D9B90FE1C91700DEA71D /* GHostServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B80FE1C91700DEA71D /* GHostServer.m */; };
-		A07FB60F0FE3CECF0019EF5F /* FileController.m in Sources */ = {isa = PBXBuildFile; fileRef = A07FB60E0FE3CECF0019EF5F /* FileController.m */; };
 		A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
 		A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A07FB6530FE429AD0019EF5F /* GHostConfig.m */; };
 		A0985B060FE3160600472680 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A0985AF60FE3160600472680 /* lib */; };
@@ -41,6 +40,11 @@
 		A0C1F02C0FE5B919001CBBC2 /* defaults in Resources */ = {isa = PBXBuildFile; fileRef = A0C1F02B0FE5B919001CBBC2 /* defaults */; };
 		A0C1F03B0FE5BC2D001CBBC2 /* bin in Resources */ = {isa = PBXBuildFile; fileRef = A0C1F03A0FE5BC2D001CBBC2 /* bin */; };
 		A0C1F05E0FE5C454001CBBC2 /* dsa_pub_genie.pem in Resources */ = {isa = PBXBuildFile; fileRef = A0C1F05D0FE5C454001CBBC2 /* dsa_pub_genie.pem */; };
+		A0C4F4B80FE72E680065E6AB /* map.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4B70FE72E680065E6AB /* map.png */; };
+		A0C4F4BF0FE72F420065E6AB /* replay.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4BE0FE72F420065E6AB /* replay.png */; };
+		A0C4F4C10FE7306F0065E6AB /* ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4C00FE7306F0065E6AB /* ghost.png */; };
+		A0C4F4C80FE732200065E6AB /* config.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4C70FE732200065E6AB /* config.png */; };
+		A0E5D1C20FE6E663002C9A96 /* LogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E5D1C10FE6E663002C9A96 /* LogEntry.m */; };
 		A0F8C4970FE531DE0047352B /* RegexKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
 		A0F9BC3E0FDAFED500C9F2D9 /* GHostController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F9BC3D0FDAFED500C9F2D9 /* GHostController.m */; };
 		A0F9BC590FDB13BB00C9F2D9 /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F9BC580FDB13BB00C9F2D9 /* TaskWrapper.m */; };
@@ -92,8 +96,6 @@
 		A029D9B50FE1C7E000DEA71D /* GHostLocalServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostLocalServer.m; sourceTree = "<group>"; };
 		A029D9B70FE1C91700DEA71D /* GHostServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostServer.h; sourceTree = "<group>"; };
 		A029D9B80FE1C91700DEA71D /* GHostServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostServer.m; sourceTree = "<group>"; };
-		A07FB60D0FE3CECF0019EF5F /* FileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileController.h; sourceTree = "<group>"; };
-		A07FB60E0FE3CECF0019EF5F /* FileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileController.m; sourceTree = "<group>"; };
 		A07FB63F0FE3F2960019EF5F /* RegexKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RegexKit.framework; path = Local/Frameworks/RegexKit.framework; sourceTree = DEVELOPER_DIR; };
 		A07FB6520FE429AD0019EF5F /* GHostConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostConfig.h; sourceTree = "<group>"; };
 		A07FB6530FE429AD0019EF5F /* GHostConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostConfig.m; sourceTree = "<group>"; };
@@ -104,6 +106,12 @@
 		A0C1F02B0FE5B919001CBBC2 /* defaults */ = {isa = PBXFileReference; lastKnownFileType = folder; path = defaults; sourceTree = "<group>"; };
 		A0C1F03A0FE5BC2D001CBBC2 /* bin */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bin; sourceTree = "<group>"; };
 		A0C1F05D0FE5C454001CBBC2 /* dsa_pub_genie.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub_genie.pem; sourceTree = "<group>"; };
+		A0C4F4B70FE72E680065E6AB /* map.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map.png; sourceTree = "<group>"; };
+		A0C4F4BE0FE72F420065E6AB /* replay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = replay.png; sourceTree = "<group>"; };
+		A0C4F4C00FE7306F0065E6AB /* ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ghost.png; sourceTree = "<group>"; };
+		A0C4F4C70FE732200065E6AB /* config.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = config.png; sourceTree = "<group>"; };
+		A0E5D1C00FE6E663002C9A96 /* LogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogEntry.h; sourceTree = "<group>"; };
+		A0E5D1C10FE6E663002C9A96 /* LogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntry.m; sourceTree = "<group>"; };
 		A0F9BC3C0FDAFED500C9F2D9 /* GHostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostController.h; sourceTree = "<group>"; };
 		A0F9BC3D0FDAFED500C9F2D9 /* GHostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostController.m; sourceTree = "<group>"; };
 		A0F9BC570FDB13BB00C9F2D9 /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
@@ -130,8 +138,6 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A07FB60D0FE3CECF0019EF5F /* FileController.h */,
-				A07FB60E0FE3CECF0019EF5F /* FileController.m */,
 				A0F9BD620FDB288300C9F2D9 /* UIController.m */,
 				A0F9BD630FDB288300C9F2D9 /* UIController.h */,
 				A0F9BC3C0FDAFED500C9F2D9 /* GHostController.h */,
@@ -144,6 +150,8 @@
 				A029D9B80FE1C91700DEA71D /* GHostServer.m */,
 				A07FB6520FE429AD0019EF5F /* GHostConfig.h */,
 				A07FB6530FE429AD0019EF5F /* GHostConfig.m */,
+				A0E5D1C00FE6E663002C9A96 /* LogEntry.h */,
+				A0E5D1C10FE6E663002C9A96 /* LogEntry.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -201,6 +209,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A0C4F4C70FE732200065E6AB /* config.png */,
+				A0C4F4C00FE7306F0065E6AB /* ghost.png */,
+				A0C4F4BE0FE72F420065E6AB /* replay.png */,
+				A0C4F4B70FE72E680065E6AB /* map.png */,
 				A0C1F05D0FE5C454001CBBC2 /* dsa_pub_genie.pem */,
 				A0C1F03A0FE5BC2D001CBBC2 /* bin */,
 				A0C1F02B0FE5B919001CBBC2 /* defaults */,
@@ -289,6 +301,10 @@
 				A0C1F02C0FE5B919001CBBC2 /* defaults in Resources */,
 				A0C1F03B0FE5BC2D001CBBC2 /* bin in Resources */,
 				A0C1F05E0FE5C454001CBBC2 /* dsa_pub_genie.pem in Resources */,
+				A0C4F4B80FE72E680065E6AB /* map.png in Resources */,
+				A0C4F4BF0FE72F420065E6AB /* replay.png in Resources */,
+				A0C4F4C10FE7306F0065E6AB /* ghost.png in Resources */,
+				A0C4F4C80FE732200065E6AB /* config.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,9 +339,9 @@
 				A029D9B30FE1C7CC00DEA71D /* GHostRemoteServer.m in Sources */,
 				A029D9B60FE1C7E000DEA71D /* GHostLocalServer.m in Sources */,
 				A029D9B90FE1C91700DEA71D /* GHostServer.m in Sources */,
-				A07FB60F0FE3CECF0019EF5F /* FileController.m in Sources */,
 				A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */,
 				A002AF000FE4FB93009A7E1D /* AsyncSocket.m in Sources */,
+				A0E5D1C20FE6E663002C9A96 /* LogEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
