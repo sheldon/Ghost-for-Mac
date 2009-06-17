@@ -29,6 +29,7 @@
 	IBOutlet id commandLine;
 	IBOutlet NSPanel *newConfigPanel;
 	IBOutlet NSTextField *newConfigName;
+	IBOutlet NSArrayController *listController;
 }
 - (IBAction)editConfig:(id)sender;
 - (IBAction)newConfig:(id)sender;
@@ -40,4 +41,5 @@
 - (IBAction)newConfigAccept:(id)sender;
 - (IBAction)newConfigCancel:(id)sender;
 - (IBAction)clearAppSupport:(id)sender;
+- (IBAction)copyLines:(id)sender;
 @end

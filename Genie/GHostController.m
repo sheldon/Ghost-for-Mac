@@ -110,6 +110,15 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
     [sheet orderOut:self];
+	[self performSelectorOnMainThread:@selector(doStuffOnMainGUIThread:)
+                           withObject:nil
+                        waitUntilDone:NO];
+	
+}
+
+- (void)doStuffOnMainGUIThread:(id)arg {
+    if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
+		[self start];
 }
 
 - (void)copyFilesAsync:(id)arg {
@@ -117,14 +126,14 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	NSError *error;
 	NSString *appSupportDir = [self applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
-	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
+	/*NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
 	
 	if (prefs != nil) {
 		//TODO: check GHost core version?
 		//[prefs objectForKey:@"Client"];
 	} else {
 		NSLog(@"Could not read version.plist!");
-	}
+	}*/
 	NSFileManager *fm = [NSFileManager defaultManager];
 	if ([fm contentsOfDirectoryAtPath:configDir error:nil] == nil) {
 		[fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:nil];
@@ -228,14 +237,12 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 			[tmpcfgfiles addObject: cfg];
 	}
 	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
-	
-	
-	if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
-		[self start];
 	[NSApp endSheet:progressPanel returnCode:0];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
+	if (![[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"startHidden"])
+		[mainWindow orderFront: mainWindow];
 	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
 	// set badge as dock icon
 	[[NSApp dockTile] setContentView: badge];
@@ -291,7 +298,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 {
 	[super init];
 	self.running = NO;
-	lines = [NSMutableArray array];
+	lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
     //BOOL fileExists = [fm fileExistsAtPath:someWhere];
 	NSString *appSupportDir = [self applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
@@ -313,20 +320,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 // It will be called whenever there is output from the TaskWrapper.
 - (void)appendOutput:(NSString *)output
 {
-    // add the string (a chunk of the results from locate) to the NSTextView's
-    // backing store, in the form of an attributed string
-    //[[logView textStorage] appendAttributedString: [[[NSAttributedString alloc]
-															  //initWithString: output] autorelease]];
-    // setup a selector to be called the next time through the event loop to scroll
-    // the view to the just pasted text.  We don't want to scroll right now,
-    // because of a bug in Mac OS X version 10.1 that causes scrolling in the context
-    // of a text storage update to starve the app of events
-	if ([autoScrollCheckbox state] == NSOnState) {
-		[self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
-		// Zum letzen Eintrag scrollen
-		
-	}
-
+	NSLog(output);
 	NSInteger count = [[listController arrangedObjects] count];
 	[listController addObject:[LogEntry logEntryWithLine:output]];
 	NSInteger newcount = [[listController arrangedObjects] count];

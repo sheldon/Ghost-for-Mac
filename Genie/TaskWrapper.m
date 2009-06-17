@@ -60,9 +60,9 @@
 {
     self = [super init];
     controller = cont;
-	execpath = path;
-	workdir = wdir;
-	environment = env;
+	execpath = [path copy];
+	workdir = [wdir copy];
+	environment = [env retain];
     arguments = [args retain];
     
     return self;
@@ -72,7 +72,9 @@
 - (void)dealloc
 {
     [self stopProcess];
-
+	[execpath release];
+	[workdir release];
+	[environment release];
     [arguments release];
     [task release];
     [super dealloc];
@@ -104,7 +106,7 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(checkATaskStatus:)
 												 name:NSTaskDidTerminateNotification
-											   object:nil];
+											   object:task];
 	
 	
     // Here we register as an observer of the NSFileHandleReadCompletionNotification, which lets
@@ -156,7 +158,7 @@
     // It is important to clean up after ourselves so that we don't leave potentially deallocated
     // objects as observers in the notification center; this can lead to crashes.
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object: [[task standardOutput] fileHandleForReading]];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object: task];
 	
     // Make sure the task has actually stopped!
 	[task terminate];
@@ -176,6 +178,7 @@
 // We just pass the data along to the controller as an NSString.
 - (void) getData: (NSNotification *)aNotification
 {
+	NSLog(@"lol");
     NSData *data = [[aNotification userInfo] objectForKey:NSFileHandleNotificationDataItem];
     // If the length of the data is zero, then the task is basically over - there is nothing
     // more to get from the handle so we may as well shut down.

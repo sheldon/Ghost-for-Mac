@@ -17,6 +17,7 @@
  */
 
 #import "UIController.h"
+#import	"LogEntry.h"
 
 @implementation UIController
 - (IBAction)editConfig:(id)sender {
@@ -93,5 +94,21 @@
 		FSPathMakeRef( (const UInt8 *)[[ghostController applicationSupportFolder] fileSystemRepresentation], &ref, NULL );
 		FSMoveObjectToTrashSync(&ref, NULL, kFSFileOperationDoNotMoveAcrossVolumes);
 	}
+}
+
+-(void)copyToClipboard:(NSString*)str
+{
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
+    [pb declareTypes:types owner:self];
+    [pb setString: str forType:NSStringPboardType];
+}
+
+- (IBAction)copyLines:(id)sender {
+	NSMutableString* output = [NSMutableString string];
+	for (LogEntry *e in [listController selectedObjects]) {
+		[output appendFormat:@"[%@ %@] %@\n",e.sender,[e.date descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],e.text];
+	}
+	[self copyToClipboard:output];
 }
 @end
