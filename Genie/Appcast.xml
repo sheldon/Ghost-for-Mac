@@ -7,7 +7,7 @@
       <language>en</language>MCwCFDf5BFV2mQ2bI75Lyj6XwAe61vqIAhREzXOkV6SIeJPCWsy2Z/5351NBIQ==
 		<item>
 			<title>Version 0.3.3 (changed ghost core)</title>
-			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.3.dmg" sparkle:version="0.3.2" length="15055718" type="application/octet-stream" sparkle:dsaSignature="MCwCFDxZMc/d8vk1i81Wt/+7hIhtGx8dAhRQRtHj9Thzf6Rm89WVp4w0m45kYw==" />
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.3.dmg" sparkle:version="0.3.3" length="15055718" type="application/octet-stream" sparkle:dsaSignature="MCwCFDxZMc/d8vk1i81Wt/+7hIhtGx8dAhRQRtHj9Thzf6Rm89WVp4w0m45kYw==" />
 			<description><![CDATA[
 				Updated GHost core to 13.3<br>
 				Removed unnecessary libs (libgcc and libstdc++)
