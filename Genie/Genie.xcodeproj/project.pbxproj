@@ -33,14 +33,13 @@
 		A029D9B60FE1C7E000DEA71D /* GHostLocalServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B50FE1C7E000DEA71D /* GHostLocalServer.m */; };
 		A029D9B90FE1C91700DEA71D /* GHostServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B80FE1C91700DEA71D /* GHostServer.m */; };
 		A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */ = {isa = PBXBuildFile; fileRef = A02C9BB50FED3AB000F5E8C9 /* Language.strings */; };
-		A02F53990FEE629B009A7F50 /* libcrypto.0.9.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A02F53980FEE629B009A7F50 /* libcrypto.0.9.8.dylib */; };
+		A02F53A40FEE704F009A7F50 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A02F53A30FEE704F009A7F50 /* lib */; };
 		A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
 		A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A07FB6530FE429AD0019EF5F /* GHostConfig.m */; };
 		A08142960FE9AB75007FF74F /* MBPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08142950FE9AB75007FF74F /* MBPreferencesController.m */; };
 		A08142990FE9ABF3007FF74F /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08142980FE9ABF3007FF74F /* MapController.m */; };
 		A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */ = {isa = PBXBuildFile; fileRef = A081429B0FE9AC02007FF74F /* ConfigController.m */; };
 		A08143400FE9B4D2007FF74F /* PreferencesConfig.xib in Resources */ = {isa = PBXBuildFile; fileRef = A081433F0FE9B4D2007FF74F /* PreferencesConfig.xib */; };
-		A0985B060FE3160600472680 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A0985AF60FE3160600472680 /* lib */; };
 		A0BB69A40FDBFE2500B9A3FC /* BadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A0BB69A30FDBFE2500B9A3FC /* BadgeView.m */; };
 		A0BB69A80FDBFF5F00B9A3FC /* GreenBanner.png in Resources */ = {isa = PBXBuildFile; fileRef = A0BB69A70FDBFF5F00B9A3FC /* GreenBanner.png */; };
 		A0C1F02C0FE5B919001CBBC2 /* defaults in Resources */ = {isa = PBXBuildFile; fileRef = A0C1F02B0FE5B919001CBBC2 /* defaults */; };
@@ -107,7 +106,7 @@
 		A029D9B80FE1C91700DEA71D /* GHostServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostServer.m; sourceTree = "<group>"; };
 		A02C9BB30FED3AA800F5E8C9 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Language.strings; sourceTree = "<group>"; };
 		A02C9BB70FED3ABD00F5E8C9 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Language.strings; sourceTree = "<group>"; };
-		A02F53980FEE629B009A7F50 /* libcrypto.0.9.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.0.9.8.dylib; path = lib/libcrypto.0.9.8.dylib; sourceTree = "<group>"; };
+		A02F53A30FEE704F009A7F50 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A07FB63F0FE3F2960019EF5F /* RegexKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RegexKit.framework; path = Local/Frameworks/RegexKit.framework; sourceTree = DEVELOPER_DIR; };
 		A07FB6520FE429AD0019EF5F /* GHostConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostConfig.h; sourceTree = "<group>"; };
 		A07FB6530FE429AD0019EF5F /* GHostConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostConfig.m; sourceTree = "<group>"; };
@@ -118,7 +117,6 @@
 		A081429A0FE9AC02007FF74F /* ConfigController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigController.h; sourceTree = "<group>"; };
 		A081429B0FE9AC02007FF74F /* ConfigController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigController.m; sourceTree = "<group>"; };
 		A08143000FE9B12E007FF74F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesConfig.xib; sourceTree = "<group>"; };
-		A0985AF60FE3160600472680 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A0BB69A20FDBFE2500B9A3FC /* BadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadgeView.h; sourceTree = "<group>"; };
 		A0BB69A30FDBFE2500B9A3FC /* BadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BadgeView.m; sourceTree = "<group>"; };
 		A0BB69A70FDBFF5F00B9A3FC /* GreenBanner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GreenBanner.png; sourceTree = "<group>"; };
@@ -152,7 +150,6 @@
 				A016ABA80FDBE423008B0151 /* Sparkle.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */,
-				A02F53990FEE629B009A7F50 /* libcrypto.0.9.8.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +231,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A02F53A30FEE704F009A7F50 /* lib */,
 				A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */,
 				A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */,
 				A081433F0FE9B4D2007FF74F /* PreferencesConfig.xib */,
@@ -244,8 +242,6 @@
 				A0C1F05D0FE5C454001CBBC2 /* dsa_pub_genie.pem */,
 				A0C1F03A0FE5BC2D001CBBC2 /* bin */,
 				A0C1F02B0FE5B919001CBBC2 /* defaults */,
-				A0985AF60FE3160600472680 /* lib */,
-				A02F53980FEE629B009A7F50 /* libcrypto.0.9.8.dylib */,
 				A0BB69A70FDBFF5F00B9A3FC /* GreenBanner.png */,
 				A0F9BDE60FDB334C00C9F2D9 /* pumbaa.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -342,7 +338,6 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				A0F9BDE70FDB334C00C9F2D9 /* pumbaa.icns in Resources */,
 				A0BB69A80FDBFF5F00B9A3FC /* GreenBanner.png in Resources */,
-				A0985B060FE3160600472680 /* lib in Resources */,
 				A0C1F02C0FE5B919001CBBC2 /* defaults in Resources */,
 				A0C1F03B0FE5BC2D001CBBC2 /* bin in Resources */,
 				A0C1F05E0FE5C454001CBBC2 /* dsa_pub_genie.pem in Resources */,
@@ -354,6 +349,7 @@
 				A0DDB7150FEBB8A0003E3B37 /* PreferencesGeneral.xib in Resources */,
 				A0DDB7E90FEBBF70003E3B37 /* PreferencesMaps.xib in Resources */,
 				A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */,
+				A02F53A40FEE704F009A7F50 /* lib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,7 +4,15 @@
       <title>Genie Changelog</title>
       <link>http://ghost4mac.googlecode.com/svn/trunk/Genie/Appcast.xml</link>
       <description>Most recent changes with links to updates.</description>
-      <language>en</language>
+      <language>en</language>MCwCFDf5BFV2mQ2bI75Lyj6XwAe61vqIAhREzXOkV6SIeJPCWsy2Z/5351NBIQ==
+		<item>
+			<title>Version 0.3.3 (changed ghost core)</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.3.dmg" sparkle:version="0.3.2" length="15055718" type="application/octet-stream" sparkle:dsaSignature="MCwCFDxZMc/d8vk1i81Wt/+7hIhtGx8dAhRQRtHj9Thzf6Rm89WVp4w0m45kYw==" />
+			<description><![CDATA[
+				Updated GHost core to 13.3<br>
+				Removed unnecessary libs (libgcc and libstdc++)
+			]]></description>
+		</item>
 		<item>
 			<title>Version 0.3.2 (only minor changes)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.2.dmg" sparkle:version="0.3.2" length="16145210" type="application/octet-stream" sparkle:dsaSignature="MCwCFGVZt2xGW5XXs283EbpH51E0V14wAhQe8DcKHvRkLQ3uYN4CCu9sUHCHpg==" />

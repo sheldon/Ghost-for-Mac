@@ -157,7 +157,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 		}
 	}
 	/* create links for dylibs */
-	NSDictionary *lnFiles = [NSDictionary dictionaryWithObjectsAndKeys:	@"libgmp.3.4.4.dylib",@"libgmp.3.dylib",@"libmysqlclient.16.0.0.dylib",@"libmysqlclient.16.dylib",@"libz.1.2.3.dylib",@"libz.1.dylib",nil];
+	NSDictionary *lnFiles = [NSDictionary dictionaryWithObjectsAndKeys:	@"libgmp.3.4.4.dylib",@"libgmp.3.dylib",@"libmysqlclient.16.0.0.dylib",@"libmysqlclient.16.dylib",nil];
 	for (NSString* key in lnFiles) {
 		if (![fm createSymbolicLinkAtPath:[[GHostController getLibDir] stringByAppendingPathComponent:key] withDestinationPath:[[GHostController getLibDir] stringByAppendingPathComponent:[lnFiles objectForKey:key]] error:&error])
 			NSLog(@"Error: %@\n\tTrying linking '%@' -> '%@'", error, [lnFiles objectForKey:key], key);
