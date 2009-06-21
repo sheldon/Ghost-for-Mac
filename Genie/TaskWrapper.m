@@ -178,7 +178,6 @@
 // We just pass the data along to the controller as an NSString.
 - (void) getData: (NSNotification *)aNotification
 {
-	NSLog(@"lol");
     NSData *data = [[aNotification userInfo] objectForKey:NSFileHandleNotificationDataItem];
     // If the length of the data is zero, then the task is basically over - there is nothing
     // more to get from the handle so we may as well shut down.

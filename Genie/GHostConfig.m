@@ -35,19 +35,24 @@
 	//NSStringEncoding *enc = [NSStringEncoding
 	fullPath = path;
 	self.name = [path lastPathComponent];
-	self.content = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:&err];
+	if ((self.content = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:&err]) == nil)
+		NSLog(@"Error loading config: %@", err);
 }
 
 - (void)saveFile
 {
+	NSLog(@"Trying to save config file %@", self.name);
 	NSError *error;
-	if (![content writeToFile:fullPath atomically:YES encoding:NSASCIIStringEncoding error:&error])
+	if (![self.content writeToFile:fullPath atomically:YES encoding:NSASCIIStringEncoding error:&error])
 		NSLog(@"Error writing config: %@", error);
 }
 
 - (void)revertFile
 {
-	self.content = [NSString stringWithContentsOfFile:fullPath encoding:NSASCIIStringEncoding error:nil];
+	NSLog(@"Trying to revert config file %@", self.name);
+	NSError *err;
+	if ((self.content = [NSString stringWithContentsOfFile:fullPath encoding:NSASCIIStringEncoding error:&err]) == nil)
+		NSLog(@"Error loading config: %@", err);
 }
 
 - (id)initWithFile:(NSString*)path

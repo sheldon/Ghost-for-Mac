@@ -20,6 +20,8 @@
 #import "TaskWrapper.h"
 #import "BadgeView.h"
 #import "GHostConfig.h"
+#import "ConfigController.h"
+#import	"GeneralController.h"
 
 @interface GHostController : NSObject <TaskWrapperController> {
 	
@@ -28,29 +30,28 @@
     IBOutlet id configSelector;
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSPanel *progressPanel;
-	IBOutlet NSPanel *newConfigPanel;
 	TaskWrapper *ghost;
 	IBOutlet BadgeView	*badge;
 	IBOutlet GHostConfig *config;
 	IBOutlet NSTextView *configEditor;
-	NSArray *cfgfiles;
+
 	IBOutlet NSButton *autoScrollCheckbox;
 	BOOL running;
-	NSString *configDir;
-	NSString *ghostDir;
-	NSString *libDir;
 	NSMutableArray *lines;
 	IBOutlet NSTableView *consoleTable;
 	IBOutlet NSArrayController *listController;
 	IBOutlet NSProgressIndicator *progressBar;
+	NSMutableArray *maps;
+	IBOutlet ConfigController *configController;
+	IBOutlet GeneralController *generalController;
 }
 @property BOOL running;
-@property(retain) NSArray *cfgfiles;
+@property(retain) NSMutableArray *maps;
 @property(retain) NSMutableArray *lines;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 //- (NSString*)getDir;
-- (NSString *)getConfigDir;
-- (NSString *)getGhostDir;
-- (NSString *)applicationSupportFolder;
++ (NSString *)getConfigDir;
++ (NSString *)getGhostDir;
++ (NSString *)applicationSupportFolder;
 @end

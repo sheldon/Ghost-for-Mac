@@ -18,28 +18,17 @@
 
 #import <Cocoa/Cocoa.h>
 #import "GHostController.h"
+#import "ConfigController.h"
 
 @interface UIController : NSObject {
-    IBOutlet id configSelector;
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *prefWindow;
     IBOutlet GHostController *ghostController;
-    IBOutlet NSTextView *textEdit;
-	IBOutlet GHostConfig *config;
 	IBOutlet id commandLine;
-	IBOutlet NSPanel *newConfigPanel;
-	IBOutlet NSTextField *newConfigName;
 	IBOutlet NSArrayController *listController;
 }
-- (IBAction)editConfig:(id)sender;
-- (IBAction)newConfig:(id)sender;
+
 - (IBAction)selectFont:(id)sender;
-- (IBAction)openGhostDir:(id)sender;
-- (IBAction)openConfigDir:(id)sender;
-- (IBAction)revertConfig:(id)sender;
-- (IBAction)saveConfig:(id)sender;
-- (IBAction)newConfigAccept:(id)sender;
-- (IBAction)newConfigCancel:(id)sender;
-- (IBAction)clearAppSupport:(id)sender;
 - (IBAction)copyLines:(id)sender;
+- (IBAction)showPreferences:(id)sender;
 @end

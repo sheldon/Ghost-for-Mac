@@ -19,27 +19,30 @@
 #import "GHostController.h"
 #import "BadgeView.h"
 #import "LogEntry.h"
+#import "ConfigController.h"
 
 @implementation GHostController
+@synthesize maps;
 @synthesize running;
-@synthesize cfgfiles;
+
 @synthesize lines;
-- (NSString *)applicationSupportFolder {
++ (NSString *)applicationSupportFolder {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
 	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
 }
 
-- (NSString *)getGhostDir {
-	return ghostDir;
+
++ (NSString *)getGhostDir {
+	return [[GHostController applicationSupportFolder] stringByAppendingPathComponent: @"ghost"];		
 }
 
-- (NSString *)getConfigDir {
-	return configDir;
++ (NSString *)getConfigDir {
+	return [[GHostController applicationSupportFolder] stringByAppendingPathComponent: @"config"];		
 }
 
-- (NSString *)getLibDir {
-	return libDir;
++ (NSString *)getLibDir {
+	return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"lib"];
 }
 
 - (void)start {
@@ -53,10 +56,10 @@
 	ghost=[[TaskWrapper alloc]
 		   initWithController:self
 		   execpath:[[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"bin"] stringByAppendingPathComponent: @"ghost++"]
-		   workdir:ghostDir
-		   environment:[NSDictionary dictionaryWithObjectsAndKeys: libDir, @"DYLD_FALLBACK_LIBRARY_PATH", nil]
+		   workdir:[GHostController getGhostDir]
+		   environment:[NSDictionary dictionaryWithObjectsAndKeys: [GHostController getLibDir], @"DYLD_FALLBACK_LIBRARY_PATH", nil]
 		   //TODO: set argument for config file
-		   arguments:[NSArray arrayWithObjects: [configDir stringByAppendingPathComponent:[configSelector title]],nil]];
+		   arguments:[NSArray arrayWithObjects: [[GHostController getConfigDir] stringByAppendingPathComponent:[configSelector title]],nil]];
 	
 	// kick off the process asynchronously
 	[ghost startProcess];
@@ -117,14 +120,15 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 }
 
 - (void)doStuffOnMainGUIThread:(id)arg {
-    if ([[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"runGHostOnStartup"])
+	BOOL startGHost = ([[NSUserDefaults standardUserDefaults] integerForKey:@"runGHostOnStartup"] == 1);
+    if (startGHost)
 		[self start];
 }
 
 - (void)copyFilesAsync:(id)arg {
 	/*check for necessary files*/
 	NSError *error;
-	NSString *appSupportDir = [self applicationSupportFolder];
+	NSString *appSupportDir = [GHostController applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
 	/*NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
 	
@@ -135,16 +139,16 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 		NSLog(@"Could not read version.plist!");
 	}*/
 	NSFileManager *fm = [NSFileManager defaultManager];
-	if ([fm contentsOfDirectoryAtPath:configDir error:nil] == nil) {
-		[fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:nil];
-		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[configDir stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
+	if ([fm contentsOfDirectoryAtPath:[GHostController getConfigDir] error:nil] == nil) {
+		[fm createDirectoryAtPath:[GHostController getConfigDir] withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[[GHostController getConfigDir] stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
 	}
 	// check core directory
-	if ([fm contentsOfDirectoryAtPath:ghostDir error:nil] == nil) {
+	if ([fm contentsOfDirectoryAtPath:[GHostController getGhostDir] error:nil] == nil) {
 		// create core directory
-		[fm createDirectoryAtPath:ghostDir withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm createDirectoryAtPath:[GHostController getGhostDir] withIntermediateDirectories:YES attributes:nil error:nil];
 		NSString *from = [NSString pathWithComponents:[NSArray arrayWithObjects:resDir,@"defaults",@"ghost",nil]];
-		NSString *to = ghostDir;
+		NSString *to = [GHostController getGhostDir];
 		NSArray *miscfiles  = [[NSFileManager defaultManager] directoryContentsAtPath: from];
 		// copy required files
 		for(NSString* file in miscfiles) {
@@ -155,7 +159,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	/* create links for dylibs */
 	NSDictionary *lnFiles = [NSDictionary dictionaryWithObjectsAndKeys:	@"libgmp.3.4.4.dylib",@"libgmp.3.dylib",@"libmysqlclient.16.0.0.dylib",@"libmysqlclient.16.dylib",@"libz.1.2.3.dylib",@"libz.1.dylib",nil];
 	for (NSString* key in lnFiles) {
-		if (![fm createSymbolicLinkAtPath:[libDir stringByAppendingPathComponent:key] withDestinationPath:[libDir stringByAppendingPathComponent:[lnFiles objectForKey:key]] error:&error])
+		if (![fm createSymbolicLinkAtPath:[[GHostController getLibDir] stringByAppendingPathComponent:key] withDestinationPath:[[GHostController getLibDir] stringByAppendingPathComponent:[lnFiles objectForKey:key]] error:&error])
 			NSLog(@"Error: %@\n\tTrying linking '%@' -> '%@'", error, [lnFiles objectForKey:key], key);
 	}
 	
@@ -226,26 +230,13 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 		} while (!abort);
 	}
 	
-	
-	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [self getConfigDir]];
-	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
-	
-	for(NSString *cfg in configs)
-	{
-		NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
-		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
-			[tmpcfgfiles addObject: cfg];
-	}
-	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
 	[NSApp endSheet:progressPanel returnCode:0];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-	if (![[[NSUserDefaultsController sharedUserDefaultsController] values] valueForKey:@"startHidden"])
+	BOOL startHidden = ([[NSUserDefaults standardUserDefaults] integerForKey:@"startHidden"] == 1);
+	if (!startHidden)
 		[mainWindow orderFront: mainWindow];
-	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
-	// set badge as dock icon
-	[[NSApp dockTile] setContentView: badge];
 	[progressBar startAnimation:self];
 	[NSApp beginSheet: progressPanel
 	   modalForWindow: mainWindow
@@ -253,6 +244,12 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
 		  contextInfo: nil];
 	[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
+	[badge bind:@"running" toObject:self withKeyPath:@"running" options:nil];
+	// set badge as dock icon
+	[[NSApp dockTile] setContentView: badge];
+	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, nil]];
+	//[mainWindow setAutorecalculatesContentBorderThickness:YES forEdge:NSMinYEdge];
+	//[mainWindow setContentBorderThickness: 26.0 forEdge: NSMinYEdge];
 }
 
 - (void) dealloc
@@ -291,7 +288,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 		[mainWindow orderOut:window];
 		return NO;
 	}
-	return NO;
+	return YES;
 }
 
 - (id)init
@@ -300,11 +297,6 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	self.running = NO;
 	lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
     //BOOL fileExists = [fm fileExistsAtPath:someWhere];
-	NSString *appSupportDir = [self applicationSupportFolder];
-	NSString *resDir = [[NSBundle mainBundle] resourcePath];
-	libDir = [resDir stringByAppendingPathComponent: @"lib"];
-	configDir = [appSupportDir stringByAppendingPathComponent: @"config"];
-	ghostDir = [appSupportDir stringByAppendingPathComponent: @"ghost"];
 	
 	[[NSNotificationCenter defaultCenter]
 	 addObserver:self
