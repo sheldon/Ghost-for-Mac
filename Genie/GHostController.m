@@ -295,6 +295,9 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 {
 	[super init];
 	self.running = NO;
+	cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
+	[cmdSock connectToHost:@"localhost" onPort:6969 error:nil];
+	[cmdSock receiveWithTimeout:-1 tag:0];
 	lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
     //BOOL fileExists = [fm fileExistsAtPath:someWhere];
 	
@@ -307,6 +310,27 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 	return self;
 }
 
+- (void)sendCommand:(NSString*)cmd {
+	[cmdSock sendData:[cmd dataUsingEncoding:NSASCIIStringEncoding] withTimeout:30 tag:0];
+}
+
+- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
+	//NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 1)];
+	NSString *msg = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	if(msg)
+	{
+		if ([msg isEqualToString:@"PING"])
+			[self sendCommand:@"\n"];
+		// don't print this, we get it directly from the process anyway
+		//[self appendOutput:msg];
+	}
+	else
+	{
+		[self appendOutput:@"Error converting received data into NSUTF8StringEncoding String"];
+	}
+	[cmdSock receiveWithTimeout:-1 tag:0];
+	return YES;
+}
 
 // This callback is implemented as part of conforming to the ProcessController protocol.
 // It will be called whenever there is output from the TaskWrapper.
@@ -314,7 +338,14 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
 {
 	NSLog(output);
 	NSInteger count = [[listController arrangedObjects] count];
-	[listController addObject:[LogEntry logEntryWithLine:output]];
+	
+	NSArray *printlines = [output componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	for(NSString* line in printlines) {
+		line = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		if ([line length] > 0)
+			[listController addObject:[LogEntry logEntryWithLine:line]];
+	}
+	
 	NSInteger newcount = [[listController arrangedObjects] count];
 	if ([autoScrollCheckbox state] == NSOnState && newcount != count) {
 		[consoleTable scrollRowToVisible:newcount - 1];

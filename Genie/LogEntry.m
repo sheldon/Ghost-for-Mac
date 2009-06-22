@@ -40,11 +40,13 @@
 	return [[LogEntry alloc] initWithText:text sender:sender date:date image:image];
 }
 + (id)logEntryWithLine:(NSString*)line {
-	NSString *sender = NULL;
-	NSString *text = NULL;
-	[line getCapturesWithRegexAndReferences:@"^\\[(.*?)\\](.*)",
+	NSString *sender = nil;
+	NSString *text = nil;
+	if ([line getCapturesWithRegexAndReferences:@"^\\[(.*?)\\](.*)",
 	 @"$1", &sender, @"$2", &text,
-	 nil];
-	return [[LogEntry alloc] initWithText:text sender:sender date:[NSDate date] image:[NSImage imageNamed:[sender lowercaseString]]];
+	 nil])
+		return [[LogEntry alloc] initWithText:text sender:sender date:[NSDate date] image:[NSImage imageNamed:[sender lowercaseString]]];
+	else
+		return [[LogEntry alloc] initWithText:line sender:@"N/A" date:[NSDate date] image:nil];
 }
 @end

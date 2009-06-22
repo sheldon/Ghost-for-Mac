@@ -31,14 +31,19 @@
 // handle enter event from command input
 - (BOOL)control: (NSControl *)control textView:(NSTextView *)textView doCommandBySelector: (SEL)commandSelector {
 	//NSLog(@"entered control area = %@",NSStringFromSelector(commandSelector));
-	if (commandSelector == @selector(insertNewline:)) {
-		// pressed key was enter
-		
+	if (commandSelector == @selector(insertTab:)) {
+		// pressed key was tab
+		NSLog(@"TAB pressed!");
+		return YES;
 	}
-	return YES;
+	return NO;
 }
 
-
+- (IBAction)sendCommand:(id)sender {
+	NSLog([sender stringValue]);
+	[ghostController sendCommand:[sender stringValue]];
+	[sender setStringValue:@""];
+}
 
 
 

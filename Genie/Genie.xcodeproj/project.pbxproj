@@ -49,6 +49,8 @@
 		A0C4F4BF0FE72F420065E6AB /* replay.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4BE0FE72F420065E6AB /* replay.png */; };
 		A0C4F4C10FE7306F0065E6AB /* ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4C00FE7306F0065E6AB /* ghost.png */; };
 		A0C4F4C80FE732200065E6AB /* config.png in Resources */ = {isa = PBXBuildFile; fileRef = A0C4F4C70FE732200065E6AB /* config.png */; };
+		A0DA50700FEF9084008F9A8F /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A0DA506F0FEF9084008F9A8F /* AsyncUdpSocket.m */; };
+		A0DA50760FEF909A008F9A8F /* Appcast.xml in Resources */ = {isa = PBXBuildFile; fileRef = A0DA50750FEF909A008F9A8F /* Appcast.xml */; };
 		A0DDB7130FEBB863003E3B37 /* GeneralController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0DDB7120FEBB863003E3B37 /* GeneralController.m */; };
 		A0DDB7150FEBB8A0003E3B37 /* PreferencesGeneral.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */; };
 		A0DDB7E90FEBBF70003E3B37 /* PreferencesMaps.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */; };
@@ -127,6 +129,9 @@
 		A0C4F4BE0FE72F420065E6AB /* replay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = replay.png; sourceTree = "<group>"; };
 		A0C4F4C00FE7306F0065E6AB /* ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ghost.png; sourceTree = "<group>"; };
 		A0C4F4C70FE732200065E6AB /* config.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = config.png; sourceTree = "<group>"; };
+		A0DA506E0FEF9084008F9A8F /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncUdpSocket.h; sourceTree = "<group>"; };
+		A0DA506F0FEF9084008F9A8F /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncUdpSocket.m; sourceTree = "<group>"; };
+		A0DA50750FEF909A008F9A8F /* Appcast.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Appcast.xml; sourceTree = "<group>"; };
 		A0DDB7110FEBB863003E3B37 /* GeneralController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralController.h; sourceTree = "<group>"; };
 		A0DDB7120FEBB863003E3B37 /* GeneralController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralController.m; sourceTree = "<group>"; };
 		A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesGeneral.xib; sourceTree = "<group>"; };
@@ -209,6 +214,7 @@
 		29B97314FDCFA39411CA2CEA /* Genie++ */ = {
 			isa = PBXGroup;
 			children = (
+				A0DA50750FEF909A008F9A8F /* Appcast.xml */,
 				A002AEA00FE4FA55009A7E1D /* 3rdparty */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -264,6 +270,8 @@
 		A002AEA00FE4FA55009A7E1D /* 3rdparty */ = {
 			isa = PBXGroup;
 			children = (
+				A0DA506E0FEF9084008F9A8F /* AsyncUdpSocket.h */,
+				A0DA506F0FEF9084008F9A8F /* AsyncUdpSocket.m */,
 				A08142940FE9AB75007FF74F /* MBPreferencesController.h */,
 				A08142950FE9AB75007FF74F /* MBPreferencesController.m */,
 				A002AEFE0FE4FB92009A7E1D /* AsyncSocket.h */,
@@ -350,6 +358,7 @@
 				A0DDB7E90FEBBF70003E3B37 /* PreferencesMaps.xib in Resources */,
 				A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */,
 				A02F53A40FEE704F009A7F50 /* lib in Resources */,
+				A0DA50760FEF909A008F9A8F /* Appcast.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +400,7 @@
 				A08142990FE9ABF3007FF74F /* MapController.m in Sources */,
 				A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */,
 				A0DDB7130FEBB863003E3B37 /* GeneralController.m in Sources */,
+				A0DA50700FEF9084008F9A8F /* AsyncUdpSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -31,4 +31,5 @@
 - (IBAction)selectFont:(id)sender;
 - (IBAction)copyLines:(id)sender;
 - (IBAction)showPreferences:(id)sender;
+- (IBAction)sendCommand:(id)sender;
 @end

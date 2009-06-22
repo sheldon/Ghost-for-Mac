@@ -22,6 +22,7 @@
 #import "GHostConfig.h"
 #import "ConfigController.h"
 #import	"GeneralController.h"
+#import "AsyncUdpSocket.h"
 
 @interface GHostController : NSObject <TaskWrapperController> {
 	
@@ -44,12 +45,14 @@
 	NSMutableArray *maps;
 	IBOutlet ConfigController *configController;
 	IBOutlet GeneralController *generalController;
+	AsyncUdpSocket *cmdSock;
 }
 @property BOOL running;
 @property(retain) NSMutableArray *maps;
 @property(retain) NSMutableArray *lines;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
+- (void)sendCommand:(NSString*)cmd;
 //- (NSString*)getDir;
 + (NSString *)getConfigDir;
 + (NSString *)getGhostDir;
