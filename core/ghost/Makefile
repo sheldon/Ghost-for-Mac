@@ -3,13 +3,15 @@ SYSTEM = $(shell uname)
 C++ = g++
 CC = gcc
 DFLAGS = -DGHOST_MYSQL
-OFLAGS = -O3
-LFLAGS = -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lrt -lmysqlclient_r -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt -lboost_regex-mt
-CFLAGS = -I../mysql/include/
+OFLAGS = -O2
+LFLAGS = -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lmysqlclient_r -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt -lboost_regex-mt
+CFLAGS =
 
 ifeq ($(SYSTEM),Darwin)
 DFLAGS += -D__APPLE__
 OFLAGS += -flat_namespace
+else
+LFLAGS += -lrt
 endif
 
 ifeq ($(SYSTEM),FreeBSD)
@@ -23,7 +25,13 @@ endif
 
 CFLAGS += $(OFLAGS) $(DFLAGS) -I. -I../bncsutil/src/ -I../StormLib/
 
+ifeq ($(SYSTEM),Darwin)
+CFLAGS += -I../mysql/include/
+endif
+
 OBJS = bncsutilinterface.o bnet.o bnetprotocol.o bnlsclient.o bnlsprotocol.o commandpacket.o config.o crc32.o csvparser.o game.o game_base.o gameplayer.o gameprotocol.o gameslot.o ghost.o ghostdb.o ghostdbmysql.o ghostdbsqlite.o language.o map.o packed.o replay.o savegame.o sha1.o socket.o stats.o statsdota.o statsw3mmd.o util.o
+#Remote Console:
+OBJS += rcon.o
 COBJS = sqlite3.o
 PROGS = ./ghost++
 
@@ -74,3 +82,4 @@ stats.o: ghost.h stats.h
 statsdota.o: ghost.h util.h ghostdb.h gameplayer.h gameprotocol.h game_base.h stats.h statsdota.h
 statsw3mmd.o: ghost.h util.h ghostdb.h gameprotocol.h game_base.h stats.h statsw3mmd.h
 util.o: ghost.h util.h
+rcon.o: rcon.h ghost.h util.h gameplayer.h gameprotocol.h game_base.h game.h language.h config.h socket.h bnetprotocol.h

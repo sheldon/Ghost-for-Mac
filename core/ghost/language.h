@@ -212,6 +212,11 @@ public:
 	string ErrorListingMapConfigs( );
 	string FoundMapConfigs( string mapconfigs );
 	string NoMapConfigsFound( );
+	string PlayerFinishedLoading( string user );
+	string PleaseWaitPlayersStillLoading( );
+	string MapDownloadsDisabled( );
+	string MapDownloadsEnabled( );
+	string MapDownloadsConditional( );
 };
 
 #endif

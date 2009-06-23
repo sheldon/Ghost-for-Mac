@@ -36,6 +36,7 @@
 #include "gameprotocol.h"
 #include "game_base.h"
 #include "game.h"
+#include "rcon.h"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -89,27 +90,14 @@
  #include <sys/time.h>
 #endif
 
+#ifdef __APPLE__
+ #include <mach/mach_time.h>
+#endif
+
 time_t gStartTime;
 string gLogFile;
 CGHost *gGHost = NULL;
 
-
-#ifdef __APPLE__
-uint32_t GetTime( )
-{
-	return (uint32_t)( time( NULL ) - gStartTime );
-}
-
-uint32_t GetTicks( )
-{
-	uint32_t ticks;
-	struct timeval now;
-	gettimeofday( &now, NULL );
-	ticks = now.tv_sec * 1000;
-	ticks += now.tv_usec / 1000;
-	return ticks;
-}
-#else
 uint32_t GetTime( )
 {
 	return (uint32_t)( ( GetTicks( ) / 1000 ) - gStartTime );
@@ -119,6 +107,15 @@ uint32_t GetTicks( )
 {
 #ifdef WIN32
 	return GetTickCount( );
+#elif __APPLE__
+	uint64_t current = mach_absolute_time( );
+	static mach_timebase_info_data_t info = { 0, 0 };
+	// get timebase info
+	if( info.denom == 0 )
+		mach_timebase_info( &info );
+	uint64_t elapsednano = current * ( info.numer / info.denom );
+	// convert ns to ms
+	return elapsednano / 1e6;
 #else
 	uint32_t ticks;
 	struct timespec t;
@@ -128,13 +125,10 @@ uint32_t GetTicks( )
 	return ticks;
 #endif
 }
-#endif
-
-
 
 void SignalCatcher2( int s )
 {
-	CONSOLE_Print( "[!!!] caught signal " + UTIL_ToString( s ) + ", shutting down NOW" );
+	CONSOLE_Print( "[!!!] caught signal " + UTIL_ToString( s ) + ", exiting NOW" );
 
 	if( gGHost )
 	{
@@ -152,7 +146,7 @@ void SignalCatcher( int s )
 	// signal( SIGABRT, SignalCatcher2 );
 	signal( SIGINT, SignalCatcher2 );
 
-	CONSOLE_Print( "[!!!] caught signal " + UTIL_ToString( s ) + ", shutting down nicely" );
+	CONSOLE_Print( "[!!!] caught signal " + UTIL_ToString( s ) + ", exiting nicely" );
 
 	if( gGHost )
 		gGHost->m_ExitingNice = true;
@@ -243,6 +237,10 @@ void CONSOLE_Print( string message )
 {
 	cout << message << endl;
 
+	// output to remote console
+	if( gGHost && gGHost->m_RConsole )
+		gGHost->m_RConsole->Send( message );
+
 	// logging
 
 	if( !gLogFile.empty( ) )
@@ -285,6 +283,8 @@ void DEBUG_Print( BYTEARRAY b )
 
 CGHost :: CGHost( CConfig *CFG )
 {
+	// fire up the remote console
+	m_RConsole = new CRemoteConsole( this, CFG );
 	m_UDPSocket = new CUDPSocket( );
 	m_CRC = new CCRC32( );
 	m_CRC->Initialize( );
@@ -310,7 +310,7 @@ CGHost :: CGHost( CConfig *CFG )
 	m_Exiting = false;
 	m_ExitingNice = false;
 	m_Enabled = true;
-	m_Version = "13.2";
+	m_Version = "13.3";
 	m_HostCounter = 1;
 	m_AutoHostMaximumGames = 0;
 	m_AutoHostAutoStartPlayers = 0;
@@ -461,6 +461,7 @@ CGHost :: CGHost( CConfig *CFG )
 	MapCFG.Read( m_MapCFGPath + m_DefaultMap + ".cfg" );
 	m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap + ".cfg" );
 	m_AdminMap = new CMap( this );
+	m_AutoHostMap = new CMap( *m_Map );
 	m_SaveGame = new CSaveGame( this );
 
 	// load the iptocountry data
@@ -518,6 +519,7 @@ CGHost :: ~CGHost( )
 	delete m_Language;
 	delete m_Map;
 	delete m_AdminMap;
+	delete m_AutoHostMap;
 	delete m_SaveGame;
 }
 
@@ -608,6 +610,10 @@ bool CGHost :: Update( long usecBlock )
 
 	for( vector<CBaseGame *> :: iterator i = m_Games.begin( ); i != m_Games.end( ); i++ )
 		NumFDs += (*i)->SetFD( &fd, &send_fd, &nfds );
+		
+	// 5. the remote console
+	if ( m_RConsole )
+		NumFDs += m_RConsole->SetFD( &fd, &send_fd, &nfds );
 
 	struct timeval tv;
 	tv.tv_sec = 0;
@@ -635,6 +641,10 @@ bool CGHost :: Update( long usecBlock )
 
 	bool AdminExit = false;
 	bool BNETExit = false;
+	
+	// update remote console
+	if ( m_RConsole )
+		m_RConsole->Update( &fd );
 
 	// update current game
 
@@ -699,7 +709,7 @@ bool CGHost :: Update( long usecBlock )
 
 	// autohost
 
-	if( !m_AutoHostGameName.empty( ) && !m_AutoHostMapCFG.empty( ) && m_AutoHostMaximumGames != 0 && m_AutoHostAutoStartPlayers != 0 && GetTime( ) >= m_LastAutoHostTime + 30 )
+	if( !m_AutoHostGameName.empty( ) && m_AutoHostMaximumGames != 0 && m_AutoHostAutoStartPlayers != 0 && GetTime( ) >= m_LastAutoHostTime + 30 )
 	{
 		string GameName = m_AutoHostGameName + " #" + UTIL_ToString( m_HostCounter );
 
@@ -708,13 +718,7 @@ bool CGHost :: Update( long usecBlock )
 
 		if( m_Enabled && GameName.size( ) <= 31 && !m_CurrentGame && m_Games.size( ) < m_MaxGames && m_Games.size( ) < m_AutoHostMaximumGames )
 		{
-			// load the autohost map config
-
-			CConfig MapCFG;
-			MapCFG.Read( m_AutoHostMapCFG );
-			m_Map->Load( &MapCFG, m_AutoHostMapCFG );
-
-			if( m_Map->GetValid( ) )
+			if( m_AutoHostMap->GetValid( ) )
 			{
 				CreateGame( GAME_PUBLIC, false, GameName, string( ), m_AutoHostOwner, m_AutoHostServer, false );
 
@@ -746,9 +750,8 @@ bool CGHost :: Update( long usecBlock )
 			}
 			else
 			{
-				CONSOLE_Print( "[GHOST] stopped auto hosting, map config file [" + m_AutoHostMapCFG + "] is invalid" );
+				CONSOLE_Print( "[GHOST] stopped auto hosting, map config file [" + m_AutoHostMap->GetCFGFile( ) + "] is invalid" );
 				m_AutoHostGameName.clear( );
-				m_AutoHostMapCFG.clear( );
 				m_AutoHostOwner.clear( );
 				m_AutoHostServer.clear( );
 				m_AutoHostMaximumGames = 0;

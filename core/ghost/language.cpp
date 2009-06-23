@@ -1269,3 +1269,30 @@ string CLanguage :: NoMapConfigsFound( )
 {
 	return m_CFG->GetString( "lang_0176", "lang_0176" );
 }
+
+string CLanguage :: PlayerFinishedLoading( string user )
+{
+	string Out = m_CFG->GetString( "lang_0177", "lang_0177" );
+	Replace( Out, "$USER$", user );
+	return Out;
+}
+
+string CLanguage :: PleaseWaitPlayersStillLoading( )
+{
+	return m_CFG->GetString( "lang_0178", "lang_0178" );
+}
+
+string CLanguage :: MapDownloadsDisabled( )
+{
+	return m_CFG->GetString( "lang_0179", "lang_0179" );
+}
+
+string CLanguage :: MapDownloadsEnabled( )
+{
+	return m_CFG->GetString( "lang_0180", "lang_0180" );
+}
+
+string CLanguage :: MapDownloadsConditional( )
+{
+	return m_CFG->GetString( "lang_0181", "lang_0181" );
+}

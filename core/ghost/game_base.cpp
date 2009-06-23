@@ -83,6 +83,7 @@ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16
 	m_CountDownCounter = 0;
 	m_StartedLoadingTicks = 0;
 	m_StartPlayers = 0;
+	m_LastLoadInGameResetTime = 0;
 	m_LastActionSentTicks = 0;
 	m_StartedLaggingTime = 0;
 	m_LastLagScreenTime = 0;
@@ -99,6 +100,7 @@ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16
 	m_CountDownStarted = false;
 	m_GameLoading = false;
 	m_GameLoaded = false;
+	m_LoadInGame = m_Map->GetMapLoadInGame( );
 	m_Desynced = false;
 	m_Lagging = false;
 	m_AutoSave = m_GHost->m_AutoSave;
@@ -582,6 +584,7 @@ bool CBaseGame :: Update( void *fd, void *send_fd )
 		else if( !m_GameLoading && !m_GameLoaded )
 		{
 			m_StartedLoadingTicks = GetTicks( );
+			m_LastLoadInGameResetTime = GetTime( );
 			m_GameLoading = true;
 			EventGameStarted( );
 		}
@@ -630,6 +633,50 @@ bool CBaseGame :: Update( void *fd, void *send_fd )
 			m_GameLoading = false;
 			m_GameLoaded = true;
 			EventGameLoaded( );
+		}
+		else
+		{
+			// reset the "lag" screen (the load-in-game screen) every 30 seconds
+
+			if( m_LoadInGame && GetTime( ) >= m_LastLoadInGameResetTime + 30 )
+			{
+				for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+				{
+					if( (*i)->GetFinishedLoading( ) )
+					{
+						// stop the lag screen
+
+						for( vector<CGamePlayer *> :: iterator j = m_Players.begin( ); j != m_Players.end( ); j++ )
+						{
+							if( !(*j)->GetFinishedLoading( ) )
+								Send( *i, m_Protocol->SEND_W3GS_STOP_LAG( *j, true ) );
+						}
+
+						// send an empty update
+						// this resets the lag screen timer but creates a rather annoying problem
+						// in order to prevent a desync we must make sure every player receives the exact same "desyncable game data" (updates and player leaves) in the exact same order
+						// unfortunately we cannot send updates to players who are still loading the map, so we buffer the updates to those players (see the else clause a few lines down for the code)
+						// in addition to this we must ensure any player leave messages are sent in the exact same position relative to these updates so those must be buffered too
+
+						Send( *i, m_Protocol->SEND_W3GS_INCOMING_ACTION( queue<CIncomingAction *>( ), 0 ) );
+
+						// start the lag screen
+
+						Send( *i, m_Protocol->SEND_W3GS_START_LAG( m_Players, true ) );
+					}
+					else
+					{
+						// buffer the empty update since the player is still loading the map
+
+						UTIL_AppendByteArray( *(*i)->GetLoadInGameData( ), m_Protocol->SEND_W3GS_INCOMING_ACTION( queue<CIncomingAction *>( ), 0 ) );
+					}
+				}
+
+				if( m_Replay )
+					m_Replay->AddTimeSlot( 0, queue<CIncomingAction *>( ) );
+
+				m_LastLoadInGameResetTime = GetTime( );
+			}
 		}
 	}
 
@@ -867,7 +914,7 @@ void CBaseGame :: SendChat( unsigned char fromPID, CGamePlayer *player, string m
 
 	if( player )
 	{
-		if( !m_GameLoaded )
+		if( !m_GameLoading && !m_GameLoaded )
 		{
 			if( message.size( ) > 254 )
 				message = message.substr( 0, 254 );
@@ -914,7 +961,7 @@ void CBaseGame :: SendAllChat( unsigned char fromPID, string message )
 
 	if( GetNumPlayers( ) > 0 )
 	{
-		if( !m_GameLoaded )
+		if( !m_GameLoading && !m_GameLoaded )
 		{
 			if( message.size( ) > 254 )
 				message = message.substr( 0, 254 );
@@ -1137,7 +1184,7 @@ void CBaseGame :: EventPlayerDeleted( CGamePlayer *player )
 
 	// autosave
 
-	if( m_AutoSave && m_GameLoaded && player->GetLeftCode( ) == PLAYERLEAVE_DISCONNECT )
+	if( m_GameLoaded && player->GetLeftCode( ) == PLAYERLEAVE_DISCONNECT && m_AutoSave )
 	{
 		string SaveGameName = UTIL_FileSafeName( "GHost++ AutoSave " + m_GameName + " (" + player->GetName( ) + ").w3z" );
 		CONSOLE_Print( "[GAME: " + m_GameName + "] auto saving [" + SaveGameName + "] before player drop, shortened send interval = " + UTIL_ToString( GetTicks( ) - m_LastActionSentTicks ) );
@@ -1149,9 +1196,30 @@ void CBaseGame :: EventPlayerDeleted( CGamePlayer *player )
 		SendAllActions( );
 	}
 
-	// tell everyone about the player leaving
+	if( m_GameLoading && m_LoadInGame )
+	{
+		// we must buffer player leave messages when using "load in game" to prevent desyncs
+		// this ensures the player leave messages are correctly interleaved with the empty updates sent to each player
 
-	SendAll( m_Protocol->SEND_W3GS_PLAYERLEAVE_OTHERS( player->GetPID( ), player->GetLeftCode( ) ) );
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+		{
+			if( (*i)->GetFinishedLoading( ) )
+			{
+				if( !player->GetFinishedLoading( ) )
+					Send( *i, m_Protocol->SEND_W3GS_STOP_LAG( player ) );
+
+				Send( *i, m_Protocol->SEND_W3GS_PLAYERLEAVE_OTHERS( player->GetPID( ), player->GetLeftCode( ) ) );
+			}
+			else
+				UTIL_AppendByteArray( *(*i)->GetLoadInGameData( ), m_Protocol->SEND_W3GS_PLAYERLEAVE_OTHERS( player->GetPID( ), player->GetLeftCode( ) ) );
+		}
+	}
+	else
+	{
+		// tell everyone about the player leaving
+
+		SendAll( m_Protocol->SEND_W3GS_PLAYERLEAVE_OTHERS( player->GetPID( ), player->GetLeftCode( ) ) );
+	}
 
 	// set the replay's host PID and name to the last player to leave the game
 	// this will get overwritten as each player leaves the game so it will eventually be set to the last player
@@ -1163,7 +1231,7 @@ void CBaseGame :: EventPlayerDeleted( CGamePlayer *player )
 
 		// add leave message to replay
 
-		if( m_GameLoading )
+		if( m_GameLoading && !m_LoadInGame )
 			m_Replay->AddLeaveGameDuringLoading( 1, player->GetPID( ), player->GetLeftCode( ) );
 		else
 			m_Replay->AddLeaveGame( 1, player->GetPID( ), player->GetLeftCode( ) );
@@ -1763,20 +1831,23 @@ void CBaseGame :: EventPlayerJoinedWithScore( CPotentialPlayer *potential, CInco
 
 	for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
 	{
-		if( (*i)->GetScore( ) < -99999.0 )
-			PlayersNotScored++;
-		else
+		if( !(*i)->GetLeftMessageSent( ) )
 		{
-			PlayersScored++;
-			AverageScore += (*i)->GetScore( );
+			if( (*i)->GetScore( ) < -99999.0 )
+				PlayersNotScored++;
+			else
+			{
+				PlayersScored++;
+				AverageScore += (*i)->GetScore( );
 
-			if( !Found || (*i)->GetScore( ) < MinScore )
-				MinScore = (*i)->GetScore( );
+				if( !Found || (*i)->GetScore( ) < MinScore )
+					MinScore = (*i)->GetScore( );
 
-			if( !Found || (*i)->GetScore( ) > MaxScore )
-				MaxScore = (*i)->GetScore( );
+				if( !Found || (*i)->GetScore( ) > MaxScore )
+					MaxScore = (*i)->GetScore( );
 
-			Found = true;
+				Found = true;
+			}
 		}
 	}
 
@@ -1840,7 +1911,51 @@ void CBaseGame :: EventPlayerLeft( CGamePlayer *player )
 
 void CBaseGame :: EventPlayerLoaded( CGamePlayer *player )
 {
-	SendAll( m_Protocol->SEND_W3GS_GAMELOADED_OTHERS( player->GetPID( ) ) );
+	if( m_LoadInGame )
+	{
+		// send any buffered data to the player now
+		// see the Update function for more information about why we do this
+		// this includes player loaded messages, game updates, and player leave messages
+
+		Send( player, *player->GetLoadInGameData( ) );
+		player->GetLoadInGameData( )->clear( );
+
+		// start the lag screen for the new player
+
+		bool FinishedLoading = true;
+
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+		{
+			FinishedLoading = (*i)->GetFinishedLoading( );
+
+			if( !FinishedLoading )
+				break;
+		}
+
+		if( !FinishedLoading )
+			Send( player, m_Protocol->SEND_W3GS_START_LAG( m_Players, true ) );
+
+		// remove the new player from previously loaded players' lag screens
+
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+		{
+			if( *i != player && (*i)->GetFinishedLoading( ) )
+				Send( *i, m_Protocol->SEND_W3GS_STOP_LAG( player ) );
+		}
+
+		// send a chat message to previously loaded players
+
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+		{
+			if( *i != player && (*i)->GetFinishedLoading( ) )
+				SendChat( *i, m_GHost->m_Language->PlayerFinishedLoading( player->GetName( ) ) );
+		}
+
+		if( !FinishedLoading )
+			SendChat( player, m_GHost->m_Language->PleaseWaitPlayersStillLoading( ) );
+	}
+	else
+		SendAll( m_Protocol->SEND_W3GS_GAMELOADED_OTHERS( player->GetPID( ) ) );
 }
 
 void CBaseGame :: EventPlayerAction( CGamePlayer *player, CIncomingAction *action )
@@ -1894,59 +2009,56 @@ void CBaseGame :: EventPlayerChatToHost( CGamePlayer *player, CIncomingChatPlaye
 		{
 			// relay the chat message to other players
 
-			if( !m_GameLoading )
+			bool Relay = !player->GetMuted( );
+			BYTEARRAY ExtraFlags = chatPlayer->GetExtraFlags( );
+
+			// calculate timestamp
+
+			string MinString = UTIL_ToString( ( m_GameTicks / 1000 ) / 60 );
+			string SecString = UTIL_ToString( ( m_GameTicks / 1000 ) % 60 );
+
+			if( MinString.size( ) == 1 )
+				MinString.insert( 0, "0" );
+
+			if( SecString.size( ) == 1 )
+				SecString.insert( 0, "0" );
+
+			if( !ExtraFlags.empty( ) )
 			{
-				bool Relay = !player->GetMuted( );
-				BYTEARRAY ExtraFlags = chatPlayer->GetExtraFlags( );
-
-				// calculate timestamp
-
-				string MinString = UTIL_ToString( ( m_GameTicks / 1000 ) / 60 );
-				string SecString = UTIL_ToString( ( m_GameTicks / 1000 ) % 60 );
-
-				if( MinString.size( ) == 1 )
-					MinString.insert( 0, "0" );
-
-				if( SecString.size( ) == 1 )
-					SecString.insert( 0, "0" );
-
-				if( !ExtraFlags.empty( ) )
+				if( ExtraFlags[0] == 0 )
 				{
-					if( ExtraFlags[0] == 0 )
-					{
-						// this is an ingame [All] message, print it to the console
+					// this is an ingame [All] message, print it to the console
 
-						CONSOLE_Print( "[GAME: " + m_GameName + "] (" + MinString + ":" + SecString + ") [All] [" + player->GetName( ) + "]: " + chatPlayer->GetMessage( ) );
+					CONSOLE_Print( "[GAME: " + m_GameName + "] (" + MinString + ":" + SecString + ") [All] [" + player->GetName( ) + "]: " + chatPlayer->GetMessage( ) );
 
-						// don't relay ingame messages targeted for all players if we're currently muting all
-						// note that commands will still be processed even when muting all because we only stop relaying the messages, the rest of the function is unaffected
+					// don't relay ingame messages targeted for all players if we're currently muting all
+					// note that commands will still be processed even when muting all because we only stop relaying the messages, the rest of the function is unaffected
 
-						if( m_MuteAll )
-							Relay = false;
-					}
-
-					if( Relay )
-					{
-						// add chat message to replay
-						// this includes allied chat and private chat from both teams as long as it was relayed
-
-						if( m_Replay )
-							m_Replay->AddChatMessage( chatPlayer->GetFromPID( ), chatPlayer->GetFlag( ), UTIL_ByteArrayToUInt32( chatPlayer->GetExtraFlags( ), false ), chatPlayer->GetMessage( ) );
-					}
-				}
-				else
-				{
-					// this is a lobby message, print it to the console
-
-					CONSOLE_Print( "[GAME: " + m_GameName + "] [Lobby] [" + player->GetName( ) + "]: " + chatPlayer->GetMessage( ) );
-
-					if( m_MuteLobby )
+					if( m_MuteAll )
 						Relay = false;
 				}
 
 				if( Relay )
-					Send( chatPlayer->GetToPIDs( ), m_Protocol->SEND_W3GS_CHAT_FROM_HOST( chatPlayer->GetFromPID( ), chatPlayer->GetToPIDs( ), chatPlayer->GetFlag( ), chatPlayer->GetExtraFlags( ), chatPlayer->GetMessage( ) ) );
+				{
+					// add chat message to replay
+					// this includes allied chat and private chat from both teams as long as it was relayed
+
+					if( m_Replay )
+						m_Replay->AddChatMessage( chatPlayer->GetFromPID( ), chatPlayer->GetFlag( ), UTIL_ByteArrayToUInt32( chatPlayer->GetExtraFlags( ), false ), chatPlayer->GetMessage( ) );
+				}
 			}
+			else
+			{
+				// this is a lobby message, print it to the console
+
+				CONSOLE_Print( "[GAME: " + m_GameName + "] [Lobby] [" + player->GetName( ) + "]: " + chatPlayer->GetMessage( ) );
+
+				if( m_MuteLobby )
+					Relay = false;
+			}
+
+			if( Relay )
+				Send( chatPlayer->GetToPIDs( ), m_Protocol->SEND_W3GS_CHAT_FROM_HOST( chatPlayer->GetFromPID( ), chatPlayer->GetToPIDs( ), chatPlayer->GetFlag( ), chatPlayer->GetExtraFlags( ), chatPlayer->GetMessage( ) ) );
 
 			// handle bot commands
 
@@ -2320,6 +2432,21 @@ void CBaseGame :: EventGameStarted( )
 	UTIL_AppendByteArray( StatString, m_Map->GetMapSHA1( ) );		// note: in replays generated by Warcraft III it stores 20 zeros for the SHA1 instead of the real thing
 	StatString = UTIL_EncodeStatString( StatString );
 	m_StatString = string( StatString.begin( ), StatString.end( ) );
+
+	if( m_LoadInGame )
+	{
+		// buffer all the player loaded messages
+		// this ensures that every player receives the same set of player loaded messages in the same order, even if someone leaves during loading
+		// if someone leaves during loading we buffer the leave message to ensure it gets sent in the correct position but the player loaded message wouldn't get sent if we didn't buffer it now
+
+		BYTEARRAY Buffer;
+
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+			UTIL_AppendByteArray( Buffer, m_Protocol->SEND_W3GS_GAMELOADED_OTHERS( (*i)->GetPID( ) ) );
+
+		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
+			UTIL_AppendByteArray( *(*i)->GetLoadInGameData( ), Buffer );
+	}
 
 	// move the game to the games in progress vector
 

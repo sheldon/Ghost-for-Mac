@@ -470,17 +470,22 @@ bool CBNET :: Update( void *fd, void *send_fd )
 		}
 
 		// check if at least one packet is waiting to be sent and if we've waited long enough to prevent flooding
-		// this formula has changed many times but currently we wait 1 second if the last packet was "small" and 3 seconds if it was "big"
+		// this formula has changed many times but currently we wait 1 second if the last packet was "small", 3.2 seconds if it was "medium", and 4 seconds if it was "big"
 
 		uint32_t WaitTicks = 0;
 
 		if( m_LastOutPacketSize < 10 )
 			WaitTicks = 1000;
+		else if( m_LastOutPacketSize < 100 )
+			WaitTicks = 3200;
 		else
-			WaitTicks = 3000;
+			WaitTicks = 4000;
 
 		if( !m_OutPackets.empty( ) && GetTicks( ) >= m_LastOutPacketTicks + WaitTicks )
 		{
+			if( m_OutPackets.size( ) > 7 )
+				CONSOLE_Print( "[BNET: " + m_Server + "] packet queue warning - there are " + UTIL_ToString( m_OutPackets.size( ) ) + " packets waiting to be sent" );
+
 			m_Socket->PutBytes( m_OutPackets.front( ) );
 			m_LastOutPacketSize = m_OutPackets.front( ).size( );
 			m_OutPackets.pop( );
@@ -544,7 +549,24 @@ bool CBNET :: Update( void *fd, void *send_fd )
 		if( !m_GHost->m_BindAddress.empty( ) )
 			CONSOLE_Print( "[BNET: " + m_Server + "] attempting to bind to address [" + m_GHost->m_BindAddress + "]" );
 
-		m_Socket->Connect( m_GHost->m_BindAddress, m_Server, 6112 );
+		if( m_ServerIP.empty( ) )
+		{
+			m_Socket->Connect( m_GHost->m_BindAddress, m_Server, 6112 );
+
+			if( !m_Socket->HasError( ) )
+			{
+				m_ServerIP = m_Socket->GetIPString( );
+				CONSOLE_Print( "[BNET: " + m_Server + "] resolved and cached server IP address " + m_ServerIP );
+			}
+		}
+		else
+		{
+			// use cached server IP address since resolving takes time and is blocking
+
+			CONSOLE_Print( "[BNET: " + m_Server + "] using cached server IP address " + m_ServerIP );
+			m_Socket->Connect( m_GHost->m_BindAddress, m_ServerIP, 6112 );
+		}
+
 		m_WaitingToConnect = false;
 		return m_Exiting;
 	}
@@ -1029,7 +1051,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 						{
 							QueueChatCommand( m_GHost->m_Language->AutoHostDisabled( ), User, Whisper );
 							m_GHost->m_AutoHostGameName.clear( );
-							m_GHost->m_AutoHostMapCFG.clear( );
 							m_GHost->m_AutoHostOwner.clear( );
 							m_GHost->m_AutoHostServer.clear( );
 							m_GHost->m_AutoHostMaximumGames = 0;
@@ -1072,8 +1093,9 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 											GameName = GameName.substr( Start );
 
 										QueueChatCommand( m_GHost->m_Language->AutoHostEnabled( ), User, Whisper );
+										delete m_GHost->m_AutoHostMap;
+										m_GHost->m_AutoHostMap = new CMap( *m_GHost->m_Map );
 										m_GHost->m_AutoHostGameName = GameName;
-										m_GHost->m_AutoHostMapCFG = m_GHost->m_Map->GetCFGFile( );
 										m_GHost->m_AutoHostOwner = User;
 										m_GHost->m_AutoHostServer = m_Server;
 										m_GHost->m_AutoHostMaximumGames = MaximumGames;
@@ -1103,7 +1125,6 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 						{
 							QueueChatCommand( m_GHost->m_Language->AutoHostDisabled( ), User, Whisper );
 							m_GHost->m_AutoHostGameName.clear( );
-							m_GHost->m_AutoHostMapCFG.clear( );
 							m_GHost->m_AutoHostOwner.clear( );
 							m_GHost->m_AutoHostServer.clear( );
 							m_GHost->m_AutoHostMaximumGames = 0;
@@ -1160,8 +1181,9 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 													GameName = GameName.substr( Start );
 
 												QueueChatCommand( m_GHost->m_Language->AutoHostEnabled( ), User, Whisper );
+												delete m_GHost->m_AutoHostMap;
+												m_GHost->m_AutoHostMap = new CMap( *m_GHost->m_Map );
 												m_GHost->m_AutoHostGameName = GameName;
-												m_GHost->m_AutoHostMapCFG = m_GHost->m_Map->GetCFGFile( );
 												m_GHost->m_AutoHostOwner = User;
 												m_GHost->m_AutoHostServer = m_Server;
 												m_GHost->m_AutoHostMaximumGames = MaximumGames;
@@ -1349,6 +1371,31 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 					}
 					else
 						QueueChatCommand( m_GHost->m_Language->YouDontHaveAccessToThatCommand( ), User, Whisper );
+				}
+
+				//
+				// !DOWNLOADS
+				//
+
+				if( Command == "downloads" && !Payload.empty( ) )
+				{
+					uint32_t Downloads = UTIL_ToUInt32( Payload );
+
+					if( Downloads == 0 )
+					{
+						QueueChatCommand( m_GHost->m_Language->MapDownloadsDisabled( ), User, Whisper );
+						m_GHost->m_AllowDownloads = 0;
+					}
+					else if( Downloads == 1 )
+					{
+						QueueChatCommand( m_GHost->m_Language->MapDownloadsEnabled( ), User, Whisper );
+						m_GHost->m_AllowDownloads = 1;
+					}
+					else if( Downloads == 2 )
+					{
+						QueueChatCommand( m_GHost->m_Language->MapDownloadsConditional( ), User, Whisper );
+						m_GHost->m_AllowDownloads = 2;
+					}
 				}
 
 				//
@@ -1977,7 +2024,7 @@ void CBNET :: ProcessChatEvent( CIncomingChatEvent *chatEvent )
 				}
 			}
 			else
-				CONSOLE_Print( "[BNET: " + m_Server + "] user [" + User + "] sent command [" + Message + "]" );
+				CONSOLE_Print( "[BNET: " + m_Server + "] non-admin [" + User + "] sent command [" + Message + "]" );
 
 			/*********************
 			* NON ADMIN COMMANDS *
