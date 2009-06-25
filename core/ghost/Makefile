@@ -4,7 +4,7 @@ C++ = g++
 CC = gcc
 DFLAGS = -DGHOST_MYSQL
 OFLAGS = -O2
-LFLAGS = -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lmysqlclient_r -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt -lboost_regex-mt
+LFLAGS = -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lmysqlclient.16.0.0 -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt -lboost_regex-mt
 CFLAGS =
 
 ifeq ($(SYSTEM),Darwin)

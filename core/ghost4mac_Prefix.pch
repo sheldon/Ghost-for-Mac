@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'ghost4mac' target in the 'ghost4mac' project.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

@@ -1,0 +1,620 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		A0C1DEBD0FF26DF80097AF13 /* ghost++ in Resources */ = {isa = PBXBuildFile; fileRef = A0C1DEBC0FF26DF80097AF13 /* ghost++ */; };
+		A0FF01C90FF28ED7001686D1 /* GHostController.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01C50FF28ED7001686D1 /* GHostController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0FF01CA0FF28ED7001686D1 /* GHostController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01C60FF28ED7001686D1 /* GHostController.m */; };
+		A0FF01CB0FF28ED7001686D1 /* TaskWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */; };
+		A0FF01CC0FF28ED7001686D1 /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01C80FF28ED7001686D1 /* TaskWrapper.m */; };
+		A0FF01E90FF297A6001686D1 /* libbncsutil.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC30FF26EC00097AF13 /* libbncsutil.dylib */; };
+		A0FF01EA0FF297A6001686D1 /* libboost_date_time-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC40FF26EC00097AF13 /* libboost_date_time-mt.dylib */; };
+		A0FF01EB0FF297A6001686D1 /* libboost_filesystem-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC50FF26EC00097AF13 /* libboost_filesystem-mt.dylib */; };
+		A0FF01EC0FF297A6001686D1 /* libboost_regex-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC60FF26EC00097AF13 /* libboost_regex-mt.dylib */; };
+		A0FF01ED0FF297A6001686D1 /* libboost_system-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC70FF26EC00097AF13 /* libboost_system-mt.dylib */; };
+		A0FF01EE0FF297A6001686D1 /* libboost_thread-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC80FF26EC00097AF13 /* libboost_thread-mt.dylib */; };
+		A0FF01EF0FF297A6001686D1 /* libcrypto.0.9.8.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC90FF26EC00097AF13 /* libcrypto.0.9.8.dylib */; };
+		A0FF01F00FF297A6001686D1 /* libgmp.3.4.4.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECA0FF26EC00097AF13 /* libgmp.3.4.4.dylib */; };
+		A0FF01F10FF297A6001686D1 /* libmysqlclient.16.0.0.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECB0FF26EC00097AF13 /* libmysqlclient.16.0.0.dylib */; };
+		A0FF01F20FF297A6001686D1 /* libssl.0.9.8.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECC0FF26EC00097AF13 /* libssl.0.9.8.dylib */; };
+		A0FF01F30FF297A6001686D1 /* libStorm.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECD0FF26EC00097AF13 /* libStorm.dylib */; };
+		A0FF01FE0FF2DAE4001686D1 /* AsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */; };
+		A0FF01FF0FF2DAE4001686D1 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A00A56A80FF3DBBC00CAD524 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00A56A50FF3DB8200CAD524;
+			remoteInfo = ghost;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A00A56AE0FF3DC9400CAD524 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0FF01F50FF297E2001686D1 /* Copy libs */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = lib;
+			dstSubfolderSpec = 7;
+			files = (
+				A0FF01E90FF297A6001686D1 /* libbncsutil.dylib in Copy libs */,
+				A0FF01EA0FF297A6001686D1 /* libboost_date_time-mt.dylib in Copy libs */,
+				A0FF01EB0FF297A6001686D1 /* libboost_filesystem-mt.dylib in Copy libs */,
+				A0FF01EC0FF297A6001686D1 /* libboost_regex-mt.dylib in Copy libs */,
+				A0FF01ED0FF297A6001686D1 /* libboost_system-mt.dylib in Copy libs */,
+				A0FF01EE0FF297A6001686D1 /* libboost_thread-mt.dylib in Copy libs */,
+				A0FF01EF0FF297A6001686D1 /* libcrypto.0.9.8.dylib in Copy libs */,
+				A0FF01F00FF297A6001686D1 /* libgmp.3.4.4.dylib in Copy libs */,
+				A0FF01F10FF297A6001686D1 /* libmysqlclient.16.0.0.dylib in Copy libs */,
+				A0FF01F20FF297A6001686D1 /* libssl.0.9.8.dylib in Copy libs */,
+				A0FF01F30FF297A6001686D1 /* libStorm.dylib in Copy libs */,
+			);
+			name = "Copy libs";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		32DBCF5E0370ADEE00C91783 /* ghost4mac_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ghost4mac_Prefix.pch; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* ghost4mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ghost4mac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0C1DE540FF23C580097AF13 /* bncsutilinterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bncsutilinterface.cpp; path = ghost/bncsutilinterface.cpp; sourceTree = "<group>"; };
+		A0C1DE550FF23C580097AF13 /* bncsutilinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bncsutilinterface.h; path = ghost/bncsutilinterface.h; sourceTree = "<group>"; };
+		A0C1DE560FF23C580097AF13 /* bnet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bnet.cpp; path = ghost/bnet.cpp; sourceTree = "<group>"; };
+		A0C1DE570FF23C580097AF13 /* bnet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bnet.h; path = ghost/bnet.h; sourceTree = "<group>"; };
+		A0C1DE580FF23C580097AF13 /* bnetprotocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bnetprotocol.cpp; path = ghost/bnetprotocol.cpp; sourceTree = "<group>"; };
+		A0C1DE590FF23C580097AF13 /* bnetprotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bnetprotocol.h; path = ghost/bnetprotocol.h; sourceTree = "<group>"; };
+		A0C1DE5A0FF23C580097AF13 /* bnlsclient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bnlsclient.cpp; path = ghost/bnlsclient.cpp; sourceTree = "<group>"; };
+		A0C1DE5B0FF23C580097AF13 /* bnlsclient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bnlsclient.h; path = ghost/bnlsclient.h; sourceTree = "<group>"; };
+		A0C1DE5C0FF23C580097AF13 /* bnlsprotocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bnlsprotocol.cpp; path = ghost/bnlsprotocol.cpp; sourceTree = "<group>"; };
+		A0C1DE5D0FF23C580097AF13 /* bnlsprotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bnlsprotocol.h; path = ghost/bnlsprotocol.h; sourceTree = "<group>"; };
+		A0C1DE5E0FF23C580097AF13 /* commandpacket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = commandpacket.cpp; path = ghost/commandpacket.cpp; sourceTree = "<group>"; };
+		A0C1DE5F0FF23C580097AF13 /* commandpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = commandpacket.h; path = ghost/commandpacket.h; sourceTree = "<group>"; };
+		A0C1DE600FF23C580097AF13 /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = config.cpp; path = ghost/config.cpp; sourceTree = "<group>"; };
+		A0C1DE610FF23C580097AF13 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ghost/config.h; sourceTree = "<group>"; };
+		A0C1DE620FF23C580097AF13 /* crc32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = crc32.cpp; path = ghost/crc32.cpp; sourceTree = "<group>"; };
+		A0C1DE630FF23C580097AF13 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = ghost/crc32.h; sourceTree = "<group>"; };
+		A0C1DE640FF23C580097AF13 /* csvparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = csvparser.cpp; path = ghost/csvparser.cpp; sourceTree = "<group>"; };
+		A0C1DE650FF23C580097AF13 /* csvparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = csvparser.h; path = ghost/csvparser.h; sourceTree = "<group>"; };
+		A0C1DE660FF23C580097AF13 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game.cpp; path = ghost/game.cpp; sourceTree = "<group>"; };
+		A0C1DE670FF23C580097AF13 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game.h; path = ghost/game.h; sourceTree = "<group>"; };
+		A0C1DE680FF23C580097AF13 /* game_base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = game_base.cpp; path = ghost/game_base.cpp; sourceTree = "<group>"; };
+		A0C1DE690FF23C580097AF13 /* game_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = game_base.h; path = ghost/game_base.h; sourceTree = "<group>"; };
+		A0C1DE6A0FF23C580097AF13 /* gameplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameplayer.cpp; path = ghost/gameplayer.cpp; sourceTree = "<group>"; };
+		A0C1DE6B0FF23C580097AF13 /* gameplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameplayer.h; path = ghost/gameplayer.h; sourceTree = "<group>"; };
+		A0C1DE6C0FF23C580097AF13 /* gameprotocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameprotocol.cpp; path = ghost/gameprotocol.cpp; sourceTree = "<group>"; };
+		A0C1DE6D0FF23C580097AF13 /* gameprotocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameprotocol.h; path = ghost/gameprotocol.h; sourceTree = "<group>"; };
+		A0C1DE6E0FF23C580097AF13 /* gameslot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gameslot.cpp; path = ghost/gameslot.cpp; sourceTree = "<group>"; };
+		A0C1DE6F0FF23C580097AF13 /* gameslot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameslot.h; path = ghost/gameslot.h; sourceTree = "<group>"; };
+		A0C1DE700FF23C580097AF13 /* ghost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ghost.cpp; path = ghost/ghost.cpp; sourceTree = "<group>"; };
+		A0C1DE710FF23C580097AF13 /* ghost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ghost.h; path = ghost/ghost.h; sourceTree = "<group>"; };
+		A0C1DE720FF23C580097AF13 /* ghost.vcproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ghost.vcproj; path = ghost/ghost.vcproj; sourceTree = "<group>"; };
+		A0C1DE730FF23C580097AF13 /* ghostdb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ghostdb.cpp; path = ghost/ghostdb.cpp; sourceTree = "<group>"; };
+		A0C1DE740FF23C580097AF13 /* ghostdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ghostdb.h; path = ghost/ghostdb.h; sourceTree = "<group>"; };
+		A0C1DE750FF23C580097AF13 /* ghostdbmysql.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ghostdbmysql.cpp; path = ghost/ghostdbmysql.cpp; sourceTree = "<group>"; };
+		A0C1DE760FF23C580097AF13 /* ghostdbmysql.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ghostdbmysql.h; path = ghost/ghostdbmysql.h; sourceTree = "<group>"; };
+		A0C1DE770FF23C580097AF13 /* ghostdbsqlite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ghostdbsqlite.cpp; path = ghost/ghostdbsqlite.cpp; sourceTree = "<group>"; };
+		A0C1DE780FF23C580097AF13 /* ghostdbsqlite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ghostdbsqlite.h; path = ghost/ghostdbsqlite.h; sourceTree = "<group>"; };
+		A0C1DE790FF23C580097AF13 /* language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = language.cpp; path = ghost/language.cpp; sourceTree = "<group>"; };
+		A0C1DE7A0FF23C580097AF13 /* language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = language.h; path = ghost/language.h; sourceTree = "<group>"; };
+		A0C1DE880FF23C580097AF13 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ghost/Makefile; sourceTree = "<group>"; };
+		A0C1DE890FF23C580097AF13 /* map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = map.cpp; path = ghost/map.cpp; sourceTree = "<group>"; };
+		A0C1DE8A0FF23C580097AF13 /* map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = map.h; path = ghost/map.h; sourceTree = "<group>"; };
+		A0C1DE8B0FF23C580097AF13 /* ms_stdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ms_stdint.h; path = ghost/ms_stdint.h; sourceTree = "<group>"; };
+		A0C1DE8C0FF23C580097AF13 /* packed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = packed.cpp; path = ghost/packed.cpp; sourceTree = "<group>"; };
+		A0C1DE8D0FF23C580097AF13 /* packed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = packed.h; path = ghost/packed.h; sourceTree = "<group>"; };
+		A0C1DE8E0FF23C580097AF13 /* rcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rcon.cpp; path = ghost/rcon.cpp; sourceTree = "<group>"; };
+		A0C1DE8F0FF23C580097AF13 /* rcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rcon.h; path = ghost/rcon.h; sourceTree = "<group>"; };
+		A0C1DE900FF23C580097AF13 /* replay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = replay.cpp; path = ghost/replay.cpp; sourceTree = "<group>"; };
+		A0C1DE910FF23C580097AF13 /* replay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = replay.h; path = ghost/replay.h; sourceTree = "<group>"; };
+		A0C1DE920FF23C580097AF13 /* savegame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = savegame.cpp; path = ghost/savegame.cpp; sourceTree = "<group>"; };
+		A0C1DE930FF23C580097AF13 /* savegame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = savegame.h; path = ghost/savegame.h; sourceTree = "<group>"; };
+		A0C1DE940FF23C580097AF13 /* sha1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sha1.cpp; path = ghost/sha1.cpp; sourceTree = "<group>"; };
+		A0C1DE950FF23C580097AF13 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = ghost/sha1.h; sourceTree = "<group>"; };
+		A0C1DE960FF23C580097AF13 /* socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socket.cpp; path = ghost/socket.cpp; sourceTree = "<group>"; };
+		A0C1DE970FF23C580097AF13 /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = socket.h; path = ghost/socket.h; sourceTree = "<group>"; };
+		A0C1DE980FF23C580097AF13 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ghost/sqlite3.c; sourceTree = "<group>"; };
+		A0C1DE990FF23C580097AF13 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ghost/sqlite3.h; sourceTree = "<group>"; };
+		A0C1DE9A0FF23C580097AF13 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3ext.h; path = ghost/sqlite3ext.h; sourceTree = "<group>"; };
+		A0C1DE9B0FF23C580097AF13 /* stats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stats.cpp; path = ghost/stats.cpp; sourceTree = "<group>"; };
+		A0C1DE9C0FF23C580097AF13 /* stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stats.h; path = ghost/stats.h; sourceTree = "<group>"; };
+		A0C1DE9D0FF23C580097AF13 /* statsdota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = statsdota.cpp; path = ghost/statsdota.cpp; sourceTree = "<group>"; };
+		A0C1DE9E0FF23C580097AF13 /* statsdota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statsdota.h; path = ghost/statsdota.h; sourceTree = "<group>"; };
+		A0C1DE9F0FF23C580097AF13 /* statsw3mmd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = statsw3mmd.cpp; path = ghost/statsw3mmd.cpp; sourceTree = "<group>"; };
+		A0C1DEA00FF23C580097AF13 /* statsw3mmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statsw3mmd.h; path = ghost/statsw3mmd.h; sourceTree = "<group>"; };
+		A0C1DEA20FF23C580097AF13 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util.cpp; path = ghost/util.cpp; sourceTree = "<group>"; };
+		A0C1DEA30FF23C580097AF13 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = ghost/util.h; sourceTree = "<group>"; };
+		A0C1DEBC0FF26DF80097AF13 /* ghost++ */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = "ghost++"; path = "ghost/ghost++"; sourceTree = "<group>"; };
+		A0C1DEC30FF26EC00097AF13 /* libbncsutil.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbncsutil.dylib; path = ghost/libbncsutil.dylib; sourceTree = "<group>"; };
+		A0C1DEC40FF26EC00097AF13 /* libboost_date_time-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_date_time-mt.dylib"; path = "ghost/libboost_date_time-mt.dylib"; sourceTree = "<group>"; };
+		A0C1DEC50FF26EC00097AF13 /* libboost_filesystem-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_filesystem-mt.dylib"; path = "ghost/libboost_filesystem-mt.dylib"; sourceTree = "<group>"; };
+		A0C1DEC60FF26EC00097AF13 /* libboost_regex-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_regex-mt.dylib"; path = "ghost/libboost_regex-mt.dylib"; sourceTree = "<group>"; };
+		A0C1DEC70FF26EC00097AF13 /* libboost_system-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_system-mt.dylib"; path = "ghost/libboost_system-mt.dylib"; sourceTree = "<group>"; };
+		A0C1DEC80FF26EC00097AF13 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "ghost/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
+		A0C1DEC90FF26EC00097AF13 /* libcrypto.0.9.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.0.9.8.dylib; path = ghost/libcrypto.0.9.8.dylib; sourceTree = "<group>"; };
+		A0C1DECA0FF26EC00097AF13 /* libgmp.3.4.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.3.4.4.dylib; path = ghost/libgmp.3.4.4.dylib; sourceTree = "<group>"; };
+		A0C1DECB0FF26EC00097AF13 /* libmysqlclient.16.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmysqlclient.16.0.0.dylib; path = ghost/libmysqlclient.16.0.0.dylib; sourceTree = "<group>"; };
+		A0C1DECC0FF26EC00097AF13 /* libssl.0.9.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.0.9.8.dylib; path = ghost/libssl.0.9.8.dylib; sourceTree = "<group>"; };
+		A0C1DECD0FF26EC00097AF13 /* libStorm.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libStorm.dylib; path = ghost/libStorm.dylib; sourceTree = "<group>"; };
+		A0FF01C50FF28ED7001686D1 /* GHostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostController.h; sourceTree = "<group>"; };
+		A0FF01C60FF28ED7001686D1 /* GHostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostController.m; sourceTree = "<group>"; };
+		A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
+		A0FF01C80FF28ED7001686D1 /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
+		A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncUdpSocket.h; sourceTree = "<group>"; };
+		A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncUdpSocket.m; sourceTree = "<group>"; };
+		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* ghost4mac.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* ghost4mac */ = {
+			isa = PBXGroup;
+			children = (
+				A0C1DE420FF23BF30097AF13 /* ghost */,
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = ghost4mac;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
+				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A0FF01CD0FF2974D001686D1 /* lib */,
+				A0C1DEBC0FF26DF80097AF13 /* ghost++ */,
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */,
+				A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */,
+				A0FF01C50FF28ED7001686D1 /* GHostController.h */,
+				A0FF01C60FF28ED7001686D1 /* GHostController.m */,
+				A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */,
+				A0FF01C80FF28ED7001686D1 /* TaskWrapper.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+				D2F7E79907B2D74100F64583 /* CoreData.framework */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF5E0370ADEE00C91783 /* ghost4mac_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		A0C1DE420FF23BF30097AF13 /* ghost */ = {
+			isa = PBXGroup;
+			children = (
+				A0C1DE540FF23C580097AF13 /* bncsutilinterface.cpp */,
+				A0C1DE550FF23C580097AF13 /* bncsutilinterface.h */,
+				A0C1DE560FF23C580097AF13 /* bnet.cpp */,
+				A0C1DE570FF23C580097AF13 /* bnet.h */,
+				A0C1DE580FF23C580097AF13 /* bnetprotocol.cpp */,
+				A0C1DE590FF23C580097AF13 /* bnetprotocol.h */,
+				A0C1DE5A0FF23C580097AF13 /* bnlsclient.cpp */,
+				A0C1DE5B0FF23C580097AF13 /* bnlsclient.h */,
+				A0C1DE5C0FF23C580097AF13 /* bnlsprotocol.cpp */,
+				A0C1DE5D0FF23C580097AF13 /* bnlsprotocol.h */,
+				A0C1DE5E0FF23C580097AF13 /* commandpacket.cpp */,
+				A0C1DE5F0FF23C580097AF13 /* commandpacket.h */,
+				A0C1DE600FF23C580097AF13 /* config.cpp */,
+				A0C1DE610FF23C580097AF13 /* config.h */,
+				A0C1DE620FF23C580097AF13 /* crc32.cpp */,
+				A0C1DE630FF23C580097AF13 /* crc32.h */,
+				A0C1DE640FF23C580097AF13 /* csvparser.cpp */,
+				A0C1DE650FF23C580097AF13 /* csvparser.h */,
+				A0C1DE660FF23C580097AF13 /* game.cpp */,
+				A0C1DE670FF23C580097AF13 /* game.h */,
+				A0C1DE680FF23C580097AF13 /* game_base.cpp */,
+				A0C1DE690FF23C580097AF13 /* game_base.h */,
+				A0C1DE6A0FF23C580097AF13 /* gameplayer.cpp */,
+				A0C1DE6B0FF23C580097AF13 /* gameplayer.h */,
+				A0C1DE6C0FF23C580097AF13 /* gameprotocol.cpp */,
+				A0C1DE6D0FF23C580097AF13 /* gameprotocol.h */,
+				A0C1DE6E0FF23C580097AF13 /* gameslot.cpp */,
+				A0C1DE6F0FF23C580097AF13 /* gameslot.h */,
+				A0C1DE700FF23C580097AF13 /* ghost.cpp */,
+				A0C1DE710FF23C580097AF13 /* ghost.h */,
+				A0C1DE720FF23C580097AF13 /* ghost.vcproj */,
+				A0C1DE730FF23C580097AF13 /* ghostdb.cpp */,
+				A0C1DE740FF23C580097AF13 /* ghostdb.h */,
+				A0C1DE750FF23C580097AF13 /* ghostdbmysql.cpp */,
+				A0C1DE760FF23C580097AF13 /* ghostdbmysql.h */,
+				A0C1DE770FF23C580097AF13 /* ghostdbsqlite.cpp */,
+				A0C1DE780FF23C580097AF13 /* ghostdbsqlite.h */,
+				A0C1DE790FF23C580097AF13 /* language.cpp */,
+				A0C1DE7A0FF23C580097AF13 /* language.h */,
+				A0C1DE880FF23C580097AF13 /* Makefile */,
+				A0C1DE890FF23C580097AF13 /* map.cpp */,
+				A0C1DE8A0FF23C580097AF13 /* map.h */,
+				A0C1DE8B0FF23C580097AF13 /* ms_stdint.h */,
+				A0C1DE8C0FF23C580097AF13 /* packed.cpp */,
+				A0C1DE8D0FF23C580097AF13 /* packed.h */,
+				A0C1DE8E0FF23C580097AF13 /* rcon.cpp */,
+				A0C1DE8F0FF23C580097AF13 /* rcon.h */,
+				A0C1DE900FF23C580097AF13 /* replay.cpp */,
+				A0C1DE910FF23C580097AF13 /* replay.h */,
+				A0C1DE920FF23C580097AF13 /* savegame.cpp */,
+				A0C1DE930FF23C580097AF13 /* savegame.h */,
+				A0C1DE940FF23C580097AF13 /* sha1.cpp */,
+				A0C1DE950FF23C580097AF13 /* sha1.h */,
+				A0C1DE960FF23C580097AF13 /* socket.cpp */,
+				A0C1DE970FF23C580097AF13 /* socket.h */,
+				A0C1DE980FF23C580097AF13 /* sqlite3.c */,
+				A0C1DE990FF23C580097AF13 /* sqlite3.h */,
+				A0C1DE9A0FF23C580097AF13 /* sqlite3ext.h */,
+				A0C1DE9B0FF23C580097AF13 /* stats.cpp */,
+				A0C1DE9C0FF23C580097AF13 /* stats.h */,
+				A0C1DE9D0FF23C580097AF13 /* statsdota.cpp */,
+				A0C1DE9E0FF23C580097AF13 /* statsdota.h */,
+				A0C1DE9F0FF23C580097AF13 /* statsw3mmd.cpp */,
+				A0C1DEA00FF23C580097AF13 /* statsw3mmd.h */,
+				A0C1DEA20FF23C580097AF13 /* util.cpp */,
+				A0C1DEA30FF23C580097AF13 /* util.h */,
+			);
+			name = ghost;
+			sourceTree = "<group>";
+		};
+		A0FF01CD0FF2974D001686D1 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				A0C1DEC30FF26EC00097AF13 /* libbncsutil.dylib */,
+				A0C1DEC40FF26EC00097AF13 /* libboost_date_time-mt.dylib */,
+				A0C1DEC50FF26EC00097AF13 /* libboost_filesystem-mt.dylib */,
+				A0C1DEC60FF26EC00097AF13 /* libboost_regex-mt.dylib */,
+				A0C1DEC70FF26EC00097AF13 /* libboost_system-mt.dylib */,
+				A0C1DEC80FF26EC00097AF13 /* libboost_thread-mt.dylib */,
+				A0C1DEC90FF26EC00097AF13 /* libcrypto.0.9.8.dylib */,
+				A0C1DECA0FF26EC00097AF13 /* libgmp.3.4.4.dylib */,
+				A0C1DECB0FF26EC00097AF13 /* libmysqlclient.16.0.0.dylib */,
+				A0C1DECC0FF26EC00097AF13 /* libssl.0.9.8.dylib */,
+				A0C1DECD0FF26EC00097AF13 /* libStorm.dylib */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0FF01C90FF28ED7001686D1 /* GHostController.h in Headers */,
+				A0FF01CB0FF28ED7001686D1 /* TaskWrapper.h in Headers */,
+				A0FF01FE0FF2DAE4001686D1 /* AsyncUdpSocket.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXLegacyTarget section */
+		A00A56A50FF3DB8200CAD524 /* ghost */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = A00A56AA0FF3DBDA00CAD524 /* Build configuration list for PBXLegacyTarget "ghost" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/lucas/Projekte/ghost4mac/ghost;
+			dependencies = (
+			);
+			name = ghost;
+			passBuildSettingsInEnvironment = 1;
+			productName = ghost;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* ghost4mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "ghost4mac" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				A0FF01F50FF297E2001686D1 /* Copy libs */,
+				A0C1DEE60FF26F310097AF13 /* Create links for libs */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+				A00A56AE0FF3DC9400CAD524 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A00A56A90FF3DBBC00CAD524 /* PBXTargetDependency */,
+			);
+			name = ghost4mac;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = ghost4mac;
+			productReference = 8DC2EF5B0486A6940098B216 /* ghost4mac.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "ghost4mac" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* ghost4mac */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00A56A50FF3DB8200CAD524 /* ghost */,
+				8DC2EF4F0486A6940098B216 /* ghost4mac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				A0C1DEBD0FF26DF80097AF13 /* ghost++ in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0C1DEE60FF26F310097AF13 /* Create links for libs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Create links for libs";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $BUILT_PRODUCTS_DIR\ncd $UNLOCALIZED_RESOURCES_FOLDER_PATH\ncd lib\nln -fs libgmp3.4.4.dylib libgmp3.dylib\nln -fs libmysqlclient.16.0.0.dylib libmysqlclient.16.dylib";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0FF01CA0FF28ED7001686D1 /* GHostController.m in Sources */,
+				A0FF01CC0FF28ED7001686D1 /* TaskWrapper.m in Sources */,
+				A0FF01FF0FF2DAE4001686D1 /* AsyncUdpSocket.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A00A56A90FF3DBBC00CAD524 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A00A56A50FF3DB8200CAD524 /* ghost */;
+			targetProxy = A00A56A80FF3DBBC00CAD524 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = supported;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ghost4mac_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/ghost\"",
+				);
+				PRODUCT_NAME = ghost4mac;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_GC = supported;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ghost4mac_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/ghost\"",
+				);
+				PRODUCT_NAME = ghost4mac;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DEPLOYMENT_LOCATION = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+		A00A56A60FF3DB8200CAD524 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = ghost;
+			};
+			name = Debug;
+		};
+		A00A56A70FF3DB8200CAD524 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = ghost;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "ghost4mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "ghost4mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00A56AA0FF3DBDA00CAD524 /* Build configuration list for PBXLegacyTarget "ghost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00A56A60FF3DB8200CAD524 /* Debug */,
+				A00A56A70FF3DB8200CAD524 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
