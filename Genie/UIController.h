@@ -17,19 +17,36 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "GHostController.h"
 #import "ConfigController.h"
+#import "BadgeView.h"
+#import "GeneralController.h"
+#import "ConfigController.h"
+#import "ghost4mac/GHostController.h"
 
 @interface UIController : NSObject {
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *prefWindow;
-    IBOutlet GHostController *ghostController;
-	IBOutlet id commandLine;
+	IBOutlet NSPopUpButton *configSelector;
+	IBOutlet NSButton *autoScrollCheckbox;
+	IBOutlet NSToolbarItem *startStopButton;
+	IBOutlet NSTableView *consoleTable;
+	IBOutlet NSProgressIndicator *progressBar;
+	IBOutlet BadgeView *badge;
+	IBOutlet NSPanel *progressPanel;
+	IBOutlet NSComboBox *commandLine;
 	IBOutlet NSArrayController *listController;
+	IBOutlet ConfigController *configController;
+	IBOutlet GeneralController *generalController;
+	NSMutableArray *lines;
+	GHostController *ghost;
 }
-
+@property(retain) NSMutableArray *lines;
++ (NSString *)getConfigDir;
++ (NSString *)applicationSupportFolder;
 - (IBAction)selectFont:(id)sender;
 - (IBAction)copyLines:(id)sender;
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)sendCommand:(id)sender;
+- (IBAction)startStop:(id)sender;
+- (IBAction)restart:(id)sender;
 @end

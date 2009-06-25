@@ -7,7 +7,8 @@
 //
 
 #import "GeneralController.h"
-#import "GHostController.h"
+#import "UIController.h"
+#import "ghost4mac/GHostController.h"
 
 
 @implementation GeneralController
@@ -28,17 +29,17 @@
 
 
 - (IBAction)openGhostDir:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [GHostController getGhostDir]]];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [GHostController sharedController].ghostDir]];
 }
 
 - (IBAction)openConfigDir:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [GHostController getConfigDir]]];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: [UIController getConfigDir]]];
 }
 
 - (IBAction)clearAppSupport:(id)sender {
 	if (NSRunCriticalAlertPanel(@"Are you sure?", @"You are about to TRASH ALL GHost configuration files and your GHost database. The files will be moved to your trash and can be recovered from there.\n\nAre you REALLY sure you want to do this?", @"No", @"Yes, I want to trash everything", nil) == NSAlertAlternateReturn) {
 		FSRef ref;
-		FSPathMakeRef( (const UInt8 *)[[GHostController applicationSupportFolder] fileSystemRepresentation], &ref, NULL );
+		FSPathMakeRef( (const UInt8 *)[[UIController applicationSupportFolder] fileSystemRepresentation], &ref, NULL );
 		FSMoveObjectToTrashSync(&ref, NULL, kFSFileOperationDoNotMoveAcrossVolumes);
 	}
 }

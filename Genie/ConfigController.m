@@ -7,7 +7,7 @@
 //
 
 #import "ConfigController.h"
-#import "GHostController.h";
+#import "UIController.h";
 
 
 @implementation ConfigController
@@ -47,7 +47,7 @@
 }
 
 - (IBAction)editConfig:(id)sender {
-	[config loadFile:[[GHostController getConfigDir] stringByAppendingPathComponent: [[sender selectedItem] title]]];
+	[config loadFile:[[UIController getConfigDir] stringByAppendingPathComponent: [[sender selectedItem] title]]];
 }
 
 - (IBAction)newConfig:(id)sender {
@@ -70,7 +70,7 @@
 - (id)init
 {
 	self = [self initWithNibName:@"PreferencesConfig" bundle:nil];
-	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [GHostController getConfigDir]];
+	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [UIController getConfigDir]];
 	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
 	
 	for(NSString *cfg in configs)
