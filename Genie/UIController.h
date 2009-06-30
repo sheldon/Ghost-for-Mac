@@ -21,7 +21,9 @@
 #import "BadgeView.h"
 #import "GeneralController.h"
 #import "ConfigController.h"
+#import "MapController.h"
 #import "ghost4mac/GHostController.h"
+#import "AsyncUdpSocket.h"
 
 @interface UIController : NSObject {
 	IBOutlet NSWindow *mainWindow;
@@ -37,8 +39,14 @@
 	IBOutlet NSArrayController *listController;
 	IBOutlet ConfigController *configController;
 	IBOutlet GeneralController *generalController;
+	IBOutlet MapController *mapController;
+	IBOutlet NSMenu *showHideHeaderMenu;
 	NSMutableArray *lines;
 	GHostController *ghost;
+	AsyncUdpSocket *cmdSock;
+	IBOutlet NSProgressIndicator *portMapProgress;
+	IBOutlet NSImageView *portMapStatus;
+	IBOutlet NSTextField *portMapText;
 }
 @property(retain) NSMutableArray *lines;
 + (NSString *)getConfigDir;
@@ -46,7 +54,7 @@
 - (IBAction)selectFont:(id)sender;
 - (IBAction)copyLines:(id)sender;
 - (IBAction)showPreferences:(id)sender;
-- (IBAction)sendCommand:(id)sender;
+- (IBAction)inputCommand:(id)sender;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 @end

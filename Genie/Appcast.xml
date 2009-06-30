@@ -6,10 +6,18 @@
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
 		<item>
+			<title>Version 0.4.2</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.2.dmg" sparkle:version="0.4.2" length="15163142" type="application/octet-stream" sparkle:dsaSignature="MCwCFE2yXsb4cvPKCU6OnecB71r6soJdAhRrSk9O0jo+eTqUCqH9pCtmC4/mPA==" />
+			<description><![CDATA[
+				Made columns hideable in console output<br/>
+				Implemented UPNP port mapper for hosting (untested, needs feedback)
+			]]></description>
+		</item>
+		<item>
 			<title>Version 0.4.1 (bugfix release)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.1.dmg" sparkle:version="0.4.1" length="13410434" type="application/octet-stream" sparkle:dsaSignature="MC4CFQCJ7rkw7ycjI+crzYPCXE9rnbSsDgIVAJh8Vg07YvCPz2ZWH6DuIj/+3gY8" />
 			<description><![CDATA[
-				Fixed a bug with sending the wrong commandtrigger when executing commands<br>
+				Fixed a bug with sending the wrong commandtrigger when executing commands<br/>
 				Recompiled ghost core with optimization level -O2 instead of -O3
 			]]></description>
 		</item>
@@ -17,7 +25,7 @@
 			<title>Version 0.4 (command input)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.dmg" sparkle:version="0.4" length="13473386" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCbtmHz6KXk68wDLX56Q4xEJTIWnQIUB/bpjRrmw3Ia0HSGE+o3/m0Aato=" />
 			<description><![CDATA[
-				Added the ability to control the bot without opening Warcraft III<br>
+				Added the ability to control the bot without opening Warcraft III<br/>
 				Compressed GHost core with UPX
 			]]></description>
 		</item>
@@ -25,7 +33,7 @@
 			<title>Version 0.3.3 (changed ghost core)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.3.dmg" sparkle:version="0.3.3" length="15055718" type="application/octet-stream" sparkle:dsaSignature="MCwCFDxZMc/d8vk1i81Wt/+7hIhtGx8dAhRQRtHj9Thzf6Rm89WVp4w0m45kYw==" />
 			<description><![CDATA[
-				Updated GHost core to 13.3<br>
+				Updated GHost core to 13.3<br/>
 				Removed unnecessary libs (libgcc and libstdc++)
 			]]></description>
 		</item>
@@ -33,7 +41,7 @@
 			<title>Version 0.3.2 (only minor changes)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.2.dmg" sparkle:version="0.3.2" length="16145210" type="application/octet-stream" sparkle:dsaSignature="MCwCFGVZt2xGW5XXs283EbpH51E0V14wAhQe8DcKHvRkLQ3uYN4CCu9sUHCHpg==" />
 			<description><![CDATA[
-				Changed the layout of Genie and the Preferences window<br>
+				Changed the layout of Genie and the Preferences window<br/>
 				Fixed a bug with loading and saving configs
 			]]></description>
 		</item>

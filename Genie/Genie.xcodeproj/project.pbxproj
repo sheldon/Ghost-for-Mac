@@ -26,11 +26,16 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		A002AF000FE4FB93009A7E1D /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A002AEFF0FE4FB92009A7E1D /* AsyncSocket.m */; };
 		A00A55950FF3A2F200CAD524 /* ghost4mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00A55940FF3A2F200CAD524 /* ghost4mac.framework */; };
-		A00A55960FF3A2F600CAD524 /* ghost4mac.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A00A55940FF3A2F200CAD524 /* ghost4mac.framework */; };
+		A00A55960FF3A2F600CAD524 /* ghost4mac.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A00A55940FF3A2F200CAD524 /* ghost4mac.framework */; };
+		A00A57900FF4C07100CAD524 /* GreenDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578D0FF4C07100CAD524 /* GreenDot.png */; };
+		A00A57910FF4C07100CAD524 /* RedDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578E0FF4C07100CAD524 /* RedDot.png */; };
+		A00A57920FF4C07100CAD524 /* YellowDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578F0FF4C07100CAD524 /* YellowDot.png */; };
+		A0114B260FFAA323007554DD /* GHostMapConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A0114B250FFAA323007554DD /* GHostMapConfig.m */; };
 		A016ABA80FDBE423008B0151 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A016ABA70FDBE423008B0151 /* Sparkle.framework */; };
-		A016ABB90FDBE520008B0151 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A016ABA70FDBE423008B0151 /* Sparkle.framework */; };
+		A016ABB90FDBE520008B0151 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A016ABA70FDBE423008B0151 /* Sparkle.framework */; };
+		A02812140FF6A20500664D23 /* TCMPortMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A028114E0FF69E0400664D23 /* TCMPortMapper.framework */; };
+		A02812380FF6A62F00664D23 /* TCMPortMapper.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A028114E0FF69E0400664D23 /* TCMPortMapper.framework */; };
 		A029D9B30FE1C7CC00DEA71D /* GHostRemoteServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B20FE1C7CC00DEA71D /* GHostRemoteServer.m */; };
 		A029D9B60FE1C7E000DEA71D /* GHostLocalServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B50FE1C7E000DEA71D /* GHostLocalServer.m */; };
 		A029D9B90FE1C91700DEA71D /* GHostServer.m in Sources */ = {isa = PBXBuildFile; fileRef = A029D9B80FE1C91700DEA71D /* GHostServer.m */; };
@@ -55,8 +60,7 @@
 		A0DDB7150FEBB8A0003E3B37 /* PreferencesGeneral.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */; };
 		A0DDB7E90FEBBF70003E3B37 /* PreferencesMaps.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */; };
 		A0E5D1C20FE6E663002C9A96 /* LogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E5D1C10FE6E663002C9A96 /* LogEntry.m */; };
-		A0F8C4970FE531DE0047352B /* RegexKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
-		A0F9BC590FDB13BB00C9F2D9 /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F9BC580FDB13BB00C9F2D9 /* TaskWrapper.m */; };
+		A0F8C4970FE531DE0047352B /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
 		A0F9BD640FDB288300C9F2D9 /* UIController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F9BD620FDB288300C9F2D9 /* UIController.m */; };
 		A0F9BDE70FDB334C00C9F2D9 /* pumbaa.icns in Resources */ = {isa = PBXBuildFile; fileRef = A0F9BDE60FDB334C00C9F2D9 /* pumbaa.icns */; };
 /* End PBXBuildFile section */
@@ -72,16 +76,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A016ABBC0FDBE523008B0151 /* CopyFiles */ = {
+		A016ABBC0FDBE523008B0151 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A00A55960FF3A2F600CAD524 /* ghost4mac.framework in CopyFiles */,
-				A0F8C4970FE531DE0047352B /* RegexKit.framework in CopyFiles */,
-				A016ABB90FDBE520008B0151 /* Sparkle.framework in CopyFiles */,
+				A02812380FF6A62F00664D23 /* TCMPortMapper.framework in Copy Frameworks */,
+				A00A55960FF3A2F600CAD524 /* ghost4mac.framework in Copy Frameworks */,
+				A0F8C4970FE531DE0047352B /* RegexKit.framework in Copy Frameworks */,
+				A016ABB90FDBE520008B0151 /* Sparkle.framework in Copy Frameworks */,
 			);
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -97,10 +103,14 @@
 		32CA4F630368D1EE00C91783 /* Genie_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Genie_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Genie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Genie.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A002AEFE0FE4FB92009A7E1D /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
-		A002AEFF0FE4FB92009A7E1D /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
 		A00A55940FF3A2F200CAD524 /* ghost4mac.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ghost4mac.framework; sourceTree = "<group>"; };
+		A00A578D0FF4C07100CAD524 /* GreenDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = GreenDot.png; path = ../../GreenDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00A578E0FF4C07100CAD524 /* RedDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RedDot.png; path = ../../RedDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00A578F0FF4C07100CAD524 /* YellowDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = YellowDot.png; path = ../../YellowDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0114B240FFAA323007554DD /* GHostMapConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostMapConfig.h; sourceTree = "<group>"; };
+		A0114B250FFAA323007554DD /* GHostMapConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostMapConfig.m; sourceTree = "<group>"; };
 		A016ABA70FDBE423008B0151 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		A028114E0FF69E0400664D23 /* TCMPortMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCMPortMapper.framework; sourceTree = "<group>"; };
 		A029D9B10FE1C7CC00DEA71D /* GHostRemoteServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostRemoteServer.h; sourceTree = "<group>"; };
 		A029D9B20FE1C7CC00DEA71D /* GHostRemoteServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostRemoteServer.m; sourceTree = "<group>"; };
 		A029D9B40FE1C7E000DEA71D /* GHostLocalServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostLocalServer.h; sourceTree = "<group>"; };
@@ -137,8 +147,6 @@
 		A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesMaps.xib; sourceTree = "<group>"; };
 		A0E5D1C00FE6E663002C9A96 /* LogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogEntry.h; sourceTree = "<group>"; };
 		A0E5D1C10FE6E663002C9A96 /* LogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntry.m; sourceTree = "<group>"; };
-		A0F9BC570FDB13BB00C9F2D9 /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
-		A0F9BC580FDB13BB00C9F2D9 /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
 		A0F9BD620FDB288300C9F2D9 /* UIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIController.m; sourceTree = "<group>"; };
 		A0F9BD630FDB288300C9F2D9 /* UIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIController.h; sourceTree = "<group>"; };
 		A0F9BDE60FDB334C00C9F2D9 /* pumbaa.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = pumbaa.icns; sourceTree = "<group>"; };
@@ -153,6 +161,7 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */,
 				A00A55950FF3A2F200CAD524 /* ghost4mac.framework in Frameworks */,
+				A02812140FF6A20500664D23 /* TCMPortMapper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +182,8 @@
 				A029D9B80FE1C91700DEA71D /* GHostServer.m */,
 				A07FB6520FE429AD0019EF5F /* GHostConfig.h */,
 				A07FB6530FE429AD0019EF5F /* GHostConfig.m */,
+				A0114B240FFAA323007554DD /* GHostMapConfig.h */,
+				A0114B250FFAA323007554DD /* GHostMapConfig.m */,
 				A0E5D1C00FE6E663002C9A96 /* LogEntry.h */,
 				A0E5D1C10FE6E663002C9A96 /* LogEntry.m */,
 			);
@@ -182,6 +193,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A028114E0FF69E0400664D23 /* TCMPortMapper.framework */,
 				A00A55940FF3A2F200CAD524 /* ghost4mac.framework */,
 				A07FB63F0FE3F2960019EF5F /* RegexKit.framework */,
 				A016ABA70FDBE423008B0151 /* Sparkle.framework */,
@@ -211,8 +223,8 @@
 		29B97314FDCFA39411CA2CEA /* Genie++ */ = {
 			isa = PBXGroup;
 			children = (
-				A002AEA00FE4FA55009A7E1D /* 3rdparty */,
 				A0DA50750FEF909A008F9A8F /* Appcast.xml */,
+				A002AEA00FE4FA55009A7E1D /* 3rdparty */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -234,6 +246,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A00A578D0FF4C07100CAD524 /* GreenDot.png */,
+				A00A578E0FF4C07100CAD524 /* RedDot.png */,
+				A00A578F0FF4C07100CAD524 /* YellowDot.png */,
 				A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */,
 				A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */,
 				A081433F0FE9B4D2007FF74F /* PreferencesConfig.xib */,
@@ -269,10 +284,6 @@
 				A0DA506F0FEF9084008F9A8F /* AsyncUdpSocket.m */,
 				A08142940FE9AB75007FF74F /* MBPreferencesController.h */,
 				A08142950FE9AB75007FF74F /* MBPreferencesController.m */,
-				A002AEFE0FE4FB92009A7E1D /* AsyncSocket.h */,
-				A002AEFF0FE4FB92009A7E1D /* AsyncSocket.m */,
-				A0F9BC570FDB13BB00C9F2D9 /* TaskWrapper.h */,
-				A0F9BC580FDB13BB00C9F2D9 /* TaskWrapper.m */,
 				A0BB69A20FDBFE2500B9A3FC /* BadgeView.h */,
 				A0BB69A30FDBFE2500B9A3FC /* BadgeView.m */,
 			);
@@ -302,7 +313,7 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
-				A016ABBC0FDBE523008B0151 /* CopyFiles */,
+				A016ABBC0FDBE523008B0151 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -352,6 +363,9 @@
 				A0DDB7E90FEBBF70003E3B37 /* PreferencesMaps.xib in Resources */,
 				A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */,
 				A0DA50760FEF909A008F9A8F /* Appcast.xml in Resources */,
+				A00A57900FF4C07100CAD524 /* GreenDot.png in Resources */,
+				A00A57910FF4C07100CAD524 /* RedDot.png in Resources */,
+				A00A57920FF4C07100CAD524 /* YellowDot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +383,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\n\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"";
+			shellScript = "set -ex\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\n\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\" -format UDZO -imagekey zlib-level=9\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -379,20 +393,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				A0F9BC590FDB13BB00C9F2D9 /* TaskWrapper.m in Sources */,
 				A0F9BD640FDB288300C9F2D9 /* UIController.m in Sources */,
 				A0BB69A40FDBFE2500B9A3FC /* BadgeView.m in Sources */,
 				A029D9B30FE1C7CC00DEA71D /* GHostRemoteServer.m in Sources */,
 				A029D9B60FE1C7E000DEA71D /* GHostLocalServer.m in Sources */,
 				A029D9B90FE1C91700DEA71D /* GHostServer.m in Sources */,
 				A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */,
-				A002AF000FE4FB93009A7E1D /* AsyncSocket.m in Sources */,
 				A0E5D1C20FE6E663002C9A96 /* LogEntry.m in Sources */,
 				A08142960FE9AB75007FF74F /* MBPreferencesController.m in Sources */,
 				A08142990FE9ABF3007FF74F /* MapController.m in Sources */,
 				A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */,
 				A0DDB7130FEBB863003E3B37 /* GeneralController.m in Sources */,
 				A0DA50700FEF9084008F9A8F /* AsyncUdpSocket.m in Sources */,
+				A0114B260FFAA323007554DD /* GHostMapConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +517,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(DEVELOPER_DIR)/Local/Frameworks\"",
 				);
+				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Genie_Prefix.pch;

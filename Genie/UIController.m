@@ -20,10 +20,22 @@
 #import	"LogEntry.h"
 #import "MBPreferencesController.h"
 #import "ghost4mac/GHostController.h"
+#import "RegexKit/RegexKit.h"
+#import "TCMPortMapper/TCMPortMapper.h"
 
 @implementation UIController
 
 @synthesize lines;
+
++ (NSString *)applicationSupportFolder {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
+	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
+}
+
+- (void)sendCommand:(NSString*)cmd {
+	[cmdSock sendData:[cmd dataUsingEncoding:NSUTF8StringEncoding] withTimeout:30 tag:0];
+}
 
 - (IBAction)startStop:(id)sender
 {
@@ -54,9 +66,9 @@
 	return NO;
 }
 
-- (IBAction)sendCommand:(id)sender {
+- (IBAction)inputCommand:(id)sender {
 	NSLog([sender stringValue]);
-	[ghost sendCommand:[sender stringValue]];
+	[self sendCommand:[sender stringValue]];
 	[sender setStringValue:@""];
 }
 
@@ -82,6 +94,51 @@
 	[self copyToClipboard:output];
 }
 
+- (void)portMapperDidStartWork:(NSNotification *)aNotification {
+    //[O_portStatusProgressIndicator startAnimation:self];
+    //[O_portStatusImageView setHidden:YES];
+    //[O_portStatusTextField setStringValue:@"Checking port status..."];
+	NSLog(@"Checking port status...");
+}
+
+- (void)portMapperDidFinishWork:(NSNotification *)aNotification {
+    [portMapProgress stopAnimation:self];
+    TCMPortMapper *pm = [TCMPortMapper sharedInstance];
+    // since we only have one mapping this is fine
+    TCMPortMapping *mapping = [[pm portMappings] anyObject];
+    if ([mapping mappingStatus]==TCMPortMappingStatusMapped) {
+        /*[O_portStatusImageView setImage:[NSImage imageNamed:@"URLIconOK"]];
+        [O_portStatusTextField setStringValue:
+		 [NSString stringWithFormat:@"see://%@:%d",
+		  [pm externalIPAddress],[mapping externalPort]]];*/
+		[portMapText setStringValue:@"Port mapping successful!"];
+		[portMapStatus setImage:[NSImage imageNamed:@"GreenDot.png"]];
+    } else {
+		[portMapText setStringValue:@"Port mapping failed!"];
+		[portMapStatus setImage:[NSImage imageNamed:@"RedDot.png"]];
+        /*[O_portStatusImageView setImage:[NSImage imageNamed:@"URLIconNotOK"]];
+        [O_portStatusTextField setStringValue:@"No public mapping."];*/
+    }
+	
+	[portMapProgress setHidden:YES];
+	[portMapStatus setHidden:NO];
+}
+
+- (void)gotHostPortInfo:(NSInteger)port
+{
+	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
+	[pm addPortMapping:
+	 [TCMPortMapping portMappingWithLocalPort:port 
+						  desiredExternalPort:port 
+							transportProtocol:TCMPortMappingTransportProtocolTCP
+									 userInfo:nil]];
+	[portMapProgress startAnimation:self];
+	[portMapStatus setHidden:YES];
+	[portMapProgress setHidden:NO];
+	[portMapText setStringValue:@"Mapping port via UPnP..."];
+	[pm start];
+}
+
 - (void)appendOutput:(NSString *)output
 {
 	//NSLog(output);
@@ -92,6 +149,13 @@
 	if ([autoScrollCheckbox state] == NSOnState && newcount != count) {
 		[consoleTable scrollRowToVisible:newcount - 1];
 	}
+	const NSString* hostExpression = @"\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
+	NSString *portString;
+	if ([output getCapturesWithRegexAndReferences:hostExpression, @"$1", &portString, nil]) {
+		NSInteger port = [portString intValue];
+		NSLog(@"GOT PORT: %d", port);
+		[self gotHostPortInfo:port];
+	}
 }
 
 - (void)appendOutputNotify:(NSNotification*)note
@@ -99,11 +163,28 @@
 	[self appendOutput:[[note userInfo] objectForKey:@"line"]];
 }
 
-+ (NSString *)applicationSupportFolder {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
-	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
+- (void)contextMenuSelected:(id)sender {
+	BOOL on = ([sender state] == NSOnState);
+	[sender setState:on ? NSOffState : NSOnState];
+	NSTableColumn *column = [sender representedObject];
+	[column	setHidden:on];
 }
+
+- (void)awakeFromNib
+{
+	for (NSTableColumn *column in [consoleTable tableColumns]) {
+		NSString *title = [[column headerCell] title];
+		NSMenuItem *item = [showHideHeaderMenu addItemWithTitle:title action:@selector(contextMenuSelected:) keyEquivalent:@""];
+		[item setTarget:self];
+		[item setRepresentedObject:column];
+
+		if([column isHidden])
+			[item setState:NSOffState];
+		else
+			[item setState:NSOnState];
+	}
+}
+
 
 + (NSString *)getConfigDir {
 	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"config"];
@@ -112,6 +193,12 @@
 - (void)processStarted:(NSNotification*)note {
 	[startStopButton setLabel:@"Stop"];
 	[startStopButton setImage: [NSImage imageNamed: @"NSStopProgressFreestandingTemplate"]];
+	if (cmdSock)
+		[cmdSock release];
+	cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
+	[cmdSock connectToHost:@"localhost" onPort:6969 error:nil];
+	[cmdSock receiveWithTimeout:-1 tag:0];
+	[self sendCommand:@"\n"];
 }
 
 - (void)processStopped:(NSNotification*)note {
@@ -129,13 +216,40 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStopped:) name:GHProcessStopped object:ghost];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appendOutputNotify:) name:GHConsoleOutput object:ghost];
 	lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
+	
+	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidStartWork:) 
+												 name:TCMPortMapperDidStartWorkNotification object:pm];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidFinishWork:)
+												 name:TCMPortMapperDidFinishWorkNotification object:pm];
+	//[O_portStatusImageView setDelegate:self];
+	/*if ([pm isAtWork]) {
+		[self portMapperDidStartWork:nil];
+	} else {
+		[self portMapperDidFinishWork:nil];
+	}*/
 	return self;
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+	[self performSelectorOnMainThread:@selector(doStuffOnMainGUIThread:)
+                           withObject:nil
+                        waitUntilDone:NO];
+	
+}
+
+- (void)doStuffOnMainGUIThread:(id)arg {
+	BOOL startGHost = ([[NSUserDefaults standardUserDefaults] integerForKey:@"runGHostOnStartup"] == 1);
+    if (startGHost)
+		[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]]];
 }
 
 - (void)copyFilesAsync:(id)arg {
 	/*check for necessary files*/
 	NSError *error;
-	NSString *appSupportDir = [[self class] applicationSupportFolder];
+	NSString *appSupportDir = [UIController applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
 	/*NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
 	 
@@ -163,13 +277,6 @@
 				NSLog(@"Error: %@\n\tTrying to copy file '%@' from '%@' to '%@'", error, file, from, to);
 		}
 	}
-	/* create links for dylibs */
-	/*NSDictionary *lnFiles = [NSDictionary dictionaryWithObjectsAndKeys:	@"libgmp.3.4.4.dylib",@"libgmp.3.dylib",@"libmysqlclient.16.0.0.dylib",@"libmysqlclient.16.dylib",nil];
-	for (NSString* key in lnFiles) {
-		if (![fm createSymbolicLinkAtPath:[[GHostController getLibDir] stringByAppendingPathComponent:key] withDestinationPath:[[GHostController getLibDir] stringByAppendingPathComponent:[lnFiles objectForKey:key]] error:&error])
-			NSLog(@"Error: %@\n\tTrying linking '%@' -> '%@'", error, [lnFiles objectForKey:key], key);
-	}*/
-	
 	
 	NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"war3.exe",@"Storm.dll",@"game.dll",@"War3Patch.mpq",nil];
 	NSMutableArray *filesNotFound = [NSMutableArray arrayWithArray:requiredFiles];
@@ -240,28 +347,44 @@
 	[NSApp endSheet:progressPanel returnCode:0];
 }
 
+- (void)doTerminate:(NSNotification *)note
+{
+	[ghost stop];
+	[[TCMPortMapper sharedInstance] stopBlocking];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
+	[[NSNotificationCenter defaultCenter]
+	 addObserver:self
+	 selector:@selector(doTerminate:)
+	 name:NSApplicationWillTerminateNotification
+	 object:NSApp];
 	BOOL startHidden = ([[NSUserDefaults standardUserDefaults] integerForKey:@"startHidden"] == 1);
 	if (!startHidden)
 		[mainWindow orderFront: mainWindow];
 	[progressBar startAnimation:self];
-	/*[NSApp beginSheet: progressPanel
+	[NSApp beginSheet: progressPanel
 	   modalForWindow: mainWindow
 		modalDelegate: self
 	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-		  contextInfo: nil];*/
-	//[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
+		  contextInfo: nil];
+	[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
 	[badge bind:@"running" toObject:ghost withKeyPath:@"running" options:nil];
 	// set badge as dock icon
 	[[NSApp dockTile] setContentView: badge];
-	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, nil]];
+	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, /*mapController,*/ nil]];
 	//[mainWindow setAutorecalculatesContentBorderThickness:YES forEdge:NSMinYEdge];
 	//[mainWindow setContentBorderThickness: 26.0 forEdge: NSMinYEdge];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
 	if (!ghost.running || NSRunAlertPanel(@"Application Exit", @"GHost++ is still running, are you sure you want to exit?", @"No", @"Yes", nil) == NSAlertAlternateReturn)
+	{
+		/*[ghost stop];
+		while(ghost.running)
+			sleep(100);*/
 		return YES;
+	}
 	else
 		return NO;
 }
@@ -281,6 +404,22 @@
 		[mainWindow orderOut:window];
 		return NO;
 	}
+	return YES;
+}
+
+- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
+	//NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 1)];
+	NSString *msg = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	if(msg)
+	{
+		if ([msg isEqualToString:@"PING"])
+			[self sendCommand:@"\n"];
+	}
+	else
+	{
+		[self appendOutput:@"Error converting received data into NSUTF8StringEncoding String"];
+	}
+	[cmdSock receiveWithTimeout:-1 tag:0];
 	return YES;
 }
 @end
