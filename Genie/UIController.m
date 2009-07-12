@@ -22,6 +22,7 @@
 #import "ghost4mac/GHostController.h"
 #import "RegexKit/RegexKit.h"
 #import "TCMPortMapper/TCMPortMapper.h"
+#import "GHostSocket.h"
 
 @implementation UIController
 
@@ -31,10 +32,6 @@
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
 	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
-}
-
-- (void)sendCommand:(NSString*)cmd {
-	[cmdSock sendData:[cmd dataUsingEncoding:NSUTF8StringEncoding] withTimeout:30 tag:0];
 }
 
 - (IBAction)startStop:(id)sender
@@ -66,32 +63,12 @@
 	return NO;
 }
 
-- (IBAction)inputCommand:(id)sender {
-	NSLog([sender stringValue]);
-	[self sendCommand:[sender stringValue]];
-	[sender setStringValue:@""];
-}
+
 
 
 
 - (IBAction)showPreferences:(id)sender {
 	[[MBPreferencesController sharedController] showWindow:sender];
-}
-
--(void)copyToClipboard:(NSString*)str
-{
-    NSPasteboard *pb = [NSPasteboard generalPasteboard];
-    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
-    [pb declareTypes:types owner:self];
-    [pb setString: str forType:NSStringPboardType];
-}
-
-- (IBAction)copyLines:(id)sender {
-	NSMutableString* output = [NSMutableString string];
-	for (LogEntry *e in [listController selectedObjects]) {
-		[output appendFormat:@"[%@ %@] %@\n",e.sender,[e.date descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],e.text];
-	}
-	[self copyToClipboard:output];
 }
 
 - (void)portMapperDidStartWork:(NSNotification *)aNotification {
@@ -142,13 +119,12 @@
 - (void)appendOutput:(NSString *)output
 {
 	//NSLog(output);
-	NSInteger count = [[listController arrangedObjects] count];
+	/*NSInteger count = [[listController arrangedObjects] count];
 	[listController addObject:[LogEntry logEntryWithLine:output]];
 	
 	NSInteger newcount = [[listController arrangedObjects] count];
-	if ([autoScrollCheckbox state] == NSOnState && newcount != count) {
-		[consoleTable scrollRowToVisible:newcount - 1];
-	}
+	*/
+	[consoleView addCoreOutput:output autoScroll:[autoScrollCheckbox state] == NSOnState];
 	const NSString* hostExpression = @"\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
 	NSString *portString;
 	if ([output getCapturesWithRegexAndReferences:hostExpression, @"$1", &portString, nil]) {
@@ -163,29 +139,6 @@
 	[self appendOutput:[[note userInfo] objectForKey:@"line"]];
 }
 
-- (void)contextMenuSelected:(id)sender {
-	BOOL on = ([sender state] == NSOnState);
-	[sender setState:on ? NSOffState : NSOnState];
-	NSTableColumn *column = [sender representedObject];
-	[column	setHidden:on];
-}
-
-- (void)awakeFromNib
-{
-	for (NSTableColumn *column in [consoleTable tableColumns]) {
-		NSString *title = [[column headerCell] title];
-		NSMenuItem *item = [showHideHeaderMenu addItemWithTitle:title action:@selector(contextMenuSelected:) keyEquivalent:@""];
-		[item setTarget:self];
-		[item setRepresentedObject:column];
-
-		if([column isHidden])
-			[item setState:NSOffState];
-		else
-			[item setState:NSOnState];
-	}
-}
-
-
 + (NSString *)getConfigDir {
 	return [[self applicationSupportFolder] stringByAppendingPathComponent: @"config"];
 }
@@ -193,12 +146,7 @@
 - (void)processStarted:(NSNotification*)note {
 	[startStopButton setLabel:@"Stop"];
 	[startStopButton setImage: [NSImage imageNamed: @"NSStopProgressFreestandingTemplate"]];
-	if (cmdSock)
-		[cmdSock release];
-	cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
-	[cmdSock connectToHost:@"localhost" onPort:6969 error:nil];
-	[cmdSock receiveWithTimeout:-1 tag:0];
-	[self sendCommand:@"\n"];
+	[[GHostSocket sharedSocket] initWithPort:6969];
 }
 
 - (void)processStopped:(NSNotification*)note {
@@ -260,9 +208,9 @@
 	 NSLog(@"Could not read version.plist!");
 	 }*/
 	NSFileManager *fm = [NSFileManager defaultManager];
-	if ([fm contentsOfDirectoryAtPath:ghost.ghostDir error:nil] == nil) {
-		[fm createDirectoryAtPath:ghost.ghostDir withIntermediateDirectories:YES attributes:nil error:nil];
-		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[ghost.ghostDir stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
+	if ([fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] == nil || [[fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] count] < 1) {
+		[fm createDirectoryAtPath:[UIController getConfigDir] withIntermediateDirectories:YES attributes:nil error:nil];
+		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[[UIController getConfigDir] stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
 	}
 	// check core directory
 	if ([fm contentsOfDirectoryAtPath:ghost.ghostDir error:nil] == nil) {
@@ -373,6 +321,8 @@
 	// set badge as dock icon
 	[[NSApp dockTile] setContentView: badge];
 	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, /*mapController,*/ nil]];
+	[viewController setModules:[NSArray arrayWithObjects:consoleView,nil]];
+	//[viewController addSubview:[consoleView view]];
 	//[mainWindow setAutorecalculatesContentBorderThickness:YES forEdge:NSMinYEdge];
 	//[mainWindow setContentBorderThickness: 26.0 forEdge: NSMinYEdge];
 }
@@ -404,22 +354,6 @@
 		[mainWindow orderOut:window];
 		return NO;
 	}
-	return YES;
-}
-
-- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
-	//NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 1)];
-	NSString *msg = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-	if(msg)
-	{
-		if ([msg isEqualToString:@"PING"])
-			[self sendCommand:@"\n"];
-	}
-	else
-	{
-		[self appendOutput:@"Error converting received data into NSUTF8StringEncoding String"];
-	}
-	[cmdSock receiveWithTimeout:-1 tag:0];
 	return YES;
 }
 @end

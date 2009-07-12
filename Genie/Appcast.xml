@@ -6,6 +6,16 @@
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
 		<item>
+			<title>Version 0.4.3</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.3.dmg" sparkle:version="0.4.3" length="15197703" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCa/Zbs52FdyZgCqs1B3h9/w5P+/AIUX6Uq82hdQLk32lC0tHNNK7memRk=" />
+			<description><![CDATA[
+				Fixed a few bugs with lib requisites<br>
+				Redesigned main window layout (not really visible yet)<br>
+				Search not working because of restructuring<br>
+				Fixed bug with default config not being copied
+			]]></description>
+		</item>
+		<item>
 			<title>Version 0.4.2</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.2.dmg" sparkle:version="0.4.2" length="15163142" type="application/octet-stream" sparkle:dsaSignature="MCwCFE2yXsb4cvPKCU6OnecB71r6soJdAhRrSk9O0jo+eTqUCqH9pCtmC4/mPA==" />
 			<description><![CDATA[

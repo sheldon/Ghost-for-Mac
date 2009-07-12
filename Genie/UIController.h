@@ -24,6 +24,8 @@
 #import "MapController.h"
 #import "ghost4mac/GHostController.h"
 #import "AsyncUdpSocket.h"
+#import "LRViewController.h"
+#import "ConsoleViewController.h"
 
 @interface UIController : NSObject {
 	IBOutlet NSWindow *mainWindow;
@@ -43,18 +45,17 @@
 	IBOutlet NSMenu *showHideHeaderMenu;
 	NSMutableArray *lines;
 	GHostController *ghost;
-	AsyncUdpSocket *cmdSock;
 	IBOutlet NSProgressIndicator *portMapProgress;
 	IBOutlet NSImageView *portMapStatus;
 	IBOutlet NSTextField *portMapText;
+	IBOutlet LRViewController *viewController;
+	IBOutlet ConsoleViewController *consoleView;
 }
 @property(retain) NSMutableArray *lines;
 + (NSString *)getConfigDir;
 + (NSString *)applicationSupportFolder;
 - (IBAction)selectFont:(id)sender;
-- (IBAction)copyLines:(id)sender;
 - (IBAction)showPreferences:(id)sender;
-- (IBAction)inputCommand:(id)sender;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
 @end

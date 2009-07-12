@@ -16,28 +16,18 @@
  along with Genie.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#import "GHostMapConfig.h"
+#import <Cocoa/Cocoa.h>
+#import "LRViewController.h"
 
-
-@implementation GHostMapConfig
-@synthesize name;
-- (void)loadFile:(NSString*)path
-{
-	NSError *err;
-	NSLog(@"Trying to load config file %@", path);
-	//NSStringEncoding *enc = [NSStringEncoding
-	fullPath = path;
-	self.name = [path lastPathComponent];
-	//if ((self.content = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:&err]) == nil)
-		//NSLog(@"Error loading config: %@", err);
+@interface ConsoleViewController : NSViewController <LRViewModule> {
+	NSMutableArray *_logLines;
+	IBOutlet NSArrayController *listController;
+	IBOutlet NSTableView *consoleTable;
 }
-
-- (id)initWithFile:(NSString*)path
-{
-	if ([super init]) {
-		[self loadFile:path];
-	}
-	return self;
-}
-
+@property(retain) NSMutableArray *logLines;
+- (NSPredicate*)filterPredicate;
+- (void)setFilterPredicate:(NSPredicate*)value;
+- (void)addCoreOutput:(NSString*)msg autoScroll:(BOOL)scroll;
+- (IBAction)copyLines:(id)sender;
+- (IBAction)inputCommand:(id)sender;
 @end
