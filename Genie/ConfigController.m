@@ -43,11 +43,27 @@
 		[self editConfig:configSelector];
 }
 
-- (IBAction)revertConfig:(id)sender {
+- (void)reloadConfigList
+{
+	NSArray *files  = [[NSFileManager defaultManager] directoryContentsAtPath: [UIController getConfigDir]];
+	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
+	
+	for(NSString *cfg in files)
+	{
+		//NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
+		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
+			[tmpcfgfiles addObject: cfg];
+	}
+	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
+}
+
+- (IBAction)revertConfig:(id)sender
+{
     [config revertFile];
 }
 
-- (IBAction)saveConfig:(id)sender {
+- (IBAction)saveConfig:(id)sender
+{
     [config saveFile];
 }
 
@@ -69,27 +85,20 @@
 	 contextInfo: nil];*/
 }
 
-- (IBAction)newConfigAccept:(id)sender {
+- (IBAction)newConfigAccept:(id)sender
+{
 	[NSApp endSheet:newConfigPanel returnCode:NSOKButton];
 }
 
-- (IBAction)newConfigCancel:(id)sender {
+- (IBAction)newConfigCancel:(id)sender
+{
 	[NSApp endSheet:newConfigPanel returnCode:NSCancelButton];
 }
 
 - (id)init
 {
 	self = [self initWithNibName:@"PreferencesConfig" bundle:nil];
-	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: [UIController getConfigDir]];
-	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
-	
-	for(NSString *cfg in configs)
-	{
-		//NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
-		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
-			[tmpcfgfiles addObject: cfg];
-	}
-	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
+	[self reloadConfigList];
 	return self;
 }
 @end

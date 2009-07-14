@@ -211,6 +211,7 @@
 	if ([fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] == nil || [[fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] count] < 1) {
 		[fm createDirectoryAtPath:[UIController getConfigDir] withIntermediateDirectories:YES attributes:nil error:nil];
 		[fm copyItemAtPath:[[resDir stringByAppendingPathComponent:@"defaults"] stringByAppendingPathComponent:@"ghost.cfg"] toPath:[[UIController getConfigDir] stringByAppendingPathComponent:@"ghost.cfg"] error:nil];
+		[configController reloadConfigList];
 	}
 	// check core directory
 	if ([fm contentsOfDirectoryAtPath:ghost.ghostDir error:nil] == nil) {
@@ -238,10 +239,10 @@
 			[filesNotFound removeObject:file];
 	}
 	
-	if ([filesNotFound count] > 0 && NSRunAlertPanelRelativeToWindow(@"Required files missing!",
-																	 @"Some files that are required to run GHost have not been installed yet.\nThe files missing are:\n%@\nDo you want to install them now?",
-																	 @"Yes", @"No", nil,progressPanel, filesNotFound) == NSAlertDefaultReturn) {
-		[requiredFiles setArray:filesNotFound];
+	if ([filesNotFound count] > 0 && NSRunAlertPanel(@"Required files missing!",
+																	 @"Some files that are required to run GHost have not been installed yet. Although this is a pure Mac application, GHost++ needs some files from an original Warcraft 3 Windows installation.\nThe files missing are:\n%@\nDo you want to install them now?",
+																	 @"Yes", @"No", nil, filesNotFound) == NSAlertDefaultReturn) {
+		
 		// Create the File Open Dialog class.
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
 		[openDlg setTitle:@"Select Windows Wacraft 3 Installation"];
@@ -258,6 +259,7 @@
 		BOOL abort = YES;
 		// retry selection if required files are missing
 		do {
+			[requiredFiles setArray:filesNotFound];
 			// Display the dialog.  If the OK button was pressed,
 			// process the files.
 			if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
@@ -270,13 +272,18 @@
 				for( NSString *file in requiredFiles )
 				{
 					if ([files containsObject:file])
-						[filesNotFound removeObject:file];
-				}
-				// copy required files
-				for(NSString* file in requiredFiles) {
-					if (![filesNotFound containsObject:file] && ![fm copyItemAtPath:[[openDlg filename] stringByAppendingPathComponent:file] toPath:[war3dir stringByAppendingPathComponent:file] error:&error]) {
-						NSAlert *errorDlg = [NSAlert alertWithError:error];
-						[errorDlg runModal];
+					{
+						if ([fm copyItemAtPath:[[openDlg filename] stringByAppendingPathComponent:file] toPath:[war3dir stringByAppendingPathComponent:file] error:&error])
+						{
+							//success in moving
+							[filesNotFound removeObject:file];
+						}
+						else
+						{
+							//failure
+							NSAlert *errorDlg = [NSAlert alertWithError:error];
+							[errorDlg runModal];
+						}
 					}
 				}
 				

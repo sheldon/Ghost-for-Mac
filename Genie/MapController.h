@@ -21,9 +21,9 @@
 
 
 @interface MapController : NSViewController <MBPreferencesModule> {
-	NSMutableArray *mapconfigs;
+	NSArray *mapconfigs;
 	IBOutlet NSArrayController *mapconfigController;
 	NSString *mapDir;
 }
-@property(retain) NSMutableArray *mapconfigs;
+@property(retain) NSArray *mapconfigs;
 @end

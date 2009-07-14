@@ -21,7 +21,7 @@
 #import "GHostConfig.h"
 
 @interface ConfigController : NSViewController <MBPreferencesModule> {
-	NSArray *cfgfiles;
+	NSMutableArray *cfgfiles;
 	IBOutlet id ghost;
 	IBOutlet GHostConfig *config;
 	IBOutlet NSPopUpButton *configSelector;
@@ -29,7 +29,8 @@
 	IBOutlet NSTextField *newConfigName;
 	IBOutlet NSTextView *textEdit;
 }
-@property(retain) NSArray *cfgfiles;
+@property(retain) NSMutableArray *cfgfiles;
+- (void)reloadConfigList;
 - (IBAction)editConfig:(id)sender;
 - (IBAction)newConfig:(id)sender;
 - (IBAction)revertConfig:(id)sender;
