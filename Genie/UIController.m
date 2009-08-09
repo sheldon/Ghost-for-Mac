@@ -214,8 +214,7 @@
 	
 	NSInteger newcount = [[listController arrangedObjects] count];
 	*/
-	[consoleView addCoreOutput:output];
-	[chatView parseConsoleOutput:output];
+	
 	const NSString* hostExpression = @"\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
 	const NSString* ghostStarted = @"^\\[GHOST\\] GHost\\+\\+ Version (\\d+\\.\\d+)";
 	NSString *portString;
@@ -229,6 +228,10 @@
 		NSLog(@"GOT GHOST VERSION: %@", capture1);
 		[self ghostStarted:capture1];
 	}
+	[consoleView addCoreOutput:output];
+	[chatView parseConsoleOutput:output];
+	
+	
 }
 
 - (void)appendOutputNotify:(NSNotification*)note

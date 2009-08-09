@@ -15,6 +15,7 @@
 @implementation ChatViewController
 @synthesize messages=_messages;
 @synthesize autoScroll;
+@synthesize chatFilter;
 - (void)updatePredicate
 {
 	//NSString *pred = [NSString string];
@@ -25,7 +26,8 @@
 	}
 	else
 		pred = [NSPredicate predicateWithFormat:@"isVirtualMessage == NO"];
-	[listController setFilterPredicate:pred];
+	self.chatFilter = pred;
+	//[listController setFilterPredicate:pred];
 	//[listController rearrangeObjects];
 }
 - (BOOL)hideCommands
@@ -36,6 +38,7 @@
 - (void)awakeFromNib
 {
 	//[self loadView];
+	//[self updatePredicate];
 }
 - (void)setHideCommands:(BOOL)value
 {
@@ -66,6 +69,7 @@
 	commandTriggers = [NSMutableDictionary dictionary];
 	hideCommands = YES;
 	autoScroll = YES;
+	[self updatePredicate];
 	return self;
 }
 
@@ -89,8 +93,11 @@
 {
 	if (!msg)
 		return;
+	//NSLog(@"canInsert: %d", [listController canInsert]);
 	NSInteger count = [[listController arrangedObjects] count];
 	[listController addObject:msg];
+	//TODO: this sucks! why do we have to clear the filterPredicate upon adding new items?
+	[self updatePredicate];
 	NSInteger newcount = [[listController arrangedObjects] count];
 	if (newcount > count && autoScroll)
 		[messageTable scrollRowToVisible:newcount - 1];
@@ -100,10 +107,10 @@
 	NSLog([sender stringValue]);
 	[[GHostSocket sharedSocket] sendCommand:[@"say " stringByAppendingString:[sender stringValue]]];
 	
-	ChatMessage *msg = [ChatMessage chatMessageWithText:[sender stringValue] sender:@"Me" date:[NSDate date] image:nil];
+	/*ChatMessage *msg = [ChatMessage chatMessageWithText:[sender stringValue] sender:@"Me" date:[NSDate date] image:nil];
 	msg.image = [NSImage imageNamed:NSImageNameEveryone];
 	msg.isVirtualMessage = YES;
-	[self addMessage:msg];
+	[self addMessage:msg];*/
 	[sender setStringValue:@""];
 }
 
@@ -119,6 +126,7 @@
 }
 
 const NSString *reCommandTrigger = @"^\\[GHOST\\] using commandtrigger \\[(.*?)\\] for server \\[(.*?)\\]";
+const NSString *reAdminSays = @"^\\[BNET: (.*?)\\] admin \\[(.*?)\\] sent command \\[\\.say (.*?)\\]$";
 //const NSString *reWhisper = @"(?m)^\\[WHISPER: (.*?)\\] \\[(.*?)\\] (.*?)$";
 const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?)$";
 
@@ -134,7 +142,7 @@ const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?
 		[commandTriggers setValue:group1 forKey:group2];
 		NSLog(@"Got command trigger '%@' for server '%@'", group1, group2);
 	}
-	if ([line getCapturesWithRegexAndReferences:reMessage, @"$1", &group1, @"$2", &group2, @"$3", &group3, @"$4", &group4, nil]) {
+	else if ([line getCapturesWithRegexAndReferences:reMessage, @"$1", &group1, @"$2", &group2, @"$3", &group3, @"$4", &group4, nil]) {
 		msg = [ChatMessage chatMessageWithText:group4 sender:group3 date:[NSDate date] image:nil];
 		if ([group1 isEqualToString:@"WHISPER"]) {
 			msg.isWhisper = YES;
@@ -145,6 +153,12 @@ const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?
 		msg.realm = group2;
 		if ([group4 hasPrefix:[commandTriggers valueForKey:group2]])
 			msg.isCommand = YES;
+	}
+	else if ([line getCapturesWithRegexAndReferences:reAdminSays, @"$1", &group1, @"$2", &group2, @"$3", &group3, nil]) {
+		msg = [ChatMessage chatMessageWithText:group3 sender:group2 date:[NSDate date] image:nil];
+		msg.realm = group1;
+		msg.isVirtualMessage = YES;
+		msg.image = [NSImage imageNamed:NSImageNameEveryone];
 	}
 	[self addMessage:msg];
 }

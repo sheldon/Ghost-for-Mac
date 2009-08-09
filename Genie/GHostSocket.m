@@ -25,17 +25,19 @@
 		if ([msg isEqualToString:@"PING"])
 			[self sendCommand:@"\n"];
 	}
-	[cmdSock receiveWithTimeout:-1 tag:0];
+	[cmdSock receiveWithTimeout:500 tag:0];
 	return YES;
 }
 
 - (void)initWithPort:(NSInteger)port
 {
+	if (cmdSock && [cmdSock connectedPort] == port)
+		return;
 	if (cmdSock)
 		[cmdSock release];
 	cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
 	[cmdSock connectToHost:@"localhost" onPort:port error:nil];
-	[cmdSock receiveWithTimeout:-1 tag:0];
+	[cmdSock receiveWithTimeout:500 tag:0];
 	[self sendCommand:@"\n"];
 }
 

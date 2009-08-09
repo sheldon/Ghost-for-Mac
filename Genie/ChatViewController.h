@@ -16,10 +16,12 @@
 	IBOutlet NSTableView *messageTable;
 	BOOL hideCommands;
 	BOOL autoScroll;
+	NSPredicate *chatFilter;
 }
 @property(retain) NSMutableArray *messages;
 @property BOOL hideCommands;
 @property BOOL autoScroll;
+@property(copy) NSPredicate* chatFilter;
 - (void)parseConsoleOutput:(NSString*)line;
 - (IBAction)inputCommand:(id)sender;
 - (IBAction)copyLines:(id)sender;
