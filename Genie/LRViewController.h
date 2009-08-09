@@ -35,9 +35,12 @@
 @interface LRViewController : NSView {
 	IBOutlet NSSegmentedControl* switcher;
 	NSArray *_modules;
+	int _bottomOffset;
 	id<LRViewModule> _currentModule;
 }
 
 @property(retain) NSArray *modules;
+@property int bottomOffset;
 - (id<LRViewModule>)moduleForIdentifier:(NSString *)identifier;
+- (IBAction)selectModule:(id)sender;
 @end

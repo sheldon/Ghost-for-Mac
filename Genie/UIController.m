@@ -25,8 +25,85 @@
 #import "GHostSocket.h"
 
 @implementation UIController
-
 @synthesize lines;
+
+-(NSRect)newFrameForNewContentView:(NSView *)view {
+    NSWindow *window = mainWindow;
+    NSRect newFrameRect = [window frameRectForContentRect:[view frame]];
+    NSRect oldFrameRect = [window frame];
+    NSSize newSize = newFrameRect.size;
+	newSize.height += [mainWindow contentBorderThicknessForEdge:NSMinYEdge];
+    NSSize oldSize = oldFrameRect.size;
+    
+    NSRect frame = [window frame];
+    frame.size = newSize;
+    frame.origin.y -= (newSize.height - oldSize.height);
+    
+    return frame;
+}
+
+-(NSView *)viewForTag:(int)tag {
+    NSView *view = nil;
+    switch(tag) {
+		case 0: view = [consoleView view]; break;
+		case 1: view = [chatView view]; break;
+		default: view = [consoleView view]; break;
+    }
+    return view;
+}
+
+
+-(IBAction)switchView:(id)sender {
+	int tag = [sender selectedSegment];
+	NSView *view = [self viewForTag:tag];
+	NSView *previousView = [self viewForTag: currentViewTag];
+	currentViewTag = tag;
+	
+	NSRect newWindowFrame = [mainWindow frameRectForContentRect:[view frame]];
+	newWindowFrame.size.height += [mainWindow contentBorderThicknessForEdge:NSMinYEdge];
+	
+	NSRect frame = [mainView frame];
+	frame.origin.y -= [mainWindow contentBorderThicknessForEdge:NSMinYEdge];
+	[view setFrame:frame];
+	
+	[mainView replaceSubview:previousView with:view];
+	newWindowFrame.origin = [mainWindow frame].origin;
+	newWindowFrame.origin.y -= newWindowFrame.size.height - [mainWindow frame].size.height;
+	[mainWindow setFrame:newWindowFrame display:YES animate:YES];
+}
+
+
+-(void)awakeFromNib {
+	//[[mainWindow contentView] setWantsLayer:YES];
+	//[mainView setWantsLayer:YES];
+	[mainWindow setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+	[mainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
+	[[NSNotificationCenter defaultCenter]
+	 addObserver:self
+	 selector:@selector(doTerminate:)
+	 name:NSApplicationWillTerminateNotification
+	 object:NSApp];
+	[badge bind:@"running" toObject:ghost withKeyPath:@"running" options:nil];
+	
+	// set badge as dock icon
+	[[NSApp dockTile] setContentView: badge];
+	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, mapController/*, msgController*/, nil]];
+	// load views so they get instanciated and populated
+	//[configController loadView];
+	//[[configController view] init];
+	[chatView loadView];
+	NSRect newWindowFrame = [mainWindow frameRectForContentRect:[[consoleView view] frame]];
+	newWindowFrame.size.height += [mainWindow contentBorderThicknessForEdge:NSMinYEdge];
+	newWindowFrame.origin = [mainWindow frame].origin;
+	newWindowFrame.origin.y -= newWindowFrame.size.height - [mainWindow frame].size.height;
+	[mainWindow setFrame:newWindowFrame display:YES animate:YES];
+	[mainView addSubview:[consoleView view]];
+	
+	//[ rearrangeObjects];
+	//[self appendOutput:@"[GENIE] Genie started"];
+	//[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]
+}
+
 
 + (NSString *)applicationSupportFolder {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
@@ -39,8 +116,12 @@
 	//ghost.config = [[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]];
 	if (ghost.running)
 		[ghost stop];
-	else
-		[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]]];
+	else {
+		if ([configSelector selectedItem])
+			[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]]];
+		else
+			[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:@"ghost.cfg"]];
+	}
 }
 - (IBAction)restart:(id)sender
 {
@@ -116,6 +197,15 @@
 	[pm start];
 }
 
+- (void)ghostStarted:(NSString *)version
+{
+	NSString *startupMap = [[NSUserDefaults standardUserDefaults] stringForKey:@"startupMap"];
+	if (startupMap)
+		[[GHostSocket sharedSocket] sendCommand:[@"map " stringByAppendingString:startupMap]];
+	[ghostVersion setStringValue:[@"GHost++ " stringByAppendingString:version]];
+	[ghostVersion setHidden:NO];
+}
+
 - (void)appendOutput:(NSString *)output
 {
 	//NSLog(output);
@@ -124,13 +214,20 @@
 	
 	NSInteger newcount = [[listController arrangedObjects] count];
 	*/
-	[consoleView addCoreOutput:output autoScroll:[autoScrollCheckbox state] == NSOnState];
+	[consoleView addCoreOutput:output];
+	[chatView parseConsoleOutput:output];
 	const NSString* hostExpression = @"\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
+	const NSString* ghostStarted = @"^\\[GHOST\\] GHost\\+\\+ Version (\\d+\\.\\d+)";
 	NSString *portString;
+	NSString *capture1;
 	if ([output getCapturesWithRegexAndReferences:hostExpression, @"$1", &portString, nil]) {
 		NSInteger port = [portString intValue];
 		NSLog(@"GOT PORT: %d", port);
 		[self gotHostPortInfo:port];
+	}
+	if ([output getCapturesWithRegexAndReferences:ghostStarted, @"$1", &capture1, nil]) {
+		NSLog(@"GOT GHOST VERSION: %@", capture1);
+		[self ghostStarted:capture1];
 	}
 }
 
@@ -159,23 +256,16 @@
 {
 	[super init];
 	ghost = [GHostController sharedController];
-	ghost.ghostDir = [[UIController applicationSupportFolder] stringByAppendingPathComponent: @"ghost"];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStarted:) name:GHProcessStarted object:ghost];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStopped:) name:GHProcessStopped object:ghost];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appendOutputNotify:) name:GHConsoleOutput object:ghost];
-	lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
-	
+	//lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
+	lines = [NSMutableArray array];
 	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidStartWork:) 
 												 name:TCMPortMapperDidStartWorkNotification object:pm];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidFinishWork:)
 												 name:TCMPortMapperDidFinishWorkNotification object:pm];
-	//[O_portStatusImageView setDelegate:self];
-	/*if ([pm isAtWork]) {
-		[self portMapperDidStartWork:nil];
-	} else {
-		[self portMapperDidFinishWork:nil];
-	}*/
 	return self;
 }
 
@@ -302,6 +392,12 @@
 	[NSApp endSheet:progressPanel returnCode:0];
 }
 
+- (BOOL)validateToolbarItem:(NSToolbarItem *)item {
+    //if ([item tag] == 1337) return [item isEnabled];
+    //else return YES;
+	return [item isEnabled];
+}
+
 - (void)doTerminate:(NSNotification *)note
 {
 	[ghost stop];
@@ -309,11 +405,6 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-	[[NSNotificationCenter defaultCenter]
-	 addObserver:self
-	 selector:@selector(doTerminate:)
-	 name:NSApplicationWillTerminateNotification
-	 object:NSApp];
 	BOOL startHidden = ([[NSUserDefaults standardUserDefaults] integerForKey:@"startHidden"] == 1);
 	if (!startHidden)
 		[mainWindow orderFront: mainWindow];
@@ -324,22 +415,11 @@
 	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
 		  contextInfo: nil];
 	[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
-	[badge bind:@"running" toObject:ghost withKeyPath:@"running" options:nil];
-	// set badge as dock icon
-	[[NSApp dockTile] setContentView: badge];
-	[[MBPreferencesController sharedController] setModules:[NSArray arrayWithObjects:generalController, configController, /*mapController,*/ nil]];
-	[viewController setModules:[NSArray arrayWithObjects:consoleView,nil]];
-	//[viewController addSubview:[consoleView view]];
-	//[mainWindow setAutorecalculatesContentBorderThickness:YES forEdge:NSMinYEdge];
-	//[mainWindow setContentBorderThickness: 26.0 forEdge: NSMinYEdge];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
 	if (!ghost.running || NSRunAlertPanel(@"Application Exit", @"GHost++ is still running, are you sure you want to exit?", @"No", @"Yes", nil) == NSAlertAlternateReturn)
 	{
-		/*[ghost stop];
-		while(ghost.running)
-			sleep(100);*/
 		return YES;
 	}
 	else

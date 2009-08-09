@@ -29,7 +29,6 @@
 @property(copy) NSString* text;
 @property(copy) NSDate*	date;
 
-//- (id)initWithText:(NSString*)newText sender:(NSString*)newSender date:(NSDate*)newDate image:(NSString*)newImage;
 + (id)logEntryWithLine:(NSString*)line;
 + (id)logEntryWithText:(NSString*)text sender:(NSString*)sender date:(NSDate*)date image:(NSImage*)image;
 @end

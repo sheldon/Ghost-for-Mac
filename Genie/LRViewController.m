@@ -25,6 +25,7 @@
 
 @implementation LRViewController
 @synthesize modules=_modules;
+@synthesize bottomOffset=_bottomOffset;
 
 - (id<LRViewModule>)moduleForIdentifier:(NSString *)identifier
 {
@@ -34,6 +35,12 @@
 		}
 	}
 	return nil;
+}
+
+- (void)awakeFromNib
+{
+	[self setWantsLayer:YES];
+	[self setAutoresizesSubviews: YES];
 }
 
 /*- (void)resizeSubviewsWithOldSize:(NSSize)oldBoundsSize
@@ -94,45 +101,146 @@
 	
 	[self _changeToModule:module];*/
 }
-
+BOOL lol=NO;
 - (void) setFrameSize:(NSSize)newSize
 {
     [super setFrameSize:newSize];
-	[[_currentModule view] setFrameSize:newSize];
+	if (lol)
+		return;
+	NSRect frame = [self frame];
+	frame.origin.y -= [[self window] contentBorderThicknessForEdge:NSMinYEdge];
+	//frame.size.height -= _bottomOffset;
+	//frame.size.height += _bottomOffset;
+	[[/*[*/_currentModule view]/* animator]*/ setFrame:frame];
+	//[[[_currentModule view] animator] setFrameSize:newSize];
 	//NSLog(@"new size: %fw %fh",newSize.width,  
 		  //newSize.height);
 }
 
+- (void)animationDidEnd:(NSAnimation*)animation;
+{
+	NSLog(@"finished!");
+}
+
+
+-(NSRect)newFrameForNewContentView:(NSView *)view {
+    NSWindow *window = [self window];
+	NSRect oldFrameRect = [window frame];
+	NSRect newFrameRect = [window frame];
+	newFrameRect.size.height -= [view frame].size.height - [self frame].size.height;
+	newFrameRect.size.width -= [view frame].size.width - [self frame].size.width;
+	
+    NSSize newSize = newFrameRect.size;
+    NSSize oldSize = oldFrameRect.size;
+    
+    NSRect frame = [window frame];
+    frame.size = newSize;
+    frame.origin.y -= (newSize.height - oldSize.height);
+    
+    return frame;
+}
+// NOTE: One key to having the contained view resize correctly is to have its autoresizing set correctly in IB.
+//Based on the new content view frame, calculate the window's new frame
+-(NSRect)newFrameForNewContentView2:(NSView *)view {
+    NSWindow *window = [self window];
+    NSRect newFrameRect = [window frameRectForContentRect:[view frame]];
+    NSRect oldFrameRect = [window frame];
+    NSSize newSize = newFrameRect.size;
+    NSSize oldSize = oldFrameRect.size;
+    
+    NSRect frame = [window frame];
+    frame.size = newSize;
+    frame.origin.y -= (newSize.height - oldSize.height);
+    
+    return frame;
+}
+
+// NOTE: One key to having the contained view resize correctly is to have its autoresizing set correctly in IB.
+//Based on the new content view frame, calculate the window's new frame
+-(NSRect)newFrameForNewContentView3:(NSView *)view {
+    NSWindow *window = [self window];
+    NSRect newFrameRect = [window frameRectForContentRect:[view frame]];
+	NSRect oldFrameRect = [window frame];
+	newFrameRect.size.height += _bottomOffset;
+   
+    NSSize newSize = newFrameRect.size;
+    NSSize oldSize = oldFrameRect.size;
+    
+    NSRect frame = [window frame];
+    frame.size = newSize;
+    frame.origin.y -= (newSize.height - oldSize.height);
+    
+    return frame;
+}
+
+-(void)moveAllViews {
+    float deltaY = -_bottomOffset;
+    
+    for (NSView *subview in [self subviews]) {
+			NSRect frame = [subview frame];
+			frame.origin.y += deltaY;
+			[[subview animator] setFrame: frame];
+    }
+}
+
 - (void)_changeToModule:(id<LRViewModule>)module
 {
-	[[_currentModule view] removeFromSuperview];
-	
+	//[[[self window] animator] setDelegate:self];
+	lol=YES;
+	//_currentModule = nil;
+	NSView *oldView = [_currentModule view];
 	NSView *newView = [module view];
-	//[self setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-	//[newView setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
+	[newView setAutoresizingMask: NSViewNotSizable];
+	[oldView setAutoresizingMask: NSViewNotSizable];
+	//[oldView removeFromSuperview];
+	//[newView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	// Resize the window
 	NSRect newWindowFrame = [[self window] frameRectForContentRect:[newView frame]];
-	NSRect oldWindow = [[self window] frame];
-	newWindowFrame = oldWindow;
-	newWindowFrame.origin = oldWindow.origin;
-	newWindowFrame.size.height += [newView frame].size.height - [self frame].size.height;
-	newWindowFrame.size.width += [newView frame].size.width - [self frame].size.width;
 	
-	//newWindowFrame.origin.y -= newWindowFrame.size.height - [self frame].size.height;
-	[[self window] setFrame:newWindowFrame display:YES animate:YES];
+	newWindowFrame = [self newFrameForNewContentView3:newView];
+	//[[[self window] animator] setFrame:newWindowFrame display:YES animate:YES];
+	[NSAnimationContext beginGrouping];
+	if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)
+	    [[NSAnimationContext currentContext] setDuration:1.0];
+	//[newView setFrameOrigin:[super frame].origin];
+	if (_currentModule != nil)
+		[[self animator] replaceSubview:oldView with:newView];
+	else
+		[[self animator] addSubview:newView];
 	
+	
+	[[[self window] animator] setFrame:newWindowFrame display:YES animate:YES];
+	//[[self animator] addSubview:newView];
+	[NSAnimationContext endGrouping];
+	//NSRect newframe = [[self window] frameRectForContentRect:[newView frame]];
+	//newframe.size.height += _bottomOffset;
+	
+	//[newView setFrame:newframe];
+	
+	[newView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	//[[self.window toolbar] setSelectedItemIdentifier:[module identifier]];
 	//[self.window setTitle:[module title]];
 	[switcher setSelectedSegment:[self.modules indexOfObject:module]];
 	if ([(NSObject *)module respondsToSelector:@selector(willBeDisplayed)]) {
 		[module willBeDisplayed];
 	}
-	
 	_currentModule = module;
-	[self addSubview:[_currentModule view]];
-	[self setAutoresizesSubviews:YES];
-	[[_currentModule view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+	//[self moveAllViews];
+	//[[self animator] addSubview:[_currentModule view]];
+	//[self setAutoresizesSubviews:YES];
+	
+	lol=NO;
 	// Autosave the selection
 	//[[NSUserDefaults standardUserDefaults] setObject:[module identifier] forKey:MBPreferencesSelectionAutosaveKey];
+}
+- (IBAction)selectModule:(id)sender
+{
+	[self _changeToModule:[_modules objectAtIndex:[sender selectedSegment]]];
+}
+- (void)init
+{
+	[self setAutoresizesSubviews:YES];
+	_currentModule=nil;
+	_bottomOffset=26;
 }
 @end

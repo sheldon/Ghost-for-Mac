@@ -45,7 +45,7 @@
 	if ([line getCapturesWithRegexAndReferences:@"^\\[(.*?)\\](.*)",
 	 @"$1", &sender, @"$2", &text,
 	 nil])
-		return [[LogEntry alloc] initWithText:text sender:sender date:[NSDate date] image:[NSImage imageNamed:[sender lowercaseString]]];
+		return [[LogEntry alloc] initWithText:[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] sender:sender date:[NSDate date] image:[NSImage imageNamed:[sender lowercaseString]]];
 	else
 		return [[LogEntry alloc] initWithText:line sender:@"N/A" date:[NSDate date] image:nil];
 }

@@ -19,15 +19,17 @@
 #import <Cocoa/Cocoa.h>
 #import "LRViewController.h"
 
-@interface ConsoleViewController : NSViewController <LRViewModule> {
+@interface ConsoleViewController : NSViewController {
 	NSMutableArray *_logLines;
 	IBOutlet NSArrayController *listController;
 	IBOutlet NSTableView *consoleTable;
+	BOOL autoScroll;
 }
 @property(retain) NSMutableArray *logLines;
+@property BOOL autoScroll;
 - (NSPredicate*)filterPredicate;
 - (void)setFilterPredicate:(NSPredicate*)value;
-- (void)addCoreOutput:(NSString*)msg autoScroll:(BOOL)scroll;
+- (void)addCoreOutput:(NSString*)msg;// autoScroll:(BOOL)scroll;
 - (IBAction)copyLines:(id)sender;
 - (IBAction)inputCommand:(id)sender;
 @end

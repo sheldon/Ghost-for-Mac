@@ -17,8 +17,9 @@
  */
 
 #import "MapController.h"
-#import "GHostMapConfig.h"
+#import "GHostConfigFile.h"
 #import "ghost4mac/GHostController.h"
+#import "UKKQueue.h"
 
 @implementation MapController
 @synthesize mapconfigs;
@@ -34,33 +35,70 @@
 
 - (NSImage *)image
 {
-	return [NSImage imageNamed:@"map.png"];
+	return [NSImage imageNamed:@"Map128.png"];
 }
 
-- (void)textDidBeginEditing:(NSNotification *)note {
-	NSLog(@"lol");
+- (IBAction)addMaps:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL: [NSURL fileURLWithPath: mapDir]];
+}
+
+
+- (void)refreshMaps
+{
+	NSMutableArray *configs  = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager] directoryContentsAtPath: mapDir]];
+	//self.mapconfigs = [NSMutableArray array];
+	//NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, )];
+	//[mapconfigController removeObjectsAtArrangedObjectIndexes:set];
+	for (int i=0;i<[[mapconfigController arrangedObjects] count];i++)
+	{
+		NSString *filename = [[[mapconfigController arrangedObjects] objectAtIndex:i] name];
+		if (![configs containsObject:filename])
+		{
+			[mapconfigController removeObjectAtArrangedObjectIndex:i];
+		}
+		[configs removeObject:filename];
+	}
+	
+	for(NSString *cfg in configs)
+	{
+		if ([[cfg pathExtension] caseInsensitiveCompare: @"w3x"] == NSOrderedSame /*&& ![[mapconfigController arrangedObjects] containsObject:cfg]*/)
+			[mapconfigController addObject: [[GHostConfigFile alloc] initWithFile:[mapDir stringByAppendingPathComponent:cfg]]];
+	}
+}
+
+- (void)willBeDisplayed
+{
+	[self refreshMaps];
+}
+
+- (void)fsHandler:(NSNotification*)msg
+{
+	/*NSString *path = [[msg userInfo] valueForKey:@"path"];
+	if (!path)
+		path = @"N/A";
+	NSLog(@"%@ - %@",[msg name], path);*/
+	[self refreshMaps];
 }
 
 - (void)awakeFromNib
 {
-	NSArray *configs  = [[NSFileManager defaultManager] directoryContentsAtPath: mapDir];
-	NSLog(mapDir);
-	for(NSString *cfg in configs)
-	{
-		NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
-		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
-			[mapconfigController addObject: [[GHostMapConfig alloc] initWithFile:[mapDir stringByAppendingPathComponent:cfg]]];
-	}
+	mapDir = [[[GHostController sharedController] ghostDir] stringByAppendingPathComponent:@"maps"];
+	[fileWatcher addPathToQueue:mapDir];
+    NSWorkspace* workspace = [NSWorkspace sharedWorkspace];
+    NSNotificationCenter* notificationCenter = [workspace notificationCenter];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherRenameNotification object:nil];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherWriteNotification object:nil];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherDeleteNotification object:nil];
+	[self refreshMaps];
 }
 
 - (id)init
 {
 	self = [self initWithNibName:@"PreferencesMaps" bundle:nil];
-	mapconfigs = [NSMutableArray array];
-	mapDir = [[[GHostController sharedController] ghostDir] stringByAppendingPathComponent:@"mapcfgs"];
-	
-	
-	//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidBeginEditing:) name:NSControlTextDidBeginEditingNotification object:nil];
+	self.mapconfigs = [NSMutableArray array];
+	fileWatcher = [[UKKQueue alloc] init];
+    
 	return self;
 }
 @end

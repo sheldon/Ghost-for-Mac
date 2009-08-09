@@ -18,16 +18,21 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MBPreferencesController.h"
-#import "GHostConfig.h"
+#import "GHostConfigFile.h"
+#import "UKKQueue.h"
+
+
 
 @interface ConfigController : NSViewController <MBPreferencesModule> {
 	NSMutableArray *cfgfiles;
-	IBOutlet id ghost;
-	IBOutlet GHostConfig *config;
 	IBOutlet NSPopUpButton *configSelector;
 	IBOutlet NSPanel *newConfigPanel;
 	IBOutlet NSTextField *newConfigName;
 	IBOutlet NSTextView *textEdit;
+	UKKQueue *fileWatcher;
+	IBOutlet NSArrayController *cfgArrayController;
+	IBOutlet NSArrayController *secondController;
+	BOOL initDone;
 }
 @property(retain) NSMutableArray *cfgfiles;
 - (void)reloadConfigList;
@@ -37,4 +42,5 @@
 - (IBAction)saveConfig:(id)sender;
 - (IBAction)newConfigAccept:(id)sender;
 - (IBAction)newConfigCancel:(id)sender;
+- (GHostConfigFile *)selectedConfig;
 @end

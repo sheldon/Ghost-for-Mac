@@ -17,7 +17,8 @@
  */
 
 #import "ConfigController.h"
-#import "UIController.h";
+#import "UIController.h"
+#import "GHostConfigFile.h"
 
 
 @implementation ConfigController
@@ -43,28 +44,77 @@
 		[self editConfig:configSelector];
 }
 
+- (GHostConfigFile *)selectedConfig
+{
+	//return nil;
+	NSArray *items = [cfgArrayController selectedObjects];
+	if ([items count] > 0)
+		return [items objectAtIndex:0];
+	return nil;
+}
+
 - (void)reloadConfigList
 {
-	NSArray *files  = [[NSFileManager defaultManager] directoryContentsAtPath: [UIController getConfigDir]];
-	NSMutableArray *tmpcfgfiles = [NSMutableArray array];
+	NSMutableArray *files  = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager] directoryContentsAtPath: [UIController getConfigDir]]];
+	//NSMutableArray *tmpcfgfiles = [NSMutableArray array];
+	//NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[cfgArrayController arrangedObjects] count])];
+	//[cfgArrayController removeObjectsAtArrangedObjectIndexes:set];
+	for (int i=0;i<[[cfgArrayController arrangedObjects] count];i++)
+	{
+		NSString *filename = [[[cfgArrayController arrangedObjects] objectAtIndex:i] name];
+		if (![files containsObject:filename])
+		{
+			[cfgArrayController removeObjectAtArrangedObjectIndex:i];
+		}
+		[files removeObject:filename];
+	}
 	
 	for(NSString *cfg in files)
 	{
 		//NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
 		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
-			[tmpcfgfiles addObject: cfg];
+		{
+			GHostConfigFile *file = [[GHostConfigFile alloc] initWithFile:[[UIController getConfigDir] stringByAppendingPathComponent:cfg]];
+			//[cfgArrayController addObject:file];
+			//[secondController rearrangeObjects];
+			[secondController addObject:file];
+			[cfgArrayController rearrangeObjects];
+		}
 	}
-	self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
+	//self.cfgfiles = [NSArray arrayWithArray:tmpcfgfiles];
+}
+
+- (void)fsHandler:(NSNotification*)msg
+{
+	/*NSString *path = [[msg userInfo] valueForKey:@"path"];
+	 if (!path)
+	 path = @"N/A";
+	 NSLog(@"%@ - %@",[msg name], path);*/
+	[self reloadConfigList];
+}
+
+- (void)awakeFromNib
+{
+	[self reloadConfigList];
+	[fileWatcher addPathToQueue:[UIController getConfigDir]];
+    NSWorkspace* workspace = [NSWorkspace sharedWorkspace];
+    NSNotificationCenter* notificationCenter = [workspace notificationCenter];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherRenameNotification object:nil];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherWriteNotification object:nil];
+	[notificationCenter addObserver:self selector:@selector(fsHandler:) name:UKFileWatcherDeleteNotification object:nil];
 }
 
 - (IBAction)revertConfig:(id)sender
 {
-    [config revertFile];
+	if (![self selectedConfig].isChanged || NSRunAlertPanel(@"Unsaved changes!",
+															@"You have not saved the changes you made and are trying to (re)load a config.\nAre you sure you want to dismiss the changes made?",
+															@"No", @"Yes", nil) == NSAlertAlternateReturn)
+    [[self selectedConfig] revertContent];
 }
 
 - (IBAction)saveConfig:(id)sender
 {
-    [config saveFile];
+    [[self selectedConfig] saveContent];
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
@@ -73,7 +123,10 @@
 }
 
 - (IBAction)editConfig:(id)sender {
-	[config loadFile:[[UIController getConfigDir] stringByAppendingPathComponent: [[sender selectedItem] title]]];
+	if (![self selectedConfig].isChanged || NSRunAlertPanel(@"Unsaved changes!",
+															@"You have not saved the changes you made and are trying to (re)load a config.\nAre you sure you want to dismiss the changes made?",
+															@"No", @"Yes", nil) == NSAlertAlternateReturn)
+		[[self selectedConfig] loadContent];
 }
 
 - (IBAction)newConfig:(id)sender {
@@ -98,7 +151,9 @@
 - (id)init
 {
 	self = [self initWithNibName:@"PreferencesConfig" bundle:nil];
-	[self reloadConfigList];
+	initDone = NO;
+	fileWatcher = [[UKKQueue alloc] init];
+	cfgfiles = [NSMutableArray array];
 	return self;
 }
 @end

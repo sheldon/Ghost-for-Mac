@@ -18,12 +18,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MBPreferencesController.h"
-
+#import "UKKQueue.h"
 
 @interface MapController : NSViewController <MBPreferencesModule> {
-	NSArray *mapconfigs;
+	NSMutableArray *mapconfigs;
 	IBOutlet NSArrayController *mapconfigController;
 	NSString *mapDir;
+	UKKQueue *fileWatcher;
 }
-@property(retain) NSArray *mapconfigs;
+@property(retain) NSMutableArray *mapconfigs;
+- (IBAction)addMaps:(id)sender;
 @end

@@ -31,19 +31,28 @@
 		A00A57900FF4C07100CAD524 /* GreenDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578D0FF4C07100CAD524 /* GreenDot.png */; };
 		A00A57910FF4C07100CAD524 /* RedDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578E0FF4C07100CAD524 /* RedDot.png */; };
 		A00A57920FF4C07100CAD524 /* YellowDot.png in Resources */ = {isa = PBXBuildFile; fileRef = A00A578F0FF4C07100CAD524 /* YellowDot.png */; };
-		A0114B260FFAA323007554DD /* GHostMapConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A0114B250FFAA323007554DD /* GHostMapConfig.m */; };
 		A016ABA80FDBE423008B0151 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A016ABA70FDBE423008B0151 /* Sparkle.framework */; };
 		A016ABB90FDBE520008B0151 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A016ABA70FDBE423008B0151 /* Sparkle.framework */; };
 		A0183197100A020100348EDC /* GHostSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A0183196100A020100348EDC /* GHostSocket.m */; };
 		A02812140FF6A20500664D23 /* TCMPortMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A028114E0FF69E0400664D23 /* TCMPortMapper.framework */; };
 		A02812380FF6A62F00664D23 /* TCMPortMapper.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A028114E0FF69E0400664D23 /* TCMPortMapper.framework */; };
+		A0293B00102821E400067788 /* PreferencesMessages.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0293AFF102821E400067788 /* PreferencesMessages.xib */; };
+		A0293B031028221100067788 /* MessagesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0293B021028221100067788 /* MessagesController.m */; };
 		A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */ = {isa = PBXBuildFile; fileRef = A02C9BB50FED3AB000F5E8C9 /* Language.strings */; };
+		A031AD6410273D3C00575255 /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD5C10273D3C00575255 /* UKFileWatcher.m */; };
+		A031AD6510273D3C00575255 /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD5E10273D3C00575255 /* UKFNSubscribeFileWatcher.m */; };
+		A031AD6610273D3C00575255 /* UKKQueue Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = A031AD5F10273D3C00575255 /* UKKQueue Readme.txt */; };
+		A031AD6710273D3C00575255 /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD6110273D3C00575255 /* UKKQueue.m */; };
+		A031AD6810273D3C00575255 /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD6310273D3C00575255 /* UKMainThreadProxy.m */; };
+		A031AF7110274E0000575255 /* GHostConfigFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AF7010274E0000575255 /* GHostConfigFile.m */; };
+		A031B012102758C700575255 /* Map128.png in Resources */ = {isa = PBXBuildFile; fileRef = A031B011102758C700575255 /* Map128.png */; };
+		A04A0CF9101B7F3800F1D6D9 /* ChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */; };
+		A05D495C100E7BE1004C089B /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A05D495B100E7BE1004C089B /* ChatViewController.m */; };
 		A079BAD610028982007E18C5 /* ViewConsole.xib in Resources */ = {isa = PBXBuildFile; fileRef = A079BAD510028982007E18C5 /* ViewConsole.xib */; };
 		A079BAFA1002B8CE007E18C5 /* LRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A079BAF91002B8CE007E18C5 /* LRViewController.m */; };
 		A079BB171002BB8B007E18C5 /* ConsoleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A079BB161002BB8B007E18C5 /* ConsoleViewController.m */; };
 		A079BCB5100342E2007E18C5 /* ViewChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = A079BCB4100342E2007E18C5 /* ViewChat.xib */; };
 		A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07FB63F0FE3F2960019EF5F /* RegexKit.framework */; };
-		A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A07FB6530FE429AD0019EF5F /* GHostConfig.m */; };
 		A08142960FE9AB75007FF74F /* MBPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08142950FE9AB75007FF74F /* MBPreferencesController.m */; };
 		A08142990FE9ABF3007FF74F /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08142980FE9ABF3007FF74F /* MapController.m */; };
 		A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */ = {isa = PBXBuildFile; fileRef = A081429B0FE9AC02007FF74F /* ConfigController.m */; };
@@ -109,14 +118,31 @@
 		A00A578D0FF4C07100CAD524 /* GreenDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = GreenDot.png; path = ../../GreenDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00A578E0FF4C07100CAD524 /* RedDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RedDot.png; path = ../../RedDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00A578F0FF4C07100CAD524 /* YellowDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = YellowDot.png; path = ../../YellowDot.png; sourceTree = BUILT_PRODUCTS_DIR; };
-		A0114B240FFAA323007554DD /* GHostMapConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostMapConfig.h; sourceTree = "<group>"; };
-		A0114B250FFAA323007554DD /* GHostMapConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostMapConfig.m; sourceTree = "<group>"; };
 		A016ABA70FDBE423008B0151 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		A0183195100A020100348EDC /* GHostSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostSocket.h; sourceTree = "<group>"; };
 		A0183196100A020100348EDC /* GHostSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostSocket.m; sourceTree = "<group>"; };
 		A028114E0FF69E0400664D23 /* TCMPortMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TCMPortMapper.framework; sourceTree = "<group>"; };
+		A0293AFF102821E400067788 /* PreferencesMessages.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesMessages.xib; sourceTree = "<group>"; };
+		A0293B011028221100067788 /* MessagesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagesController.h; sourceTree = "<group>"; };
+		A0293B021028221100067788 /* MessagesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessagesController.m; sourceTree = "<group>"; };
 		A02C9BB30FED3AA800F5E8C9 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Language.strings; sourceTree = "<group>"; };
 		A02C9BB70FED3ABD00F5E8C9 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Language.strings; sourceTree = "<group>"; };
+		A031AD5B10273D3C00575255 /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
+		A031AD5C10273D3C00575255 /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
+		A031AD5D10273D3C00575255 /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
+		A031AD5E10273D3C00575255 /* UKFNSubscribeFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFNSubscribeFileWatcher.m; sourceTree = "<group>"; };
+		A031AD5F10273D3C00575255 /* UKKQueue Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "UKKQueue Readme.txt"; sourceTree = "<group>"; };
+		A031AD6010273D3C00575255 /* UKKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKKQueue.h; sourceTree = "<group>"; };
+		A031AD6110273D3C00575255 /* UKKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKKQueue.m; sourceTree = "<group>"; };
+		A031AD6210273D3C00575255 /* UKMainThreadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKMainThreadProxy.h; sourceTree = "<group>"; };
+		A031AD6310273D3C00575255 /* UKMainThreadProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMainThreadProxy.m; sourceTree = "<group>"; };
+		A031AF6F10274E0000575255 /* GHostConfigFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostConfigFile.h; sourceTree = "<group>"; };
+		A031AF7010274E0000575255 /* GHostConfigFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostConfigFile.m; sourceTree = "<group>"; };
+		A031B011102758C700575255 /* Map128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Map128.png; sourceTree = "<group>"; };
+		A04A0CF7101B7F3800F1D6D9 /* ChatMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessage.h; sourceTree = "<group>"; };
+		A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessage.m; sourceTree = "<group>"; };
+		A05D495A100E7BE1004C089B /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		A05D495B100E7BE1004C089B /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
 		A079BAD510028982007E18C5 /* ViewConsole.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewConsole.xib; sourceTree = "<group>"; };
 		A079BAF81002B8CE007E18C5 /* LRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LRViewController.h; sourceTree = "<group>"; };
 		A079BAF91002B8CE007E18C5 /* LRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LRViewController.m; sourceTree = "<group>"; };
@@ -124,8 +150,6 @@
 		A079BB161002BB8B007E18C5 /* ConsoleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleViewController.m; sourceTree = "<group>"; };
 		A079BCB4100342E2007E18C5 /* ViewChat.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewChat.xib; sourceTree = "<group>"; };
 		A07FB63F0FE3F2960019EF5F /* RegexKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RegexKit.framework; path = Local/Frameworks/RegexKit.framework; sourceTree = DEVELOPER_DIR; };
-		A07FB6520FE429AD0019EF5F /* GHostConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostConfig.h; sourceTree = "<group>"; };
-		A07FB6530FE429AD0019EF5F /* GHostConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostConfig.m; sourceTree = "<group>"; };
 		A08142940FE9AB75007FF74F /* MBPreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBPreferencesController.h; sourceTree = "<group>"; };
 		A08142950FE9AB75007FF74F /* MBPreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBPreferencesController.m; sourceTree = "<group>"; };
 		A08142970FE9ABF3007FF74F /* MapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
@@ -179,16 +203,16 @@
 				A0DDB70F0FEBB815003E3B37 /* PrefControllers */,
 				A0F9BD620FDB288300C9F2D9 /* UIController.m */,
 				A0F9BD630FDB288300C9F2D9 /* UIController.h */,
-				A07FB6520FE429AD0019EF5F /* GHostConfig.h */,
-				A07FB6530FE429AD0019EF5F /* GHostConfig.m */,
-				A0114B240FFAA323007554DD /* GHostMapConfig.h */,
-				A0114B250FFAA323007554DD /* GHostMapConfig.m */,
 				A0E5D1C00FE6E663002C9A96 /* LogEntry.h */,
 				A0E5D1C10FE6E663002C9A96 /* LogEntry.m */,
 				A079BAF81002B8CE007E18C5 /* LRViewController.h */,
 				A079BAF91002B8CE007E18C5 /* LRViewController.m */,
 				A0183195100A020100348EDC /* GHostSocket.h */,
 				A0183196100A020100348EDC /* GHostSocket.m */,
+				A04A0CF7101B7F3800F1D6D9 /* ChatMessage.h */,
+				A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */,
+				A031AF6F10274E0000575255 /* GHostConfigFile.h */,
+				A031AF7010274E0000575255 /* GHostConfigFile.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -249,11 +273,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A031B011102758C700575255 /* Map128.png */,
 				A00A578D0FF4C07100CAD524 /* GreenDot.png */,
 				A00A578E0FF4C07100CAD524 /* RedDot.png */,
 				A00A578F0FF4C07100CAD524 /* YellowDot.png */,
 				A0DDB7E80FEBBF70003E3B37 /* PreferencesMaps.xib */,
 				A0DDB7140FEBB8A0003E3B37 /* PreferencesGeneral.xib */,
+				A0293AFF102821E400067788 /* PreferencesMessages.xib */,
 				A081433F0FE9B4D2007FF74F /* PreferencesConfig.xib */,
 				A0C4F4C70FE732200065E6AB /* config.png */,
 				A0C4F4C00FE7306F0065E6AB /* ghost.png */,
@@ -285,6 +311,7 @@
 		A002AEA00FE4FA55009A7E1D /* 3rdparty */ = {
 			isa = PBXGroup;
 			children = (
+				A031AD5A10273D3C00575255 /* UKKQueue */,
 				A0DA506E0FEF9084008F9A8F /* AsyncUdpSocket.h */,
 				A0DA506F0FEF9084008F9A8F /* AsyncUdpSocket.m */,
 				A08142940FE9AB75007FF74F /* MBPreferencesController.h */,
@@ -295,11 +322,29 @@
 			name = 3rdparty;
 			sourceTree = "<group>";
 		};
+		A031AD5A10273D3C00575255 /* UKKQueue */ = {
+			isa = PBXGroup;
+			children = (
+				A031AD5B10273D3C00575255 /* UKFileWatcher.h */,
+				A031AD5C10273D3C00575255 /* UKFileWatcher.m */,
+				A031AD5D10273D3C00575255 /* UKFNSubscribeFileWatcher.h */,
+				A031AD5E10273D3C00575255 /* UKFNSubscribeFileWatcher.m */,
+				A031AD5F10273D3C00575255 /* UKKQueue Readme.txt */,
+				A031AD6010273D3C00575255 /* UKKQueue.h */,
+				A031AD6110273D3C00575255 /* UKKQueue.m */,
+				A031AD6210273D3C00575255 /* UKMainThreadProxy.h */,
+				A031AD6310273D3C00575255 /* UKMainThreadProxy.m */,
+			);
+			path = UKKQueue;
+			sourceTree = "<group>";
+		};
 		A079BB141002BB6A007E18C5 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				A079BB151002BB8B007E18C5 /* ConsoleViewController.h */,
 				A079BB161002BB8B007E18C5 /* ConsoleViewController.m */,
+				A05D495A100E7BE1004C089B /* ChatViewController.h */,
+				A05D495B100E7BE1004C089B /* ChatViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -313,6 +358,8 @@
 				A081429B0FE9AC02007FF74F /* ConfigController.m */,
 				A0DDB7110FEBB863003E3B37 /* GeneralController.h */,
 				A0DDB7120FEBB863003E3B37 /* GeneralController.m */,
+				A0293B011028221100067788 /* MessagesController.h */,
+				A0293B021028221100067788 /* MessagesController.m */,
 			);
 			name = PrefControllers;
 			sourceTree = "<group>";
@@ -382,6 +429,9 @@
 				A00A57920FF4C07100CAD524 /* YellowDot.png in Resources */,
 				A079BAD610028982007E18C5 /* ViewConsole.xib in Resources */,
 				A079BCB5100342E2007E18C5 /* ViewChat.xib in Resources */,
+				A031AD6610273D3C00575255 /* UKKQueue Readme.txt in Resources */,
+				A031B012102758C700575255 /* Map128.png in Resources */,
+				A0293B00102821E400067788 /* PreferencesMessages.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,17 +461,23 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				A0F9BD640FDB288300C9F2D9 /* UIController.m in Sources */,
 				A0BB69A40FDBFE2500B9A3FC /* BadgeView.m in Sources */,
-				A07FB6540FE429AD0019EF5F /* GHostConfig.m in Sources */,
 				A0E5D1C20FE6E663002C9A96 /* LogEntry.m in Sources */,
 				A08142960FE9AB75007FF74F /* MBPreferencesController.m in Sources */,
 				A08142990FE9ABF3007FF74F /* MapController.m in Sources */,
 				A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */,
 				A0DDB7130FEBB863003E3B37 /* GeneralController.m in Sources */,
 				A0DA50700FEF9084008F9A8F /* AsyncUdpSocket.m in Sources */,
-				A0114B260FFAA323007554DD /* GHostMapConfig.m in Sources */,
 				A079BAFA1002B8CE007E18C5 /* LRViewController.m in Sources */,
 				A079BB171002BB8B007E18C5 /* ConsoleViewController.m in Sources */,
 				A0183197100A020100348EDC /* GHostSocket.m in Sources */,
+				A05D495C100E7BE1004C089B /* ChatViewController.m in Sources */,
+				A04A0CF9101B7F3800F1D6D9 /* ChatMessage.m in Sources */,
+				A031AD6410273D3C00575255 /* UKFileWatcher.m in Sources */,
+				A031AD6510273D3C00575255 /* UKFNSubscribeFileWatcher.m in Sources */,
+				A031AD6710273D3C00575255 /* UKKQueue.m in Sources */,
+				A031AD6810273D3C00575255 /* UKMainThreadProxy.m in Sources */,
+				A031AF7110274E0000575255 /* GHostConfigFile.m in Sources */,
+				A0293B031028221100067788 /* MessagesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

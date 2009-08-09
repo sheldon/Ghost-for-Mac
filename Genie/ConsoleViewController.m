@@ -19,10 +19,29 @@
 #import "ConsoleViewController.h"
 #import "LogEntry.h"
 #import "GHostSocket.h"
+#import <QuartzCore/QuartzCore.h>
+#import	<QuartzCore/CAAnimation.h>
 
 
 @implementation ConsoleViewController
 @synthesize logLines=_logLines;
+@synthesize autoScroll;
+/*- (CAAnimation *)animationForKey:(NSString *)key
+{
+	if (key)
+		NSLog(@"KEY: %@", key);
+	return [CABasicAnimation animationWithKeyPath:@"nil"];
+}*/
+/*-(id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)key
+{
+	if (key)
+		NSLog(@"KEY: %@", key);
+	if (layer)
+		NSLog(@"LAYER: %@", layer);
+	//if (key != @"onDraw")
+	//	return [NSNull null];
+	return [[consoleTable layer] actionForLayer:layer forKey:key];
+}*/
 - (NSPredicate*)filterPredicate
 {
 	NSLog(@"11111111111111");
@@ -80,6 +99,8 @@
 
 - (void)awakeFromNib
 {
+	[[consoleTable layer] setDelegate:self];
+	[[consoleTable layer] removeAllAnimations];
 	NSMenu *showHideHeaderMenu = [[NSMenu alloc] initWithTitle:@"Show/hide columns"];
 	for (NSTableColumn *column in [consoleTable tableColumns]) {
 		NSString *title = [[column headerCell] title];
@@ -95,12 +116,12 @@
 	[[consoleTable headerView] setMenu:showHideHeaderMenu];
 }
 
-- (void)addCoreOutput:(NSString*)msg autoScroll:(BOOL)scroll
+- (void)addCoreOutput:(NSString*)msg// autoScroll:(BOOL)scroll
 {
 	NSInteger count = [[listController arrangedObjects] count];
 	[listController addObject:[LogEntry logEntryWithLine:msg]];
 	NSInteger newcount = [[listController arrangedObjects] count];
-	if (newcount > count && scroll)
+	if (newcount > count && autoScroll)
 		[consoleTable scrollRowToVisible:newcount - 1];
 }
 
@@ -108,6 +129,7 @@
 {
 	self = [self initWithNibName:@"ViewConsole" bundle:nil];
 	_logLines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
+	autoScroll = YES;
 	return self;
 }
 @end

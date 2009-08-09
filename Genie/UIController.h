@@ -26,6 +26,8 @@
 #import "AsyncUdpSocket.h"
 #import "LRViewController.h"
 #import "ConsoleViewController.h"
+#import	"ChatViewController.h"
+#import "MessagesController.h"
 
 @interface UIController : NSObject {
 	IBOutlet NSWindow *mainWindow;
@@ -33,11 +35,9 @@
 	IBOutlet NSPopUpButton *configSelector;
 	IBOutlet NSButton *autoScrollCheckbox;
 	IBOutlet NSToolbarItem *startStopButton;
-	IBOutlet NSTableView *consoleTable;
 	IBOutlet NSProgressIndicator *progressBar;
 	IBOutlet BadgeView *badge;
 	IBOutlet NSPanel *progressPanel;
-	IBOutlet NSComboBox *commandLine;
 	IBOutlet NSArrayController *listController;
 	IBOutlet ConfigController *configController;
 	IBOutlet GeneralController *generalController;
@@ -48,8 +48,12 @@
 	IBOutlet NSProgressIndicator *portMapProgress;
 	IBOutlet NSImageView *portMapStatus;
 	IBOutlet NSTextField *portMapText;
-	IBOutlet LRViewController *viewController;
 	IBOutlet ConsoleViewController *consoleView;
+	IBOutlet ChatViewController *chatView;
+	IBOutlet MessagesController *msgController;
+	IBOutlet NSView *mainView;
+	IBOutlet NSTextField *ghostVersion;
+	int currentViewTag;
 }
 @property(retain) NSMutableArray *lines;
 + (NSString *)getConfigDir;
@@ -58,4 +62,6 @@
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)startStop:(id)sender;
 - (IBAction)restart:(id)sender;
+- (IBAction)switchView:(id)sender;
+- (void)appendOutput:(NSString *)output;
 @end
