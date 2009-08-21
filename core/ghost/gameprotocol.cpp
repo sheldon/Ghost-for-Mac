@@ -201,10 +201,10 @@ CIncomingChatPlayer *CGameProtocol :: RECEIVE_W3GS_CHAT_TO_HOST( BYTEARRAY data 
 	return NULL;
 }
 
-bool CGameProtocol :: RECEIVE_W3GS_SEARCHGAME( BYTEARRAY data )
+bool CGameProtocol :: RECEIVE_W3GS_SEARCHGAME( BYTEARRAY data, unsigned char war3Version )
 {
 	uint32_t ProductID	= 1462982736;	// "W3XP"
-	uint32_t Version	= 23;			// 1.23
+	uint32_t Version	= war3Version;
 
 	// DEBUG_Print( "RECEIVED W3GS_SEARCHGAME" );
 	// DEBUG_Print( data );
@@ -621,11 +621,11 @@ BYTEARRAY CGameProtocol :: SEND_W3GS_STOP_LAG( CGamePlayer *player, bool loadInG
 	return packet;
 }
 
-BYTEARRAY CGameProtocol :: SEND_W3GS_SEARCHGAME( )
+BYTEARRAY CGameProtocol :: SEND_W3GS_SEARCHGAME( unsigned char war3Version )
 {
-	unsigned char ProductID[]	= { 80, 88, 51, 87 };	// "W3XP"
-	unsigned char Version[]		= { 23,  0,  0,  0 };	// 1.23
-	unsigned char Unknown[]		= {  0,  0,  0,  0 };
+	unsigned char ProductID[]	= {          80, 88, 51, 87 };	// "W3XP"
+	unsigned char Version[]		= { war3Version,  0,  0,  0 };
+	unsigned char Unknown[]		= {           0,  0,  0,  0 };
 
 	BYTEARRAY packet;
 	packet.push_back( W3GS_HEADER_CONSTANT );		// W3GS header constant
@@ -641,12 +641,12 @@ BYTEARRAY CGameProtocol :: SEND_W3GS_SEARCHGAME( )
 	return packet;
 }
 
-BYTEARRAY CGameProtocol :: SEND_W3GS_GAMEINFO( BYTEARRAY mapGameType, BYTEARRAY mapFlags, BYTEARRAY mapWidth, BYTEARRAY mapHeight, string gameName, string hostName, uint32_t upTime, string mapPath, BYTEARRAY mapCRC, uint32_t slotsTotal, uint32_t slotsOpen, uint16_t port, uint32_t hostCounter )
+BYTEARRAY CGameProtocol :: SEND_W3GS_GAMEINFO( unsigned char war3Version, BYTEARRAY mapGameType, BYTEARRAY mapFlags, BYTEARRAY mapWidth, BYTEARRAY mapHeight, string gameName, string hostName, uint32_t upTime, string mapPath, BYTEARRAY mapCRC, uint32_t slotsTotal, uint32_t slotsOpen, uint16_t port, uint32_t hostCounter )
 {
-	unsigned char ProductID[]	= { 80, 88, 51, 87 };	// "W3XP"
-	unsigned char Version[]		= { 23,  0,  0,  0 };	// 1.23
-	unsigned char Unknown1[]	= {  1,  2,  3,  4 };
-	unsigned char Unknown2[]	= {  1,  0,  0,  0 };
+	unsigned char ProductID[]	= {          80, 88, 51, 87 };	// "W3XP"
+	unsigned char Version[]		= { war3Version,  0,  0,  0 };
+	unsigned char Unknown1[]	= {           1,  2,  3,  4 };
+	unsigned char Unknown2[]	= {           1,  0,  0,  0 };
 
 	BYTEARRAY packet;
 
@@ -695,11 +695,11 @@ BYTEARRAY CGameProtocol :: SEND_W3GS_GAMEINFO( BYTEARRAY mapGameType, BYTEARRAY 
 	return packet;
 }
 
-BYTEARRAY CGameProtocol :: SEND_W3GS_CREATEGAME( )
+BYTEARRAY CGameProtocol :: SEND_W3GS_CREATEGAME( unsigned char war3Version )
 {
-	unsigned char ProductID[]	= { 80, 88, 51, 87 };	// "W3XP"
-	unsigned char Version[]		= { 23,  0,  0,  0 };	// 1.23
-	unsigned char HostCounter[]	= {  1,  0,  0,  0 };
+	unsigned char ProductID[]	= {          80, 88, 51, 87 };	// "W3XP"
+	unsigned char Version[]		= { war3Version,  0,  0,  0 };
+	unsigned char HostCounter[]	= {           1,  0,  0,  0 };
 
 	BYTEARRAY packet;
 	packet.push_back( W3GS_HEADER_CONSTANT );		// W3GS header constant
@@ -799,32 +799,39 @@ BYTEARRAY CGameProtocol :: SEND_W3GS_MAPPART( unsigned char fromPID, unsigned ch
 	unsigned char Unknown[] = { 1, 0, 0, 0 };
 
 	BYTEARRAY packet;
-	packet.push_back( W3GS_HEADER_CONSTANT );				// W3GS header constant
-	packet.push_back( W3GS_MAPPART );						// W3GS_MAPPART
-	packet.push_back( 0 );									// packet length will be assigned later
-	packet.push_back( 0 );									// packet length will be assigned later
-	packet.push_back( toPID );								// to PID
-	packet.push_back( fromPID );							// from PID
-	UTIL_AppendByteArray( packet, Unknown, 4 );				// ???
-	UTIL_AppendByteArray( packet, start, false );			// start position
 
-	// calculate end position (don't send more than 1442 map bytes in one packet)
+	if( start < mapData->size( ) )
+	{
+		packet.push_back( W3GS_HEADER_CONSTANT );				// W3GS header constant
+		packet.push_back( W3GS_MAPPART );						// W3GS_MAPPART
+		packet.push_back( 0 );									// packet length will be assigned later
+		packet.push_back( 0 );									// packet length will be assigned later
+		packet.push_back( toPID );								// to PID
+		packet.push_back( fromPID );							// from PID
+		UTIL_AppendByteArray( packet, Unknown, 4 );				// ???
+		UTIL_AppendByteArray( packet, start, false );			// start position
 
-	uint32_t End = start + 1442;
+		// calculate end position (don't send more than 1442 map bytes in one packet)
 
-	if( End > mapData->size( ) )
-		End = mapData->size( );
+		uint32_t End = start + 1442;
 
-	// calculate crc
+		if( End > mapData->size( ) )
+			End = mapData->size( );
 
-	BYTEARRAY crc32 = UTIL_CreateByteArray( m_GHost->m_CRC->FullCRC( (unsigned char *)mapData->c_str( ) + start, End - start ), false );
-	UTIL_AppendByteArray( packet, crc32 );
+		// calculate crc
 
-	// map data
+		BYTEARRAY crc32 = UTIL_CreateByteArray( m_GHost->m_CRC->FullCRC( (unsigned char *)mapData->c_str( ) + start, End - start ), false );
+		UTIL_AppendByteArray( packet, crc32 );
 
-	BYTEARRAY Data = UTIL_CreateByteArray( (unsigned char *)mapData->c_str( ) + start, End - start );
-	UTIL_AppendByteArray( packet, Data );
-	AssignLength( packet );
+		// map data
+
+		BYTEARRAY Data = UTIL_CreateByteArray( (unsigned char *)mapData->c_str( ) + start, End - start );
+		UTIL_AppendByteArray( packet, Data );
+		AssignLength( packet );
+	}
+	else
+		CONSOLE_Print( "[GAMEPROTO] invalid parameters passed to SEND_W3GS_MAPPART" );
+
 	// DEBUG_Print( "SENT W3GS_MAPPART" );
 	// DEBUG_Print( packet );
 	return packet;

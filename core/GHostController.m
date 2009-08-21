@@ -16,15 +16,15 @@
  along with Genie.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#import "TaskWrapper.h"
 #import "GHostController.h"
 
 @implementation GHostController
 @synthesize ghostDir;
-@synthesize config;
 @synthesize running;
 
 NSString * const GHConsoleOutput = @"GHConsoleOutput";
-NSString * const GHSocketOutput = @"GHSocketOutput";
+//NSString * const GHSocketOutput = @"GHSocketOutput";
 NSString * const GHProcessStarted = @"GHProcessStarted";
 NSString * const GHProcessStopped = @"GHProcessStopped";
 
@@ -50,6 +50,12 @@ static GHostController *sharedController = nil;
     return sharedController;
 }
 
++ (NSString *)applicationSupportFolder {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex: 0] : NSTemporaryDirectory();
+	return [basePath stringByAppendingPathComponent: [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString*)kCFBundleExecutableKey]];
+}
+
 - (id)init
 {
     Class myClass = [self class];
@@ -59,11 +65,8 @@ static GHostController *sharedController = nil;
                 sharedController = self;
                 // custom initialization here
 				self.running = NO;
-				[[NSNotificationCenter defaultCenter]
-				 addObserver:self
-				 selector:@selector(doTerminate:)
-				 name:NSApplicationWillTerminateNotification
-				 object:NSApp];
+				consoleBuffer = [NSMutableString stringWithCapacity:256];
+				self.ghostDir = [[GHostController applicationSupportFolder] stringByAppendingPathComponent: @"ghost"];
             }
         }
     }
@@ -80,18 +83,16 @@ static GHostController *sharedController = nil;
 
 - (id)autorelease { return self; }
 
-- (void)doTerminate:(NSNotification *)note
-{
-	[self stop];
-}
-
 - (void)startWithConfig:(NSString*)cfg {
 	@synchronized(self) {
 		//[startButton setTitle:@"Running..."];
 		if (ghost!=nil)
 			[ghost release];
-		if (![[NSFileManager defaultManager] fileExistsAtPath:cfg])
-			cfg = @"";
+		NSArray *args = nil;
+		BOOL isDir;
+		if ([[NSFileManager defaultManager] fileExistsAtPath:cfg isDirectory:&isDir] && !isDir)
+			args = [NSArray arrayWithObject:cfg];
+			//cfg = @"";
 		// Let's allocate memory for and initialize a new TaskWrapper object, passing
 		// in ourselves as the controller for this TaskWrapper object, the path
 		// to the command-line tool, and the contents of the text field that 
@@ -101,65 +102,51 @@ static GHostController *sharedController = nil;
 			   execpath:[[[NSBundle bundleForClass:[self class]] resourcePath] stringByAppendingPathComponent: @"ghost++"]
 			   workdir:self.ghostDir
 			   environment:[NSDictionary dictionaryWithObjectsAndKeys:
-							[[[NSBundle bundleForClass:[self class]] resourcePath] stringByAppendingPathComponent: @"lib"],
+							[[[[NSBundle bundleForClass:[self class]] resourcePath] stringByAppendingPathComponent: @"lib"] stringByAppendingString:@":/usr/lib"],
 							@"DYLD_FALLBACK_LIBRARY_PATH",
 							nil]
 
-			   arguments:[NSArray arrayWithObject:cfg]];
+			   arguments:args
+		];
 		// kick off the process asynchronously
 		[ghost startProcess];
-		if (cmdSock)
-			[cmdSock release];
-		cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
-		[cmdSock connectToHost:@"localhost" onPort:6969 error:nil];
-		[cmdSock receiveWithTimeout:-1 tag:0];
-		[self sendCommand:@"\n"];
 	}
 }
 
 - (void)stop {
 	@synchronized(self) {
-	[ghost stopProcess];
-	// Release the memory for this wrapper object
-	[ghost release];
-	ghost = nil;
-	[cmdSock release];
-	cmdSock = nil;
+		[ghost stopProcess];
+		// Release the memory for this wrapper object
+		[ghost release];
+		ghost = nil;
 	}
 }
 
-- (void)sendCommand:(NSString*)cmd {
-	[cmdSock sendData:[cmd dataUsingEncoding:NSUTF8StringEncoding] withTimeout:30 tag:0];
-}
 
-- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
-	//NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 1)];
-	NSString *msg = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-	if(msg)
-	{
-		if ([msg isEqualToString:@"PING"])
-			[self sendCommand:@"\n"];
-		else
-			[[NSNotificationCenter defaultCenter] postNotificationName:GHSocketOutput object:self userInfo:[NSDictionary dictionaryWithObject:msg forKey:@"line"]];
-	}
-	else
-	{
-		[self appendOutput:@"Error converting received data into NSUTF8StringEncoding String"];
-	}
-	[cmdSock receiveWithTimeout:-1 tag:0];
-	return YES;
-}
 
 // This callback is implemented as part of conforming to the ProcessController protocol.
 // It will be called whenever there is output from the TaskWrapper.
 - (void)appendOutput:(NSString *)output
 {
 	NSLog(output);
-	NSArray *printlines = [output componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-	for(NSString* line in printlines) {
-		line = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		if ([line length] > 0) {
-			[[NSNotificationCenter defaultCenter] postNotificationName:GHConsoleOutput object:self userInfo:[NSDictionary dictionaryWithObject:line forKey:@"line"]];
+	@synchronized(self) {
+		output = [consoleBuffer stringByAppendingString:output];
+		NSArray *printlines = [output componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		int last = [printlines count];
+		if ([output hasSuffix:@"\n"]) {
+			[consoleBuffer setString:@""];
+		}
+		else {
+			// output does not end with a newline, thus is not complete
+			// save the last element in buffer
+			last--;
+			[consoleBuffer appendString:[printlines lastObject]];
+		}
+		for(int i=0;i<last;i++) {
+			NSString *line = [[printlines objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			if ([line length] > 0) {
+				[[NSNotificationCenter defaultCenter] postNotificationName:GHConsoleOutput object:self userInfo:[NSDictionary dictionaryWithObject:line forKey:@"line"]];
+			}
 		}
 	}
 }

@@ -794,6 +794,7 @@ uint32_t MySQLGameAdd( void *conn, string *error, string server, string map, str
 
 uint32_t MySQLGamePlayerAdd( void *conn, string *error, uint32_t gameid, string name, string ip, uint32_t spoofed, string spoofedrealm, uint32_t reserved, uint32_t loadingtime, uint32_t left, string leftreason, uint32_t team, uint32_t colour )
 {
+	transform( name.begin( ), name.end( ), name.begin( ), (int(*)(int))tolower );
 	uint32_t RowID = 0;
 	string EscName = MySQLEscapeString( conn, name );
 	string EscIP = MySQLEscapeString( conn, ip );
@@ -814,7 +815,7 @@ CDBGamePlayerSummary *MySQLGamePlayerSummaryCheck( void *conn, string *error, st
 	transform( name.begin( ), name.end( ), name.begin( ), (int(*)(int))tolower );
 	string EscName = MySQLEscapeString( conn, name );
 	CDBGamePlayerSummary *GamePlayerSummary = NULL;
-	string Query = "SELECT MIN(DATE(datetime)), MAX(DATE(datetime)), COUNT(*), MIN(loadingtime), AVG(loadingtime), MAX(loadingtime), MIN(`left`/duration)*100, AVG(`left`/duration)*100, MAX(`left`/duration)*100, MIN(duration), AVG(duration), MAX(duration) FROM gameplayers LEFT JOIN games ON games.id=gameid WHERE name='" + EscName + "'";
+	string Query = "SELECT MIN(DATE(datetime)), MAX(DATE(datetime)), COUNT(*), MIN(loadingtime), AVG(loadingtime), MAX(loadingtime), MIN(`left`/duration)*100, AVG(`left`/duration)*100, MAX(`left`/duration)*100, MIN(duration), AVG(duration), MAX(duration) FROM gameplayers LEFT JOIN games ON games.id=gameid WHERE LOWER(name)='" + EscName + "'";
 
 	if( mysql_real_query( (MYSQL *)conn, Query.c_str( ), Query.size( ) ) != 0 )
 		*error = mysql_error( (MYSQL *)conn );
@@ -892,7 +893,7 @@ CDBDotAPlayerSummary *MySQLDotAPlayerSummaryCheck( void *conn, string *error, st
 	transform( name.begin( ), name.end( ), name.begin( ), (int(*)(int))tolower );
 	string EscName = MySQLEscapeString( conn, name );
 	CDBDotAPlayerSummary *DotAPlayerSummary = NULL;
-	string Query = "SELECT COUNT(dotaplayers.id), SUM(kills), SUM(deaths), SUM(creepkills), SUM(creepdenies), SUM(assists), SUM(neutralkills), SUM(towerkills), SUM(raxkills), SUM(courierkills) FROM gameplayers LEFT JOIN games ON games.id=gameplayers.gameid LEFT JOIN dotaplayers ON dotaplayers.gameid=games.id AND dotaplayers.colour=gameplayers.colour WHERE name='" + EscName + "'";
+	string Query = "SELECT COUNT(dotaplayers.id), SUM(kills), SUM(deaths), SUM(creepkills), SUM(creepdenies), SUM(assists), SUM(neutralkills), SUM(towerkills), SUM(raxkills), SUM(courierkills) FROM gameplayers LEFT JOIN games ON games.id=gameplayers.gameid LEFT JOIN dotaplayers ON dotaplayers.gameid=games.id AND dotaplayers.colour=gameplayers.colour WHERE LOWER(name)='" + EscName + "'";
 
 	if( mysql_real_query( (MYSQL *)conn, Query.c_str( ), Query.size( ) ) != 0 )
 		*error = mysql_error( (MYSQL *)conn );
@@ -1041,6 +1042,7 @@ double MySQLScoreCheck( void *conn, string *error, string category, string name,
 
 uint32_t MySQLW3MMDPlayerAdd( void *conn, string *error, string category, uint32_t gameid, uint32_t pid, string name, string flag, uint32_t leaver, uint32_t practicing )
 {
+	transform( name.begin( ), name.end( ), name.begin( ), (int(*)(int))tolower );
 	uint32_t RowID = 0;
 	string EscCategory = MySQLEscapeString( conn, category );
 	string EscName = MySQLEscapeString( conn, name );

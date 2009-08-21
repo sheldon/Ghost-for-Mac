@@ -18,6 +18,7 @@
 
 */
 
+#include "rcon.h"
 #include "ghost.h"
 #include "util.h"
 #include "crc32.h"
@@ -36,7 +37,6 @@
 #include "gameprotocol.h"
 #include "game_base.h"
 #include "game.h"
-#include "rcon.h"
 
 #include <signal.h>
 #include <stdlib.h>
@@ -285,7 +285,11 @@ CGHost :: CGHost( CConfig *CFG )
 {
 	// fire up the remote console
 	m_RConsole = new CRemoteConsole( this, CFG );
+	// print hostport to console so the GUI knows which port to map via UPnP
+	CONSOLE_Print( "[GHOST] using bot_hostport [" + UTIL_ToString( CFG->GetInt( "bot_hostport", 6112 ) ) + "]" );
 	m_UDPSocket = new CUDPSocket( );
+	m_UDPSocket->SetBroadcastTarget( CFG->GetString( "udp_broadcasttarget", string( ) ) );
+	m_UDPSocket->SetDontRoute( CFG->GetInt( "udp_dontroute", 0 ) == 0 ? false : true );
 	m_CRC = new CCRC32( );
 	m_CRC->Initialize( );
 	m_SHA = new CSHA1( );
@@ -310,14 +314,16 @@ CGHost :: CGHost( CConfig *CFG )
 	m_Exiting = false;
 	m_ExitingNice = false;
 	m_Enabled = true;
-	m_Version = "13.3";
+	m_Version = "14.2";
 	m_HostCounter = 1;
-	m_AutoHostMaximumGames = 0;
-	m_AutoHostAutoStartPlayers = 0;
-	m_LastAutoHostTime = 0;
+	m_AutoHostMaximumGames = CFG->GetInt( "autohost_maxgames", 0 );
+	m_AutoHostAutoStartPlayers = CFG->GetInt( "autohost_startplayers", 0 );
+	m_AutoHostGameName = CFG->GetString( "autohost_gamename", string( ) );
+	m_LastAutoHostTime = GetTime( );
 	m_AutoHostMatchMaking = false;
 	m_AutoHostMinimumScore = 0.0;
 	m_AutoHostMaximumScore = 0.0;
+	m_AllGamesFinishedTime = 0;
 	m_LanguageFile = CFG->GetString( "bot_language", "language.cfg" );
 	m_Language = new CLanguage( m_LanguageFile );
 	m_Warcraft3Path = CFG->GetString( "bot_war3path", "C:\\Program Files\\Warcraft III\\" );
@@ -377,6 +383,9 @@ CGHost :: CGHost( CConfig *CFG )
 	m_AdminGameCreate = CFG->GetInt( "admingame_create", 0 ) == 0 ? false : true;
 	m_AdminGamePort = CFG->GetInt( "admingame_port", 6113 );
 	m_AdminGamePassword = CFG->GetString( "admingame_password", string( ) );
+	m_AdminGameMap = CFG->GetString( "admingame_map", string( ) );
+	m_LANWar3Version = CFG->GetInt( "lan_war3version", 24 );
+	m_TCPNoDelay = CFG->GetInt( "tcp_nodelay", 0 ) == 0 ? false : true;
 
 	// load the battle.net connections
 	// we're just loading the config data and creating the CBNET classes here, the connections are established later (in the Update function)
@@ -406,10 +415,11 @@ CGHost :: CGHost( CConfig *CFG )
 
 		bool HoldFriends = CFG->GetInt( Prefix + "holdfriends", 1 ) == 0 ? false : true;
 		bool HoldClan = CFG->GetInt( Prefix + "holdclan", 1 ) == 0 ? false : true;
+		bool PublicCommands = CFG->GetInt( Prefix + "publiccommands", 1 ) == 0 ? false : true;
 		string BNLSServer = CFG->GetString( Prefix + "bnlsserver", string( ) );
 		int BNLSPort = CFG->GetInt( Prefix + "bnlsport", 9367 );
 		int BNLSWardenCookie = CFG->GetInt( Prefix + "bnlswardencookie", 0 );
-		unsigned char War3Version = CFG->GetInt( Prefix + "custom_war3version", 23 );
+		unsigned char War3Version = CFG->GetInt( Prefix + "custom_war3version", 24 );
 		BYTEARRAY EXEVersion = UTIL_ExtractNumbers( CFG->GetString( Prefix + "custom_exeversion", string( ) ), 4 );
 		BYTEARRAY EXEVersionHash = UTIL_ExtractNumbers( CFG->GetString( Prefix + "custom_exeversionhash", string( ) ), 4 );
 		string PasswordHashType = CFG->GetString( Prefix + "custom_passwordhashtype", string( ) );
@@ -443,7 +453,8 @@ CGHost :: CGHost( CConfig *CFG )
 		}
 
 		CONSOLE_Print( "[GHOST] found battle.net connection #" + UTIL_ToString( i ) + " for server [" + Server + "]" );
-		m_BNETs.push_back( new CBNET( this, Server, BNLSServer, (uint16_t)BNLSPort, (uint32_t)BNLSWardenCookie, CDKeyROC, CDKeyTFT, CountryAbbrev, Country, UserName, UserPassword, FirstChannel, RootAdmin, BNETCommandTrigger[0], HoldFriends, HoldClan, War3Version, EXEVersion, EXEVersionHash, PasswordHashType, MaxMessageLength ) );
+		CONSOLE_Print( "[GHOST] using commandtrigger [" + string( 1, BNETCommandTrigger[0] ) + "] for server [" + Server + "]" );
+		m_BNETs.push_back( new CBNET( this, Server, BNLSServer, (uint16_t)BNLSPort, (uint32_t)BNLSWardenCookie, CDKeyROC, CDKeyTFT, CountryAbbrev, Country, UserName, UserPassword, FirstChannel, RootAdmin, BNETCommandTrigger[0], HoldFriends, HoldClan, PublicCommands, War3Version, EXEVersion, EXEVersionHash, PasswordHashType, MaxMessageLength ) );
 	}
 
 	if( m_BNETs.empty( ) )
@@ -457,10 +468,42 @@ CGHost :: CGHost( CConfig *CFG )
 
 	// load the default maps (note: make sure to run ExtractScripts first)
 
+	if( m_DefaultMap.size( ) < 4 || m_DefaultMap.substr( m_DefaultMap.size( ) - 4 ) != ".cfg" )
+	{
+		m_DefaultMap += ".cfg";
+		CONSOLE_Print( "[GHOST] adding \".cfg\" to default map -> new default is [" + m_DefaultMap + "]" );
+	}
+
 	CConfig MapCFG;
-	MapCFG.Read( m_MapCFGPath + m_DefaultMap + ".cfg" );
-	m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap + ".cfg" );
-	m_AdminMap = new CMap( this );
+	MapCFG.Read( m_MapCFGPath + m_DefaultMap );
+	m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap );
+
+	if( !m_AdminGameMap.empty( ) )
+	{
+		if( m_AdminGameMap.size( ) < 4 || m_AdminGameMap.substr( m_AdminGameMap.size( ) - 4 ) != ".cfg" )
+		{
+			m_AdminGameMap += ".cfg";
+			CONSOLE_Print( "[GHOST] adding \".cfg\" to default admin game map -> new default is [" + m_AdminGameMap + "]" );
+		}
+
+		CONSOLE_Print( "[GHOST] trying to load default admin game map" );
+		CConfig AdminMapCFG;
+		AdminMapCFG.Read( m_MapCFGPath + m_AdminGameMap );
+		m_AdminMap = new CMap( this, &AdminMapCFG, m_MapCFGPath + m_AdminGameMap );
+
+		if( !m_AdminMap->GetValid( ) )
+		{
+			CONSOLE_Print( "[GHOST] default admin game map isn't valid, using hardcoded admin game map instead" );
+			delete m_AdminMap;
+			m_AdminMap = new CMap( this );
+		}
+	}
+	else
+	{
+		CONSOLE_Print( "[GHOST] using hardcoded admin game map" );
+		m_AdminMap = new CMap( this );
+	}
+
 	m_AutoHostMap = new CMap( *m_Map );
 	m_SaveGame = new CSaveGame( this );
 
@@ -562,8 +605,26 @@ bool CGHost :: Update( long usecBlock )
 
 		if( !m_CurrentGame && m_Games.empty( ) )
 		{
-			CONSOLE_Print( "[GHOST] all games finished, exiting nicely" );
-			m_Exiting = true;
+			if( m_AllGamesFinishedTime == 0 )
+			{
+				CONSOLE_Print( "[GHOST] all games finished, waiting 60 seconds for threads to finish" );
+				CONSOLE_Print( "[GHOST] there are " + UTIL_ToString( m_Callables.size( ) ) + " threads in progress" );
+				m_AllGamesFinishedTime = GetTime( );
+			}
+			else
+			{
+				if( m_Callables.empty( ) )
+				{
+					CONSOLE_Print( "[GHOST] all threads finished, exiting nicely" );
+					m_Exiting = true;
+				}
+				else if( GetTime( ) >= m_AllGamesFinishedTime + 60 )
+				{
+					CONSOLE_Print( "[GHOST] waited 60 seconds for threads to finish, exiting anyway" );
+					CONSOLE_Print( "[GHOST] there are " + UTIL_ToString( m_Callables.size( ) ) + " threads still in progress which will be terminated" );
+					m_Exiting = true;
+				}
+			}
 		}
 	}
 
@@ -610,7 +671,7 @@ bool CGHost :: Update( long usecBlock )
 
 	for( vector<CBaseGame *> :: iterator i = m_Games.begin( ); i != m_Games.end( ); i++ )
 		NumFDs += (*i)->SetFD( &fd, &send_fd, &nfds );
-		
+
 	// 5. the remote console
 	if ( m_RConsole )
 		NumFDs += m_RConsole->SetFD( &fd, &send_fd, &nfds );
@@ -641,7 +702,7 @@ bool CGHost :: Update( long usecBlock )
 
 	bool AdminExit = false;
 	bool BNETExit = false;
-	
+
 	// update remote console
 	if ( m_RConsole )
 		m_RConsole->Update( &fd );
@@ -720,7 +781,7 @@ bool CGHost :: Update( long usecBlock )
 		{
 			if( m_AutoHostMap->GetValid( ) )
 			{
-				CreateGame( GAME_PUBLIC, false, GameName, string( ), m_AutoHostOwner, m_AutoHostServer, false );
+				CreateGame( m_AutoHostMap, GAME_PUBLIC, false, GameName, m_AutoHostOwner, m_AutoHostOwner, m_AutoHostServer, false );
 
 				if( m_CurrentGame )
 				{
@@ -772,30 +833,45 @@ void CGHost :: EventBNETConnecting( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->ConnectingToBNET( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->SendAllChat( m_Language->ConnectingToBNET( bnet->GetServer( ) ) );
 }
 
 void CGHost :: EventBNETConnected( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->ConnectedToBNET( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->SendAllChat( m_Language->ConnectedToBNET( bnet->GetServer( ) ) );
 }
 
 void CGHost :: EventBNETDisconnected( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->DisconnectedFromBNET( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->SendAllChat( m_Language->DisconnectedFromBNET( bnet->GetServer( ) ) );
 }
 
 void CGHost :: EventBNETLoggedIn( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->LoggedInToBNET( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->SendAllChat( m_Language->LoggedInToBNET( bnet->GetServer( ) ) );
 }
 
 void CGHost :: EventBNETGameRefreshed( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->BNETGameHostingSucceeded( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->EventGameRefreshed( bnet->GetServer( ) );
 }
 
 void CGHost :: EventBNETGameRefreshFailed( CBNET *bnet )
@@ -819,7 +895,7 @@ void CGHost :: EventBNETGameRefreshFailed( CBNET *bnet )
 		// it's possible at least one refresh succeeded and therefore the game is still joinable on at least one battle.net (plus on the local network) but we don't keep track of that
 		// we only close the game if it has no players since we support game rehosting (via !priv and !pub in the lobby)
 
-		if( m_CurrentGame->GetNumPlayers( ) == 0 )
+		if( m_CurrentGame->GetNumHumanPlayers( ) == 0 )
 			m_CurrentGame->SetExiting( true );
 
 		m_CurrentGame->SetRefreshError( true );
@@ -830,6 +906,9 @@ void CGHost :: EventBNETConnectTimedOut( CBNET *bnet )
 {
 	if( m_AdminGame )
 		m_AdminGame->SendAllChat( m_Language->ConnectingToBNETTimedOut( bnet->GetServer( ) ) );
+
+	if( m_CurrentGame )
+		m_CurrentGame->SendAllChat( m_Language->ConnectingToBNETTimedOut( bnet->GetServer( ) ) );
 }
 
 void CGHost :: EventGameDeleted( CBaseGame *game )
@@ -980,7 +1059,7 @@ void CGHost :: LoadIPToCountryData( )
 	}
 }
 
-void CGHost :: CreateGame( unsigned char gameState, bool saveGame, string gameName, string ownerName, string creatorName, string creatorServer, bool whisper )
+void CGHost :: CreateGame( CMap *map, unsigned char gameState, bool saveGame, string gameName, string ownerName, string creatorName, string creatorServer, bool whisper )
 {
 	if( !m_Enabled )
 	{
@@ -1010,7 +1089,7 @@ void CGHost :: CreateGame( unsigned char gameState, bool saveGame, string gameNa
 		return;
 	}
 
-	if( !m_Map->GetValid( ) )
+	if( !map->GetValid( ) )
 	{
 		for( vector<CBNET *> :: iterator i = m_BNETs.begin( ); i != m_BNETs.end( ); i++ )
 		{
@@ -1041,7 +1120,7 @@ void CGHost :: CreateGame( unsigned char gameState, bool saveGame, string gameNa
 		}
 
 		string MapPath1 = m_SaveGame->GetMapPath( );
-		string MapPath2 = m_Map->GetMapPath( );
+		string MapPath2 = map->GetMapPath( );
 		transform( MapPath1.begin( ), MapPath1.end( ), MapPath1.begin( ), (int(*)(int))tolower );
 		transform( MapPath2.begin( ), MapPath2.end( ), MapPath2.begin( ), (int(*)(int))tolower );
 
@@ -1091,9 +1170,9 @@ void CGHost :: CreateGame( unsigned char gameState, bool saveGame, string gameNa
 	CONSOLE_Print( "[GHOST] creating game [" + gameName + "]" );
 
 	if( saveGame )
-		m_CurrentGame = new CGame( this, m_Map, m_SaveGame, m_HostPort, gameState, gameName, ownerName, creatorName, creatorServer );
+		m_CurrentGame = new CGame( this, map, m_SaveGame, m_HostPort, gameState, gameName, ownerName, creatorName, creatorServer );
 	else
-		m_CurrentGame = new CGame( this, m_Map, NULL, m_HostPort, gameState, gameName, ownerName, creatorName, creatorServer );
+		m_CurrentGame = new CGame( this, map, NULL, m_HostPort, gameState, gameName, ownerName, creatorName, creatorServer );
 
 	// todotodo: check if listening failed and report the error to the user
 
@@ -1119,9 +1198,9 @@ void CGHost :: CreateGame( unsigned char gameState, bool saveGame, string gameNa
 		}
 
 		if( saveGame )
-			(*i)->QueueGameCreate( gameState, gameName, string( ), m_Map, m_SaveGame, m_CurrentGame->GetHostCounter( ) );
+			(*i)->QueueGameCreate( gameState, gameName, string( ), map, m_SaveGame, m_CurrentGame->GetHostCounter( ) );
 		else
-			(*i)->QueueGameCreate( gameState, gameName, string( ), m_Map, NULL, m_CurrentGame->GetHostCounter( ) );
+			(*i)->QueueGameCreate( gameState, gameName, string( ), map, NULL, m_CurrentGame->GetHostCounter( ) );
 	}
 
 	if( m_AdminGame )

@@ -12,7 +12,7 @@
 		A0C1DEBD0FF26DF80097AF13 /* ghost++ in Resources */ = {isa = PBXBuildFile; fileRef = A0C1DEBC0FF26DF80097AF13 /* ghost++ */; };
 		A0FF01C90FF28ED7001686D1 /* GHostController.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01C50FF28ED7001686D1 /* GHostController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0FF01CA0FF28ED7001686D1 /* GHostController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01C60FF28ED7001686D1 /* GHostController.m */; };
-		A0FF01CB0FF28ED7001686D1 /* TaskWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */; };
+		A0FF01CB0FF28ED7001686D1 /* TaskWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A0FF01CC0FF28ED7001686D1 /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01C80FF28ED7001686D1 /* TaskWrapper.m */; };
 		A0FF01E90FF297A6001686D1 /* libbncsutil.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC30FF26EC00097AF13 /* libbncsutil.dylib */; };
 		A0FF01EA0FF297A6001686D1 /* libboost_date_time-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DEC40FF26EC00097AF13 /* libboost_date_time-mt.dylib */; };
@@ -25,8 +25,6 @@
 		A0FF01F10FF297A6001686D1 /* libmysqlclient.16.0.0.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECB0FF26EC00097AF13 /* libmysqlclient.16.0.0.dylib */; };
 		A0FF01F20FF297A6001686D1 /* libssl.0.9.8.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECC0FF26EC00097AF13 /* libssl.0.9.8.dylib */; };
 		A0FF01F30FF297A6001686D1 /* libStorm.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A0C1DECD0FF26EC00097AF13 /* libStorm.dylib */; };
-		A0FF01FE0FF2DAE4001686D1 /* AsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */; };
-		A0FF01FF0FF2DAE4001686D1 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,8 +160,6 @@
 		A0FF01C60FF28ED7001686D1 /* GHostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostController.m; sourceTree = "<group>"; };
 		A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
 		A0FF01C80FF28ED7001686D1 /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
-		A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncUdpSocket.h; sourceTree = "<group>"; };
-		A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncUdpSocket.m; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -223,8 +219,6 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A0FF01FC0FF2DAE4001686D1 /* AsyncUdpSocket.h */,
-				A0FF01FD0FF2DAE4001686D1 /* AsyncUdpSocket.m */,
 				A0FF01C50FF28ED7001686D1 /* GHostController.h */,
 				A0FF01C60FF28ED7001686D1 /* GHostController.m */,
 				A0FF01C70FF28ED7001686D1 /* TaskWrapper.h */,
@@ -359,7 +353,6 @@
 			files = (
 				A0FF01C90FF28ED7001686D1 /* GHostController.h in Headers */,
 				A0FF01CB0FF28ED7001686D1 /* TaskWrapper.h in Headers */,
-				A0FF01FE0FF2DAE4001686D1 /* AsyncUdpSocket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,7 +443,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $BUILT_PRODUCTS_DIR\ncd $UNLOCALIZED_RESOURCES_FOLDER_PATH\ncd lib\nln -fs libgmp3.4.4.dylib libgmp3.dylib\nln -fs libmysqlclient.16.0.0.dylib libmysqlclient.16.dylib";
+			shellScript = "cd $BUILT_PRODUCTS_DIR\ncd $UNLOCALIZED_RESOURCES_FOLDER_PATH\ncd lib\nln -fs libgmp.3.4.4.dylib libgmp.3.dylib\nln -fs libmysqlclient.16.0.0.dylib libmysqlclient.16.dylib";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -461,7 +454,6 @@
 			files = (
 				A0FF01CA0FF28ED7001686D1 /* GHostController.m in Sources */,
 				A0FF01CC0FF28ED7001686D1 /* TaskWrapper.m in Sources */,
-				A0FF01FF0FF2DAE4001686D1 /* AsyncUdpSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,6 +509,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

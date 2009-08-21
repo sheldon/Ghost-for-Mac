@@ -37,13 +37,14 @@
 
 CMap :: CMap( CGHost *nGHost )
 {
+	CONSOLE_Print( "[MAP] using hardcoded Emerald Gardens map data for Warcraft 3 version 1.24" );
 	m_GHost = nGHost;
 	m_Valid = true;
 	m_MapPath = "Maps\\FrozenThrone\\(12)EmeraldGardens.w3x";
 	m_MapSize = UTIL_ExtractNumbers( "174 221 4 0", 4 );
 	m_MapInfo = UTIL_ExtractNumbers( "251 57 68 98", 4 );
-	m_MapCRC = UTIL_ExtractNumbers( "112 185 65 97", 4 );
-	m_MapSHA1 = UTIL_ExtractNumbers( "187 28 143 4 97 223 210 52 218 28 95 52 217 203 121 202 24 120 59 213", 20 );
+	m_MapCRC = UTIL_ExtractNumbers( "108 250 204 59", 4 );
+	m_MapSHA1 = UTIL_ExtractNumbers( "35 81 104 182 223 63 204 215 1 17 87 234 220 66 3 185 82 99 6 13", 20 );
 	m_MapSpeed = MAPSPEED_FAST;
 	m_MapVisibility = MAPVIS_DEFAULT;
 	m_MapObservers = MAPOBS_NONE;
@@ -677,6 +678,7 @@ void CMap :: Load( CConfig *CFG, string nCFGFile )
 	m_MapType = CFG->GetString( "map_type", string( ) );
 	m_MapMatchMakingCategory = CFG->GetString( "map_matchmakingcategory", string( ) );
 	m_MapStatsW3MMDCategory = CFG->GetString( "map_statsw3mmdcategory", string( ) );
+	m_MapDefaultHCL = CFG->GetString( "map_defaulthcl", string( ) );
 	m_MapLoadInGame = CFG->GetInt( "map_loadingame", 0 ) == 0 ? false : true;
 
 	if( MapNumPlayers == 0 )
@@ -769,6 +771,16 @@ void CMap :: CheckValid( )
 		m_Valid = false;
 		CONSOLE_Print( "[MAP] invalid map_size detected" );
 	}
+
+	/*
+
+	else if( !m_MapData.empty( ) && m_MapData.size( ) != UTIL_ByteArrayToUInt32( m_MapSize, false ) )
+	{
+		m_Valid = false;
+		CONSOLE_Print( "[MAP] invalid map_size detected - size mismatch with map data" );
+	}
+
+	*/
 
 	if( m_MapInfo.size( ) != 4 )
 	{

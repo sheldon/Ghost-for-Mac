@@ -67,6 +67,7 @@
  #include <fcntl.h>
  #include <netdb.h>
  #include <netinet/in.h>
+ #include <netinet/tcp.h>
  #include <sys/ioctl.h>
  #include <sys/socket.h>
  #include <sys/types.h>
@@ -152,6 +153,7 @@ public:
 	virtual void DoRecv( fd_set *fd );
 	virtual void DoSend( fd_set *send_fd );
 	virtual void Disconnect( );
+	virtual void SetNoDelay( bool noDelay );
 };
 
 //
@@ -194,14 +196,18 @@ public:
 
 class CUDPSocket : public CSocket
 {
+protected:
+	struct in_addr m_BroadcastTarget;
 public:
 	CUDPSocket( );
 	virtual ~CUDPSocket( );
 
-	virtual bool SendTo( struct sockaddr_in sin, BYTEARRAY message );
 	virtual bool SendTo( struct sockaddr_in sin, string message );
+	virtual bool SendTo( struct sockaddr_in sin, BYTEARRAY message );
 	virtual bool SendTo( string address, uint16_t port, BYTEARRAY message );
 	virtual bool Broadcast( uint16_t port, BYTEARRAY message );
+	virtual void SetBroadcastTarget( string subnet );
+	virtual void SetDontRoute( bool dontRoute );
 };
 
 //

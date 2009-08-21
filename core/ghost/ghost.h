@@ -89,7 +89,6 @@ class CConfig;
 class CGHost
 {
 public:
-	// remote console
 	CRemoteConsole *m_RConsole;				// remote console using an UDP socket for sending/receiving
 	CUDPSocket *m_UDPSocket;				// a UDP socket for sending broadcasts and other junk (used with !sendlan)
 	CCRC32 *m_CRC;							// for calculating CRC's
@@ -102,7 +101,7 @@ public:
 	CGHostDB *m_DBLocal;					// local database (for temporary data)
 	vector<CBaseCallable *> m_Callables;	// vector of orphaned callables waiting to die
 	CLanguage *m_Language;					// language
-	CMap *m_Map;							// the currently loaded map (this is global data, CBaseGame just references it so don't modify it unless you know what you're doing)
+	CMap *m_Map;							// the currently loaded map
 	CMap *m_AdminMap;						// the map to use in the admin game
 	CMap *m_AutoHostMap;					// the map to use when autohosting
 	CSaveGame *m_SaveGame;					// the save game to use
@@ -120,6 +119,7 @@ public:
 	bool m_AutoHostMatchMaking;
 	double m_AutoHostMinimumScore;
 	double m_AutoHostMaximumScore;
+	uint32_t m_AllGamesFinishedTime;		// GetTime when all games finished (used when exiting nicely)
 	string m_LanguageFile;					// config value: language file
 	string m_Warcraft3Path;					// config value: Warcraft 3 path
 	string m_BindAddress;					// config value: the address to host games on
@@ -159,6 +159,9 @@ public:
 	bool m_AdminGameCreate;					// config value: create the admin game or not
 	uint16_t m_AdminGamePort;				// config value: the port to host the admin game on
 	string m_AdminGamePassword;				// config value: the admin game password
+	string m_AdminGameMap;					// config value: the admin game map config to use
+	unsigned char m_LANWar3Version;			// config value: LAN warcraft 3 version
+	bool m_TCPNoDelay;						// config value: use Nagle's algorithm or not
 
 	CGHost( CConfig *CFG );
 	~CGHost( );
@@ -182,7 +185,7 @@ public:
 
 	void ExtractScripts( );
 	void LoadIPToCountryData( );
-	void CreateGame( unsigned char gameState, bool saveGame, string gameName, string ownerName, string creatorName, string creatorServer, bool whisper );
+	void CreateGame( CMap *map, unsigned char gameState, bool saveGame, string gameName, string ownerName, string creatorName, string creatorServer, bool whisper );
 };
 
 #endif

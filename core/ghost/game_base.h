@@ -54,8 +54,9 @@ protected:
 	vector<CCallableScoreCheck *> m_ScoreChecks;
 	queue<CIncomingAction *> m_Actions;				// queue of actions to be sent
 	vector<string> m_Reserved;						// vector of player names with reserved slots (from the !hold command)
+	set<string> m_IgnoredNames;						// set of player names to NOT print ban messages for when joining because they've already been printed
 	set<string> m_IPBlackList;						// set of IP addresses to blacklist from joining (todotodo: convert to uint32's for efficiency)
-	CMap *m_Map;									// map data (this is a pointer to global data)
+	CMap *m_Map;									// map data
 	CSaveGame *m_SaveGame;							// savegame data (this is a pointer to global data)
 	CReplay *m_Replay;								// replay
 	bool m_Exiting;									// set to true and this class will be deleted next update
@@ -72,6 +73,7 @@ protected:
 	string m_AnnounceMessage;						// a message to be sent every m_AnnounceInterval seconds
 	string m_StatString;							// the stat string when the game started (used when saving replays)
 	string m_KickVotePlayer;						// the player to be kicked with the currently running kick vote
+	string m_HCLCommandString;						// the "HostBot Command Library" command string, used to pass a limited amount of data to specially designed maps
 	uint32_t m_RandomSeed;							// the random seed sent to the Warcraft III clients
 	uint32_t m_HostCounter;							// a unique game number
 	uint32_t m_Latency;								// the number of ms to wait between sending action packets (we queue any received during this time)
@@ -102,6 +104,7 @@ protected:
 	bool m_Locked;									// if the game owner is the only one allowed to run game commands or not
 	bool m_RefreshMessages;							// if we should display "game refreshed..." messages or not
 	bool m_RefreshError;							// if there was an error refreshing the game
+	bool m_RefreshRehosted;							// if we just rehosted and are waiting for confirmation that it was successful
 	bool m_MuteAll;									// if we should stop forwarding ingame chat messages targeted for all players or not
 	bool m_MuteLobby;								// if we should stop forwarding lobby chat messages
 	bool m_CountDownStarted;						// if the game start countdown has started or not
@@ -141,8 +144,10 @@ public:
 	virtual void SetRefreshError( bool nRefreshError )				{ m_RefreshError = nRefreshError; }
 	virtual void SetMatchMaking( bool nMatchMaking )				{ m_MatchMaking = nMatchMaking; }
 
+	virtual uint32_t GetSlotsOccupied( );
 	virtual uint32_t GetSlotsOpen( );
 	virtual uint32_t GetNumPlayers( );
+	virtual uint32_t GetNumHumanPlayers( );
 	virtual string GetDescription( );
 
 	virtual void SetAnnounce( uint32_t interval, string message );
@@ -202,6 +207,7 @@ public:
 
 	// these events are called outside of any iterations
 
+	virtual void EventGameRefreshed( string server );
 	virtual void EventGameStarted( );
 	virtual void EventGameLoaded( );
 

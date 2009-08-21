@@ -217,6 +217,19 @@ public:
 	string MapDownloadsDisabled( );
 	string MapDownloadsEnabled( );
 	string MapDownloadsConditional( );
+	string SettingHCL( string HCL );
+	string UnableToSetHCLInvalid( );
+	string UnableToSetHCLTooLong( );
+	string TheHCLIs( string HCL );
+	string TheHCLIsTooLongUseForceToStart( );
+	string ClearingHCL( );
+	string TryingToRehostAsPrivateGame( string gamename );
+	string TryingToRehostAsPublicGame( string gamename );
+	string RehostWasSuccessful( );
+	string TryingToJoinTheGameButBannedByName( string victim );
+	string TryingToJoinTheGameButBannedByIP( string victim, string ip, string bannedname );
+	string HasBannedName( string victim );
+	string HasBannedIP( string victim, string ip, string bannedname );
 };
 
 #endif

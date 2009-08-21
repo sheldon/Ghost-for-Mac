@@ -174,11 +174,6 @@ CTCPSocket :: CTCPSocket( ) : CSocket( )
 #else
 	fcntl( m_Socket, F_SETFL, fcntl( m_Socket, F_GETFL ) | O_NONBLOCK );
 #endif
-
-	// disable Nagle's algorithm for better performance
-
-	/* int OptVal = 1;
-	setsockopt( m_Socket, IPPROTO_TCP, TCP_NODELAY, (const char *)&OptVal, sizeof( int ) ); */
 }
 
 CTCPSocket :: CTCPSocket( SOCKET nSocket, struct sockaddr_in nSIN ) : CSocket( nSocket, nSIN )
@@ -195,11 +190,6 @@ CTCPSocket :: CTCPSocket( SOCKET nSocket, struct sockaddr_in nSIN ) : CSocket( n
 #else
 	fcntl( m_Socket, F_SETFL, fcntl( m_Socket, F_GETFL ) | O_NONBLOCK );
 #endif
-
-	// disable Nagle's algorithm for better performance
-
-	/* int OptVal = 1;
-	setsockopt( m_Socket, IPPROTO_TCP, TCP_NODELAY, (const char *)&OptVal, sizeof( int ) ); */
 }
 
 CTCPSocket :: ~CTCPSocket( )
@@ -226,11 +216,6 @@ void CTCPSocket :: Reset( )
 #else
 	fcntl( m_Socket, F_SETFL, fcntl( m_Socket, F_GETFL ) | O_NONBLOCK );
 #endif
-
-	// disable Nagle's algorithm for better performance
-
-	/* int OptVal = 1;
-	setsockopt( m_Socket, IPPROTO_TCP, TCP_NODELAY, (const char *)&OptVal, sizeof( int ) ); */
 }
 
 void CTCPSocket :: PutBytes( string bytes )
@@ -317,6 +302,16 @@ void CTCPSocket :: Disconnect( )
 		shutdown( m_Socket, SHUT_RDWR );
 
 	m_Connected = false;
+}
+
+void CTCPSocket :: SetNoDelay( bool noDelay )
+{
+	int OptVal = 0;
+
+	if( noDelay )
+		OptVal = 1;
+
+	setsockopt( m_Socket, IPPROTO_TCP, TCP_NODELAY, (const char *)&OptVal, sizeof( int ) );
 }
 
 //
@@ -548,11 +543,25 @@ CUDPSocket :: CUDPSocket( ) : CSocket( )
 
 	int OptVal = 1;
 	setsockopt( m_Socket, SOL_SOCKET, SO_BROADCAST, (const char *)&OptVal, sizeof( int ) );
+	
+	// set default broadcast target
+	m_BroadcastTarget.s_addr = INADDR_BROADCAST;
 }
 
 CUDPSocket :: ~CUDPSocket( )
 {
 
+}
+
+bool CUDPSocket :: SendTo( struct sockaddr_in sin, string message )
+{
+	if( m_Socket == INVALID_SOCKET || m_HasError )
+		return false;
+
+	if( sendto( m_Socket, message.c_str( ), message.size( ), 0, (struct sockaddr *)&sin, sizeof( sin ) ) == -1 )
+		return false;
+
+	return true;
 }
 
 bool CUDPSocket :: SendTo( struct sockaddr_in sin, BYTEARRAY message )
@@ -563,17 +572,6 @@ bool CUDPSocket :: SendTo( struct sockaddr_in sin, BYTEARRAY message )
 	string MessageString = string( message.begin( ), message.end( ) );
 
 	if( sendto( m_Socket, MessageString.c_str( ), MessageString.size( ), 0, (struct sockaddr *)&sin, sizeof( sin ) ) == -1 )
-		return false;
-
-	return true;
-}
-
-bool CUDPSocket :: SendTo( struct sockaddr_in sin, string message )
-{
-	if( m_Socket == INVALID_SOCKET || m_HasError )
-		return false;
-
-	if( sendto( m_Socket, message.c_str( ), message.size( ), 0, (struct sockaddr *)&sin, sizeof( sin ) ) == -1 )
 		return false;
 
 	return true;
@@ -614,7 +612,7 @@ bool CUDPSocket :: Broadcast( uint16_t port, BYTEARRAY message )
 
 	struct sockaddr_in sin;
 	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = INADDR_BROADCAST;
+	sin.sin_addr.s_addr = m_BroadcastTarget.s_addr;
 	sin.sin_port = htons( port );
 
 	string MessageString = string( message.begin( ), message.end( ) );
@@ -626,6 +624,44 @@ bool CUDPSocket :: Broadcast( uint16_t port, BYTEARRAY message )
 	}
 
 	return true;
+}
+
+void CUDPSocket :: SetBroadcastTarget( string subnet )
+{
+	if( subnet.empty( ) )
+	{
+		CONSOLE_Print( "[UDPSOCKET] using default broadcast target" );
+		m_BroadcastTarget.s_addr = INADDR_BROADCAST;
+	}
+	else
+	{
+		// this function does not check whether the given subnet is a valid subnet the user is on
+		// convert string representation of ip/subnet to in_addr
+
+		CONSOLE_Print( "[UDPSOCKET] using broadcast target [" + subnet + "]" );
+		m_BroadcastTarget.s_addr = inet_addr( subnet.c_str( ) );
+
+		// if conversion fails, inet_addr( ) returns INADDR_NONE
+
+		if( m_BroadcastTarget.s_addr == INADDR_NONE )
+		{
+			CONSOLE_Print( "[UDPSOCKET] invalid broadcast target, using default broadcast target" );
+			m_BroadcastTarget.s_addr = INADDR_BROADCAST;
+		}
+	}
+}
+
+void CUDPSocket :: SetDontRoute( bool dontRoute )
+{
+	int OptVal = 0;
+
+	if( dontRoute )
+		OptVal = 1;
+
+	// don't route packets; make them ignore routes set by routing table and send them to the interface
+	// belonging to the target address directly
+
+	setsockopt( m_Socket, SOL_SOCKET, SO_DONTROUTE, (const char *)&OptVal, sizeof( int ) );
 }
 
 //

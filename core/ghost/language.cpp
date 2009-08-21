@@ -1296,3 +1296,88 @@ string CLanguage :: MapDownloadsConditional( )
 {
 	return m_CFG->GetString( "lang_0181", "lang_0181" );
 }
+
+string CLanguage :: SettingHCL( string HCL )
+{
+	string Out = m_CFG->GetString( "lang_0182", "lang_0182" );
+	Replace( Out, "$HCL$", HCL );
+	return Out;
+}
+
+string CLanguage :: UnableToSetHCLInvalid( )
+{
+	return m_CFG->GetString( "lang_0183", "lang_0183" );
+}
+
+string CLanguage :: UnableToSetHCLTooLong( )
+{
+	return m_CFG->GetString( "lang_0184", "lang_0184" );
+}
+
+string CLanguage :: TheHCLIs( string HCL )
+{
+	string Out = m_CFG->GetString( "lang_0185", "lang_0185" );
+	Replace( Out, "$HCL$", HCL );
+	return Out;
+}
+
+string CLanguage :: TheHCLIsTooLongUseForceToStart( )
+{
+	return m_CFG->GetString( "lang_0186", "lang_0186" );
+}
+
+string CLanguage :: ClearingHCL( )
+{
+	return m_CFG->GetString( "lang_0187", "lang_0187" );
+}
+
+string CLanguage :: TryingToRehostAsPrivateGame( string gamename )
+{
+	string Out = m_CFG->GetString( "lang_0188", "lang_0188" );
+	Replace( Out, "$GAMENAME$", gamename );
+	return Out;
+}
+
+string CLanguage :: TryingToRehostAsPublicGame( string gamename )
+{
+	string Out = m_CFG->GetString( "lang_0189", "lang_0189" );
+	Replace( Out, "$GAMENAME$", gamename );
+	return Out;
+}
+
+string CLanguage :: RehostWasSuccessful( )
+{
+	return m_CFG->GetString( "lang_0190", "lang_0190" );
+}
+
+string CLanguage :: TryingToJoinTheGameButBannedByName( string victim )
+{
+	string Out = m_CFG->GetString( "lang_0191", "lang_0191" );
+	Replace( Out, "$VICTIM$", victim );
+	return Out;
+}
+
+string CLanguage :: TryingToJoinTheGameButBannedByIP( string victim, string ip, string bannedname )
+{
+	string Out = m_CFG->GetString( "lang_0192", "lang_0192" );
+	Replace( Out, "$VICTIM$", victim );
+	Replace( Out, "$IP$", ip );
+	Replace( Out, "$BANNEDNAME$", bannedname );
+	return Out;
+}
+
+string CLanguage :: HasBannedName( string victim )
+{
+	string Out = m_CFG->GetString( "lang_0193", "lang_0193" );
+	Replace( Out, "$VICTIM$", victim );
+	return Out;
+}
+
+string CLanguage :: HasBannedIP( string victim, string ip, string bannedname )
+{
+	string Out = m_CFG->GetString( "lang_0194", "lang_0194" );
+	Replace( Out, "$VICTIM$", victim );
+	Replace( Out, "$IP$", ip );
+	Replace( Out, "$BANNEDNAME$", bannedname );
+	return Out;
+}

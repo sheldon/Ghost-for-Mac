@@ -445,6 +445,14 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 						{
 							Matches++;
 							LastMatch = *i;
+
+							// if the name matches exactly stop any further matching
+
+							if( TestName == VictimLower )
+							{
+								Matches = 1;
+								break;
+							}
 						}
 					}
 
@@ -656,6 +664,16 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 			{
 				for( vector<CBNET *> :: iterator i = m_GHost->m_BNETs.begin( ); i != m_GHost->m_BNETs.end( ); i++ )
 					m_PairedBanChecks.push_back( PairedBanCheck( User, m_GHost->m_DB->ThreadedBanCheck( (*i)->GetServer( ), Payload, string( ) ) ) );
+			}
+
+			//
+			// !CLEARHCL
+			//
+
+			if( Command == "clearhcl" && !m_CountDownStarted )
+			{
+				m_HCLCommandString.clear( );
+				SendAllChat( m_GHost->m_Language->ClearingHCL( ) );
 			}
 
 			//
@@ -1007,9 +1025,45 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 
 					if( i != m_Players.end( ) - 1 )
 						Froms += ", ";
+
+					if( ( m_GameLoading || m_GameLoaded ) && Froms.size( ) > 100 )
+					{
+						// cut the text into multiple lines ingame
+
+						SendAllChat( Froms );
+						Froms.clear( );
+					}
 				}
 
-				SendAllChat( Froms );
+				if( !Froms.empty( ) )
+					SendAllChat( Froms );
+			}
+
+			//
+			// !HCL
+			//
+
+			if( Command == "hcl" && !m_CountDownStarted )
+			{
+				if( !Payload.empty( ) )
+				{
+					if( Payload.size( ) <= m_Slots.size( ) )
+					{
+						string HCLChars = "abcdefghijklmnopqrstuvwxyz0123456789 -=,.";
+
+						if( Payload.find_first_not_of( HCLChars ) == string :: npos )
+						{
+							m_HCLCommandString = Payload;
+							SendAllChat( m_GHost->m_Language->SettingHCL( m_HCLCommandString ) );
+						}
+						else
+							SendAllChat( m_GHost->m_Language->UnableToSetHCLInvalid( ) );
+					}
+					else
+						SendAllChat( m_GHost->m_Language->UnableToSetHCLTooLong( ) );
+				}
+				else
+					SendAllChat( m_GHost->m_Language->TheHCLIs( m_HCLCommandString ) );
 			}
 
 			//
@@ -1238,9 +1292,18 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 
 					if( i != SortedPlayers.end( ) - 1 )
 						Pings += ", ";
+
+					if( ( m_GameLoading || m_GameLoaded ) && Pings.size( ) > 100 )
+					{
+						// cut the text into multiple lines ingame
+
+						SendAllChat( Pings );
+						Pings.clear( );
+					}
 				}
 
-				SendAllChat( Pings );
+				if( !Pings.empty( ) )
+					SendAllChat( Pings );
 
 				if( Kicked > 0 )
 					SendAllChat( m_GHost->m_Language->KickingPlayersWithPingsGreaterThan( UTIL_ToString( Kicked ), UTIL_ToString( KickPing ) ) );
@@ -1253,13 +1316,20 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 			if( Command == "priv" && !Payload.empty( ) && !m_CountDownStarted && !m_SaveGame )
 			{
 				CONSOLE_Print( "[GAME: " + m_GameName + "] trying to rehost as private game [" + Payload + "]" );
+				SendAllChat( m_GHost->m_Language->TryingToRehostAsPrivateGame( Payload ) );
 				m_GameState = GAME_PRIVATE;
 				m_GameName = Payload;
 				m_HostCounter = m_GHost->m_HostCounter++;
 				m_RefreshError = false;
+				m_RefreshRehosted = true;
 
 				for( vector<CBNET *> :: iterator i = m_GHost->m_BNETs.begin( ); i != m_GHost->m_BNETs.end( ); i++ )
 				{
+					// unqueue any existing game refreshes because we're going to assume the next successful game refresh indicates that the rehost worked
+					// this ignores the fact that it's possible a game refresh was just sent and no response has been received yet
+					// we assume this won't happen very often since the only downside is a potential false positive
+
+					(*i)->UnqueueGameRefreshes( );
 					(*i)->QueueGameUncreate( );
 					(*i)->QueueEnterChat( );
 
@@ -1282,13 +1352,20 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 			if( Command == "pub" && !Payload.empty( ) && !m_CountDownStarted && !m_SaveGame )
 			{
 				CONSOLE_Print( "[GAME: " + m_GameName + "] trying to rehost as public game [" + Payload + "]" );
+				SendAllChat( m_GHost->m_Language->TryingToRehostAsPublicGame( Payload ) );
 				m_GameState = GAME_PUBLIC;
 				m_GameName = Payload;
 				m_HostCounter = m_GHost->m_HostCounter++;
 				m_RefreshError = false;
+				m_RefreshRehosted = true;
 
 				for( vector<CBNET *> :: iterator i = m_GHost->m_BNETs.begin( ); i != m_GHost->m_BNETs.end( ); i++ )
 				{
+					// unqueue any existing game refreshes because we're going to assume the next successful game refresh indicates that the rehost worked
+					// this ignores the fact that it's possible a game refresh was just sent and no response has been received yet
+					// we assume this won't happen very often since the only downside is a potential false positive
+
+					(*i)->UnqueueGameRefreshes( );
 					(*i)->QueueGameUncreate( );
 					(*i)->QueueEnterChat( );
 
@@ -1364,7 +1441,7 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 						BYTEARRAY MapHeight;
 						MapHeight.push_back( 0 );
 						MapHeight.push_back( 0 );
-						m_GHost->m_UDPSocket->SendTo( IP, Port, m_Protocol->SEND_W3GS_GAMEINFO( MapGameType, m_Map->GetMapGameFlags( ), MapWidth, MapHeight, m_GameName, "Varlock", GetTime( ) - m_CreationTime, "Save\\Multiplayer\\" + m_SaveGame->GetFileNameNoPath( ), m_SaveGame->GetMagicNumber( ), 12, 12, m_HostPort, m_HostCounter ) );
+						m_GHost->m_UDPSocket->SendTo( IP, Port, m_Protocol->SEND_W3GS_GAMEINFO( m_GHost->m_LANWar3Version, MapGameType, m_Map->GetMapGameFlags( ), MapWidth, MapHeight, m_GameName, "Varlock", GetTime( ) - m_CreationTime, "Save\\Multiplayer\\" + m_SaveGame->GetFileNameNoPath( ), m_SaveGame->GetMagicNumber( ), 12, 12, m_HostPort, m_HostCounter ) );
 					}
 					else
 					{
@@ -1372,7 +1449,7 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 						MapGameType.push_back( 0 );
 						MapGameType.push_back( 0 );
 						MapGameType.push_back( 0 );
-						m_GHost->m_UDPSocket->SendTo( IP, Port, m_Protocol->SEND_W3GS_GAMEINFO( MapGameType, m_Map->GetMapGameFlags( ), m_Map->GetMapWidth( ), m_Map->GetMapHeight( ), m_GameName, "Varlock", GetTime( ) - m_CreationTime, m_Map->GetMapPath( ), m_Map->GetMapCRC( ), 12, 12, m_HostPort, m_HostCounter ) );
+						m_GHost->m_UDPSocket->SendTo( IP, Port, m_Protocol->SEND_W3GS_GAMEINFO( m_GHost->m_LANWar3Version, MapGameType, m_Map->GetMapGameFlags( ), m_Map->GetMapWidth( ), m_Map->GetMapHeight( ), m_GameName, "Varlock", GetTime( ) - m_CreationTime, m_Map->GetMapPath( ), m_Map->GetMapCRC( ), 12, 12, m_HostPort, m_HostCounter ) );
 					}
 				}
 			}
@@ -1604,20 +1681,20 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 	if( Command == "votekick" && m_GHost->m_VoteKickAllowed && !Payload.empty( ) )
 	{
 		if( !m_KickVotePlayer.empty( ) )
-			SendAllChat( m_GHost->m_Language->UnableToVoteKickAlreadyInProgress( ) );
+			SendChat( player, m_GHost->m_Language->UnableToVoteKickAlreadyInProgress( ) );
 		else if( m_Players.size( ) == 2 )
-			SendAllChat( m_GHost->m_Language->UnableToVoteKickNotEnoughPlayers( ) );
+			SendChat( player, m_GHost->m_Language->UnableToVoteKickNotEnoughPlayers( ) );
 		else
 		{
 			CGamePlayer *LastMatch = NULL;
 			uint32_t Matches = GetPlayerFromNamePartial( Payload, &LastMatch );
 
 			if( Matches == 0 )
-				SendAllChat( m_GHost->m_Language->UnableToVoteKickNoMatchesFound( Payload ) );
+				SendChat( player, m_GHost->m_Language->UnableToVoteKickNoMatchesFound( Payload ) );
 			else if( Matches == 1 )
 			{
 				if( LastMatch->GetReserved( ) )
-					SendAllChat( m_GHost->m_Language->UnableToVoteKickPlayerIsReserved( LastMatch->GetName( ) ) );
+					SendChat( player, m_GHost->m_Language->UnableToVoteKickPlayerIsReserved( LastMatch->GetName( ) ) );
 				else
 				{
 					m_KickVotePlayer = LastMatch->GetName( );
@@ -1628,12 +1705,12 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 
 					player->SetKickVote( true );
 					CONSOLE_Print( "[GAME: " + m_GameName + "] votekick against player [" + m_KickVotePlayer + "] started by player [" + User + "]" );
-					SendAllChat( m_GHost->m_Language->StartedVoteKick( LastMatch->GetName( ), User, UTIL_ToString( (uint32_t)ceil( ( GetNumPlayers( ) - 1 ) * (float)m_GHost->m_VoteKickPercentage / 100 ) - 1 ) ) );
+					SendAllChat( m_GHost->m_Language->StartedVoteKick( LastMatch->GetName( ), User, UTIL_ToString( (uint32_t)ceil( ( GetNumHumanPlayers( ) - 1 ) * (float)m_GHost->m_VoteKickPercentage / 100 ) - 1 ) ) );
 					SendAllChat( m_GHost->m_Language->TypeYesToVote( string( 1, m_GHost->m_CommandTrigger ) ) );
 				}
 			}
 			else
-				SendAllChat( m_GHost->m_Language->UnableToVoteKickFoundMoreThanOneMatch( Payload ) );
+				SendChat( player, m_GHost->m_Language->UnableToVoteKickFoundMoreThanOneMatch( Payload ) );
 		}
 	}
 
@@ -1644,7 +1721,7 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 	if( Command == "yes" && !m_KickVotePlayer.empty( ) && player->GetName( ) != m_KickVotePlayer && !player->GetKickVote( ) )
 	{
 		player->SetKickVote( true );
-		uint32_t VotesNeeded = (uint32_t)ceil( ( GetNumPlayers( ) - 1 ) * (float)m_GHost->m_VoteKickPercentage / 100 );
+		uint32_t VotesNeeded = (uint32_t)ceil( ( GetNumHumanPlayers( ) - 1 ) * (float)m_GHost->m_VoteKickPercentage / 100 );
 		uint32_t Votes = 0;
 
 		for( vector<CGamePlayer *> :: iterator i = m_Players.begin( ); i != m_Players.end( ); i++ )
@@ -1670,7 +1747,7 @@ void CGame :: EventPlayerBotCommand( CGamePlayer *player, string command, string
 				if( !m_GameLoading && !m_GameLoaded )
 					OpenSlot( GetSIDFromPID( Victim->GetPID( ) ), false );
 
-				CONSOLE_Print( "[GAME: " + m_GameName + "] votekick against player [" + m_KickVotePlayer + "] passed with " + UTIL_ToString( Votes ) + "/" + UTIL_ToString( GetNumPlayers( ) ) + " votes" );
+				CONSOLE_Print( "[GAME: " + m_GameName + "] votekick against player [" + m_KickVotePlayer + "] passed with " + UTIL_ToString( Votes ) + "/" + UTIL_ToString( GetNumHumanPlayers( ) ) + " votes" );
 				SendAllChat( m_GHost->m_Language->VoteKickPassed( m_KickVotePlayer ) );
 			}
 			else
@@ -1737,11 +1814,11 @@ void CAdminGame :: SendWelcomeMessage( CGamePlayer *player )
 	SendChat( player, " " );
 	SendChat( player, "GHost++ Admin Game                    http://forum.codelain.com/" );
 	SendChat( player, "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-" );
-	SendChat( player, "Commands: addadmin, autohost, checkadmin, countadmins" );
-	SendChat( player, "Commands: deladmin, disable, downloads, enable, end" );
-	SendChat( player, "Commands: exit, getgame, getgames, hostsg, load, loadsg" );
-	SendChat( player, "Commands: map, password, priv, privby, pub, pubby, rload" );
-	SendChat( player, "Commands: rmap, quit, saygame, saygames, unhost" );
+	SendChat( player, "Commands: addadmin, autohost, autohostmm, checkadmin" );
+	SendChat( player, "Commands: countadmins, deladmin, disable, downloads" );
+	SendChat( player, "Commands: enable, end, exit, getgame, getgames, hostsg" );
+	SendChat( player, "Commands: load, loadsg, map, password, priv, privby" );
+	SendChat( player, "Commands: pub, pubby, quit, saygame, saygames, unhost" );
 }
 
 void CAdminGame :: EventPlayerJoined( CPotentialPlayer *potential, CIncomingJoinPlayer *joinPlayer )
@@ -2193,14 +2270,13 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 		}
 
 		if( Command == "hostsg" && !Payload.empty( ) )
-			m_GHost->CreateGame( GAME_PRIVATE, true, Payload, User, User, string( ), false );
+			m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, true, Payload, User, User, string( ), false );
 
 		//
 		// !LOAD (load config file)
-		// !MAP
 		//
 
-		if( Command == "load" || Command == "map" )
+		if( Command == "load" )
 		{
 			if( Payload.empty( ) )
 				SendChat( player, m_GHost->m_Language->CurrentlyLoadedMapCFGIs( m_GHost->m_Map->GetCFGFile( ) ) );
@@ -2229,7 +2305,9 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 						for( directory_iterator i( MapCFGPath ); i != EndIterator; i++ )
 						{
 							string FileName = i->filename( );
+							string Stem = i->path( ).stem( );
 							transform( FileName.begin( ), FileName.end( ), FileName.begin( ), (int(*)(int))tolower );
+							transform( Stem.begin( ), Stem.end( ), Stem.begin( ), (int(*)(int))tolower );
 							bool Matched = false;
 
 							if( m_GHost->m_UseRegexes )
@@ -2240,7 +2318,7 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 							else if( FileName.find( Pattern ) != string :: npos )
 								Matched = true;
 
-							if( !is_directory( i->status( ) ) && Matched )
+							if( !is_directory( i->status( ) ) && i->path( ).extension( ) == ".cfg" && Matched )
 							{
 								LastMatch = i->path( );
 								Matches++;
@@ -2249,6 +2327,14 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 									FoundMapConfigs = i->filename( );
 								else
 									FoundMapConfigs += ", " + i->filename( );
+
+								// if we aren't using regexes and the pattern matches the filename exactly, with or without extension, stop any further matching
+
+								if( !m_GHost->m_UseRegexes && ( FileName == Pattern || Stem == Pattern ) )
+								{
+									Matches = 1;
+									break;
+								}
 							}
 						}
 
@@ -2257,20 +2343,10 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 						else if( Matches == 1 )
 						{
 							string File = LastMatch.filename( );
-
-							// we have to be careful here because we didn't copy the map data when creating the game (there's only one global copy)
-							// therefore if we change the map data while a game is in the lobby everything will get screwed up
-							// the easiest solution is to simply reject the command if a game is in the lobby
-
-							if( m_GHost->m_CurrentGame )
-								SendChat( player, m_GHost->m_Language->UnableToLoadConfigFileGameInLobby( ) );
-							else
-							{
-								SendChat( player, m_GHost->m_Language->LoadingConfigFile( File ) );
-								CConfig MapCFG;
-								MapCFG.Read( LastMatch.string( ) );
-								m_GHost->m_Map->Load( &MapCFG, File );
-							}
+							SendChat( player, m_GHost->m_Language->LoadingConfigFile( m_GHost->m_MapCFGPath + File ) );
+							CConfig MapCFG;
+							MapCFG.Read( LastMatch.string( ) );
+							m_GHost->m_Map->Load( &MapCFG, m_GHost->m_MapCFGPath + File );
 						}
 						else
 							SendChat( player, m_GHost->m_Language->FoundMapConfigs( FoundMapConfigs ) );
@@ -2318,67 +2394,10 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 		}
 
 		//
-		// !PRIV (host private game)
+		// !MAP (load map file)
 		//
 
-		if( Command == "priv" && !Payload.empty( ) )
-			m_GHost->CreateGame( GAME_PRIVATE, false, Payload, User, User, string( ), false );
-
-		//
-		// !PRIVBY (host private game by other player)
-		//
-
-		if( Command == "privby" && !Payload.empty( ) )
-		{
-			// extract the owner and the game name
-			// e.g. "Varlock dota 6.54b arem ~~~" -> owner: "Varlock", game name: "dota 6.54b arem ~~~"
-
-			string Owner;
-			string GameName;
-			string :: size_type GameNameStart = Payload.find( " " );
-
-			if( GameNameStart != string :: npos )
-			{
-				Owner = Payload.substr( 0, GameNameStart );
-				GameName = Payload.substr( GameNameStart + 1 );
-				m_GHost->CreateGame( GAME_PRIVATE, false, GameName, Owner, User, string( ), false );
-			}
-		}
-
-		//
-		// !PUB (host public game)
-		//
-
-		if( Command == "pub" && !Payload.empty( ) )
-			m_GHost->CreateGame( GAME_PUBLIC, false, Payload, User, User, string( ), false );
-
-		//
-		// !PUBBY (host public game by other player)
-		//
-
-		if( Command == "pubby" && !Payload.empty( ) )
-		{
-			// extract the owner and the game name
-			// e.g. "Varlock dota 6.54b arem ~~~" -> owner: "Varlock", game name: "dota 6.54b arem ~~~"
-
-			string Owner;
-			string GameName;
-			string :: size_type GameNameStart = Payload.find( " " );
-
-			if( GameNameStart != string :: npos )
-			{
-				Owner = Payload.substr( 0, GameNameStart );
-				GameName = Payload.substr( GameNameStart + 1 );
-				m_GHost->CreateGame( GAME_PUBLIC, false, GameName, Owner, User, string( ), false );
-			}
-		}
-
-		//
-		// !RLOAD
-		// !RMAP
-		//
-
-		if( Command == "rload" || Command == "rmap" )
+		if( Command == "map" )
 		{
 			if( Payload.empty( ) )
 				SendChat( player, m_GHost->m_Language->CurrentlyLoadedMapCFGIs( m_GHost->m_Map->GetCFGFile( ) ) );
@@ -2407,7 +2426,9 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 						for( directory_iterator i( MapPath ); i != EndIterator; i++ )
 						{
 							string FileName = i->filename( );
+							string Stem = i->path( ).stem( );
 							transform( FileName.begin( ), FileName.end( ), FileName.begin( ), (int(*)(int))tolower );
+							transform( Stem.begin( ), Stem.end( ), Stem.begin( ), (int(*)(int))tolower );
 							bool Matched = false;
 
 							if( m_GHost->m_UseRegexes )
@@ -2427,6 +2448,14 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 									FoundMaps = i->filename( );
 								else
 									FoundMaps += ", " + i->filename( );
+
+								// if we aren't using regexes and the pattern matches the filename exactly, with or without extension, stop any further matching
+
+								if( !m_GHost->m_UseRegexes && ( FileName == Pattern || Stem == Pattern ) )
+								{
+									Matches = 1;
+									break;
+								}
 							}
 						}
 
@@ -2435,24 +2464,14 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 						else if( Matches == 1 )
 						{
 							string File = LastMatch.filename( );
+							SendChat( player, m_GHost->m_Language->LoadingConfigFile( File ) );
 
-							// we have to be careful here because we didn't copy the map data when creating the game (there's only one global copy)
-							// therefore if we change the map data while a game is in the lobby everything will get screwed up
-							// the easiest solution is to simply reject the command if a game is in the lobby
+							// hackhack: create a config file in memory with the required information to load the map
 
-							if( m_GHost->m_CurrentGame )
-								SendChat( player, m_GHost->m_Language->UnableToLoadConfigFileGameInLobby( ) );
-							else
-							{
-								SendChat( player, m_GHost->m_Language->LoadingConfigFile( File ) );
-
-								// hackhack: create a config file in memory with the required information to load the map
-
-								CConfig MapCFG;
-								MapCFG.Set( "map_path", "Maps\\Download\\" + File );
-								MapCFG.Set( "map_localpath", File );
-								m_GHost->m_Map->Load( &MapCFG, File );
-							}
+							CConfig MapCFG;
+							MapCFG.Set( "map_path", "Maps\\Download\\" + File );
+							MapCFG.Set( "map_localpath", File );
+							m_GHost->m_Map->Load( &MapCFG, File );
 						}
 						else
 							SendChat( player, m_GHost->m_Language->FoundMaps( FoundMaps ) );
@@ -2463,6 +2482,62 @@ void CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 					CONSOLE_Print( string( "[ADMINGAME] error listing maps - caught exception [" ) + ex.what( ) + "]" );
 					SendChat( player, m_GHost->m_Language->ErrorListingMaps( ) );
 				}
+			}
+		}
+
+		//
+		// !PRIV (host private game)
+		//
+
+		if( Command == "priv" && !Payload.empty( ) )
+			m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, false, Payload, User, User, string( ), false );
+
+		//
+		// !PRIVBY (host private game by other player)
+		//
+
+		if( Command == "privby" && !Payload.empty( ) )
+		{
+			// extract the owner and the game name
+			// e.g. "Varlock dota 6.54b arem ~~~" -> owner: "Varlock", game name: "dota 6.54b arem ~~~"
+
+			string Owner;
+			string GameName;
+			string :: size_type GameNameStart = Payload.find( " " );
+
+			if( GameNameStart != string :: npos )
+			{
+				Owner = Payload.substr( 0, GameNameStart );
+				GameName = Payload.substr( GameNameStart + 1 );
+				m_GHost->CreateGame( m_GHost->m_Map, GAME_PRIVATE, false, GameName, Owner, User, string( ), false );
+			}
+		}
+
+		//
+		// !PUB (host public game)
+		//
+
+		if( Command == "pub" && !Payload.empty( ) )
+			m_GHost->CreateGame( m_GHost->m_Map, GAME_PUBLIC, false, Payload, User, User, string( ), false );
+
+		//
+		// !PUBBY (host public game by other player)
+		//
+
+		if( Command == "pubby" && !Payload.empty( ) )
+		{
+			// extract the owner and the game name
+			// e.g. "Varlock dota 6.54b arem ~~~" -> owner: "Varlock", game name: "dota 6.54b arem ~~~"
+
+			string Owner;
+			string GameName;
+			string :: size_type GameNameStart = Payload.find( " " );
+
+			if( GameNameStart != string :: npos )
+			{
+				Owner = Payload.substr( 0, GameNameStart );
+				GameName = Payload.substr( GameNameStart + 1 );
+				m_GHost->CreateGame( m_GHost->m_Map, GAME_PUBLIC, false, GameName, Owner, User, string( ), false );
 			}
 		}
 

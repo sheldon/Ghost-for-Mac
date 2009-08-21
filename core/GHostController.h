@@ -17,25 +17,20 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "TaskWrapper.h"
-#import "AsyncUdpSocket.h"
+#import "ghost4mac/TaskWrapper.h"
 
 @interface GHostController : NSObject <TaskWrapperController> {
 	TaskWrapper *ghost;
 	BOOL running;
-	AsyncUdpSocket *cmdSock;
 	NSString *ghostDir;
-	NSString *config;
+	NSMutableString *consoleBuffer;
 }
 extern NSString * const GHConsoleOutput;
-extern NSString * const GHSocketOutput;
 extern NSString * const GHProcessStarted;
 extern NSString * const GHProcessStopped;
 @property BOOL running;
 @property(copy) NSString *ghostDir;
-@property(copy) NSString *config;
 + (GHostController*)sharedController;
 - (void)startWithConfig:(NSString*)cfg;
 - (void)stop;
-- (void)sendCommand:(NSString*)cmd;
 @end
