@@ -63,7 +63,7 @@
 	for(NSString *cfg in configs)
 	{
 		if ([[cfg pathExtension] caseInsensitiveCompare: @"w3x"] == NSOrderedSame /*&& ![[mapconfigController arrangedObjects] containsObject:cfg]*/)
-			[mapconfigController addObject: [[GHostConfigFile alloc] initWithFile:[mapDir stringByAppendingPathComponent:cfg]]];
+			[mapconfigController addObject: [[[GHostConfigFile alloc] initWithFile:[mapDir stringByAppendingPathComponent:cfg]] autorelease]];
 	}
 }
 

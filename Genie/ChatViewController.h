@@ -17,6 +17,7 @@
 	BOOL hideCommands;
 	BOOL autoScroll;
 	NSPredicate *chatFilter;
+	NSImage *favIcon;
 }
 @property(retain) NSMutableArray *messages;
 @property BOOL hideCommands;

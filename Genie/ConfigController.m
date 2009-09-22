@@ -74,7 +74,7 @@
 		//NSLog(@"%@ - %@", cfg, [[cfg pathExtension] lowercaseString]);
 		if ([[cfg pathExtension] caseInsensitiveCompare: @"cfg"] == NSOrderedSame)
 		{
-			GHostConfigFile *file = [[GHostConfigFile alloc] initWithFile:[[UIController getConfigDir] stringByAppendingPathComponent:cfg]];
+			GHostConfigFile *file = [[[GHostConfigFile alloc] initWithFile:[[UIController getConfigDir] stringByAppendingPathComponent:cfg]] autorelease];
 			//[cfgArrayController addObject:file];
 			//[secondController rearrangeObjects];
 			[secondController addObject:file];

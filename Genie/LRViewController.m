@@ -195,9 +195,9 @@ BOOL lol=NO;
 	//[oldView removeFromSuperview];
 	//[newView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	// Resize the window
-	NSRect newWindowFrame = [[self window] frameRectForContentRect:[newView frame]];
+	//NSRect newWindowFrame = [[self window] frameRectForContentRect:[newView frame]];
 	
-	newWindowFrame = [self newFrameForNewContentView3:newView];
+	NSRect newWindowFrame = [self newFrameForNewContentView3:newView];
 	//[[[self window] animator] setFrame:newWindowFrame display:YES animate:YES];
 	[NSAnimationContext beginGrouping];
 	if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)
@@ -237,10 +237,11 @@ BOOL lol=NO;
 {
 	[self _changeToModule:[_modules objectAtIndex:[sender selectedSegment]]];
 }
-- (void)init
+- (id)init
 {
 	[self setAutoresizesSubviews:YES];
 	_currentModule=nil;
 	_bottomOffset=26;
+	return self;
 }
 @end

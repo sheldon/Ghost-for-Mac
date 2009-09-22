@@ -39,6 +39,8 @@
 {
 	//[self loadView];
 	//[self updatePredicate];
+	//ChatMessage *msg = [ChatMessage chatMessageWithText:@"test" sender:@"nobody" date:[NSDate date] image:favIcon];
+	//[self addMessage:msg];
 }
 - (void)setHideCommands:(BOOL)value
 {
@@ -70,6 +72,18 @@
 	hideCommands = YES;
 	autoScroll = YES;
 	[self updatePredicate];
+	
+	
+	/*favIcon = [[NSImage alloc] initWithSize:NSMakeSize(32, 32)];
+	NSImage *image1 = [NSImage imageNamed:NSImageNameEveryone];
+	NSImage *image2 = [NSImage imageNamed:@"heart32.png"];
+	favIcon = image2;*/
+	/*[image2 setSize:NSMakeSize(20, 20)];
+	[favIcon lockFocus];
+	[image1 compositeToPoint:NSMakePoint(0,0) operation:NSCompositeSourceOver];
+	[image2 compositeToPoint:NSMakePoint(14,0) operation:NSCompositeSourceOver];
+	[favIcon unlockFocus];*/
+	
 	return self;
 }
 
@@ -104,7 +118,7 @@
 }
 
 - (IBAction)inputCommand:(id)sender {
-	NSLog([sender stringValue]);
+	NSLog(@"%@", [sender stringValue]);
 	[[GHostSocket sharedSocket] sendCommand:[@"say " stringByAppendingString:[sender stringValue]]];
 	
 	/*ChatMessage *msg = [ChatMessage chatMessageWithText:[sender stringValue] sender:@"Me" date:[NSDate date] image:nil];
@@ -126,7 +140,7 @@
 }
 
 const NSString *reCommandTrigger = @"^\\[GHOST\\] using commandtrigger \\[(.*?)\\] for server \\[(.*?)\\]";
-const NSString *reAdminSays = @"^\\[BNET: (.*?)\\] admin \\[(.*?)\\] sent command \\[\\.say (.*?)\\]$";
+const NSString *reAdminSays = @"^\\[BNET: (.*?)\\] admin \\[(.*?)\\] sent command \\[(.)say (.*?)\\]$";
 //const NSString *reWhisper = @"(?m)^\\[WHISPER: (.*?)\\] \\[(.*?)\\] (.*?)$";
 const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?)$";
 
@@ -151,16 +165,28 @@ const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?
 			msg.image = [NSImage imageNamed:NSImageNameEveryone];
 		}
 		msg.realm = group2;
-		if ([group4 hasPrefix:[commandTriggers valueForKey:group2]])
+		NSString *realm = [commandTriggers valueForKey:group2];
+		if (realm != nil && [group4 hasPrefix:realm])
 			msg.isCommand = YES;
 	}
-	else if ([line getCapturesWithRegexAndReferences:reAdminSays, @"$1", &group1, @"$2", &group2, @"$3", &group3, nil]) {
-		msg = [ChatMessage chatMessageWithText:group3 sender:group2 date:[NSDate date] image:nil];
-		msg.realm = group1;
-		msg.isVirtualMessage = YES;
-		msg.image = [NSImage imageNamed:NSImageNameEveryone];
+	else if ([line getCapturesWithRegexAndReferences:reAdminSays, @"$1", &group1, @"$2", &group2, @"$3", &group3, @"$4", &group4, nil]) {
+		if ([group3 isEqualToString:[commandTriggers valueForKey:group1]]) {
+			msg = [ChatMessage chatMessageWithText:group4 sender:group2 date:[NSDate date] image:nil];
+			msg.realm = group1;
+			msg.isVirtualMessage = YES;
+			msg.image = [NSImage imageNamed:NSImageNameEveryone];
+		}
 	}
-	[self addMessage:msg];
+	if (msg && msg.isVirtualMessage && [msg.text hasPrefix:@"/f m "]) {
+		msg.text = [msg.text substringFromIndex:5];
+		
+	}
+	
+	if (msg) {
+		//msg.image = favIcon;
+		[self addMessage:msg];
+		
+	}
 }
 
 - (CGFloat)tableView:(NSTableView *)tv heightOfRow:(NSInteger)row

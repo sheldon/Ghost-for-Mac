@@ -69,7 +69,7 @@
 }
 
 - (IBAction)inputCommand:(id)sender {
-	NSLog([sender stringValue]);
+	NSLog(@"%@", [sender stringValue]);
 	[[GHostSocket sharedSocket] sendCommand:[sender stringValue]];
 	[sender setStringValue:@""];
 }
@@ -101,7 +101,7 @@
 {
 	[[consoleTable layer] setDelegate:self];
 	[[consoleTable layer] removeAllAnimations];
-	NSMenu *showHideHeaderMenu = [[NSMenu alloc] initWithTitle:@"Show/hide columns"];
+	NSMenu *showHideHeaderMenu = [[[NSMenu alloc] initWithTitle:@"Show/hide columns"] autorelease];
 	for (NSTableColumn *column in [consoleTable tableColumns]) {
 		NSString *title = [[column headerCell] title];
 		NSMenuItem *item = [showHideHeaderMenu addItemWithTitle:title action:@selector(contextMenuSelected:) keyEquivalent:@""];

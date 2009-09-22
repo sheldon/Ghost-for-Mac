@@ -39,6 +39,6 @@
 }
 + (id)chatMessageWithText:(NSString*)text sender:(NSString*)sender date:(NSDate*)date image:(NSImage*)image
 {
-	return [[ChatMessage alloc] initWithText:text sender:sender date:date image:image];
+	return [[[ChatMessage alloc] initWithText:text sender:sender date:date image:image] autorelease];
 }
 @end
