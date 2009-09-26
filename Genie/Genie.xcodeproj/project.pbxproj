@@ -292,6 +292,8 @@
 		A081429B0FE9AC02007FF74F /* ConfigController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigController.m; sourceTree = "<group>"; };
 		A08143000FE9B12E007FF74F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesConfig.xib; sourceTree = "<group>"; };
 		A09EE6911062594000E04EEE /* libmysqlclient_r.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmysqlclient_r.16.dylib; sourceTree = "<group>"; };
+		A0AB3C76106997380011FE5B /* rhasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rhasher.h; sourceTree = "<group>"; };
+		A0AB3C77106997380011FE5B /* rhasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rhasher.cpp; sourceTree = "<group>"; };
 		A0BB69A20FDBFE2500B9A3FC /* BadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadgeView.h; sourceTree = "<group>"; };
 		A0BB69A30FDBFE2500B9A3FC /* BadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BadgeView.m; sourceTree = "<group>"; };
 		A0BB69A70FDBFF5F00B9A3FC /* GreenBanner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GreenBanner.png; sourceTree = "<group>"; };
@@ -503,6 +505,10 @@
 			children = (
 				A064941610619E15001AC4CC /* Makefile */,
 				A064B01D1061AC14001AC4CC /* ghost++ */,
+				A064946010619E16001AC4CC /* rcon.cpp */,
+				A064946110619E16001AC4CC /* rcon.h */,
+				A0AB3C76106997380011FE5B /* rhasher.h */,
+				A0AB3C77106997380011FE5B /* rhasher.cpp */,
 				A064B0201061AD57001AC4CC /* lib */,
 				A064772E10619E0E001AC4CC /* bncsutilinterface.cpp */,
 				A064772F10619E0E001AC4CC /* bncsutilinterface.h */,
@@ -551,8 +557,6 @@
 				A064941B10619E15001AC4CC /* next_combination.h */,
 				A064945D10619E16001AC4CC /* packed.cpp */,
 				A064945E10619E16001AC4CC /* packed.h */,
-				A064946010619E16001AC4CC /* rcon.cpp */,
-				A064946110619E16001AC4CC /* rcon.h */,
 				A064946310619E16001AC4CC /* replay.cpp */,
 				A064946410619E16001AC4CC /* replay.h */,
 				A064946610619E16001AC4CC /* savegame.cpp */,

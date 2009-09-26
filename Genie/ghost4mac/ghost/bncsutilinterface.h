@@ -25,9 +25,19 @@
 // CBNCSUtilInterface
 //
 
+enum HashStatus
+{
+	Idle,
+	Connecting,
+	Connected,
+	Disconnected,
+	Success,
+	Error
+};
+
 class CBNCSUtilInterface
 {
-private:
+protected:
 	void *m_NLS;
 	BYTEARRAY m_EXEVersion;			// set in HELP_SID_AUTH_CHECK
 	BYTEARRAY m_EXEVersionHash;		// set in HELP_SID_AUTH_CHECK
@@ -54,14 +64,17 @@ public:
 	void SetEXEVersion( BYTEARRAY &nEXEVersion )			{ m_EXEVersion = nEXEVersion; }
 	void SetEXEVersionHash( BYTEARRAY &nEXEVersionHash )	{ m_EXEVersionHash = nEXEVersionHash; }
 
-	void Reset( string userName, string userPassword );
-
-	bool HELP_SID_AUTH_CHECK( string war3Path, string keyROC, string keyTFT, string valueStringFormula, string mpqFileName, BYTEARRAY clientToken, BYTEARRAY serverToken );
-	bool HELP_SID_AUTH_ACCOUNTLOGON( );
-	bool HELP_SID_AUTH_ACCOUNTLOGONPROOF( BYTEARRAY salt, BYTEARRAY serverKey );
-	bool HELP_PvPGNPasswordHash( string userPassword );
-
-private:
+	virtual void Reset( string userName, string userPassword );
+	virtual bool Update( void *fd, void *send_fd ) { return false; }
+	virtual unsigned int SetFD( void *fd, void *send_fd, int *nfds ) { return 0; }
+	virtual bool HELP_SID_AUTH_CHECK( string war3Path, string keyROC, string keyTFT, string valueStringFormula, string mpqFileName, BYTEARRAY clientToken, BYTEARRAY serverToken );
+	virtual bool HELP_SID_AUTH_ACCOUNTLOGON( );
+	virtual bool HELP_SID_AUTH_ACCOUNTLOGONPROOF( BYTEARRAY salt, BYTEARRAY serverKey );
+	virtual bool HELP_PvPGNPasswordHash( string userPassword );
+	HashStatus GetStatus( ) const { return m_Status; }
+	virtual string GetErrorString( ) { return "logon failed - bncsutil key hash failed (check your Warcraft 3 path and cd keys), disconnecting"; }
+protected:
+	HashStatus m_Status;
 	BYTEARRAY CreateKeyInfo( string key, uint32_t clientToken, uint32_t serverToken );
 };
 

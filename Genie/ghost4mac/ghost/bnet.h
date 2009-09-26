@@ -30,6 +30,7 @@ class CCommandPacket;
 class CBNCSUtilInterface;
 class CBNETProtocol;
 class CBNLSClient;
+class CRemoteHasher;
 class CIncomingFriendList;
 class CIncomingClanList;
 class CIncomingChatEvent;
@@ -65,6 +66,7 @@ private:
 	CBNLSClient *m_BNLSClient;						// the BNLS client (for external warden handling)
 	queue<CCommandPacket *> m_Packets;				// queue of incoming packets
 	CBNCSUtilInterface *m_BNCSUtil;					// the interface to the bncsutil library (used for logging into battle.net)
+	string m_BNCSUtilArg;							// the argument to pass to BNCSUtil (wc3 path for local hashing or wc3 version for remote hashing)
 	queue<BYTEARRAY> m_OutPackets;					// queue of outgoing packets to be sent (to prevent getting kicked for flooding)
 	vector<CIncomingFriendList *> m_Friends;		// vector of friends
 	vector<CIncomingClanList *> m_Clans;			// vector of clan members
@@ -118,7 +120,7 @@ private:
 	bool m_PublicCommands;							// whether to allow public commands or not
 
 public:
-	CBNET( CGHost *nGHost, string nServer, string nServerAlias, string nBNLSServer, uint16_t nBNLSPort, uint32_t nBNLSWardenCookie, string nCDKeyROC, string nCDKeyTFT, string nCountryAbbrev, string nCountry, string nUserName, string nUserPassword, string nFirstChannel, string nRootAdmin, char nCommandTrigger, bool nHoldFriends, bool nHoldClan, bool nPublicCommands, unsigned char nWar3Version, BYTEARRAY nEXEVersion, BYTEARRAY nEXEVersionHash, string nPasswordHashType, string nPVPGNRealmName, uint32_t nMaxMessageLength, uint32_t nHostCounterID );
+	CBNET( CGHost *nGHost, string nServer, string nServerAlias, string nRHServers, string nRHVersion, string nBNLSServer, uint16_t nBNLSPort, uint32_t nBNLSWardenCookie, string nCDKeyROC, string nCDKeyTFT, string nCountryAbbrev, string nCountry, string nUserName, string nUserPassword, string nFirstChannel, string nRootAdmin, char nCommandTrigger, bool nHoldFriends, bool nHoldClan, bool nPublicCommands, unsigned char nWar3Version, BYTEARRAY nEXEVersion, BYTEARRAY nEXEVersionHash, string nPasswordHashType, string nPVPGNRealmName, uint32_t nMaxMessageLength, uint32_t nHostCounterID );
 	~CBNET( );
 
 	bool GetExiting( )					{ return m_Exiting; }

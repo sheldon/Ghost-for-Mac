@@ -215,16 +215,21 @@
 	NSInteger newcount = [[listController arrangedObjects] count];
 	*/
 	
-	const NSString* hostExpression = @"\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
+	const NSString* hostExpression = @"^\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
 	const NSString* ghostStarted = @"^\\[GHOST\\] GHost\\+\\+ Version (\\d+\\.\\d+)";
+	const NSString* rconStarted = @"^\\[RCON\\] Listening at \\[.*?\\] on port \\[(\\d+)\\]";
 	NSString *portString;
 	NSString *capture1;
-	if ([output getCapturesWithRegexAndReferences:hostExpression, @"$1", &portString, nil]) {
+	if ([output getCapturesWithRegexAndReferences:rconStarted, @"$1", &portString, nil]) {
+		NSInteger port = [portString intValue];
+		[[GHostSocket sharedSocket] initWithPort:port];
+	}
+	else if ([output getCapturesWithRegexAndReferences:hostExpression, @"$1", &portString, nil]) {
 		NSInteger port = [portString intValue];
 		NSLog(@"GOT PORT: %d", port);
 		[self gotHostPortInfo:port];
 	}
-	if ([output getCapturesWithRegexAndReferences:ghostStarted, @"$1", &capture1, nil]) {
+	else if ([output getCapturesWithRegexAndReferences:ghostStarted, @"$1", &capture1, nil]) {
 		NSLog(@"GOT GHOST VERSION: %@", capture1);
 		[self ghostStarted:capture1];
 	}
@@ -246,7 +251,7 @@
 - (void)processStarted:(NSNotification*)note {
 	[startStopButton setLabel:@"Stop"];
 	[startStopButton setImage: [NSImage imageNamed: @"NSStopProgressFreestandingTemplate"]];
-	[[GHostSocket sharedSocket] initWithPort:6969];
+	//[[GHostSocket sharedSocket] initWithPort:6969];
 }
 
 - (void)processStopped:(NSNotification*)note {
@@ -320,7 +325,8 @@
 		}
 	}
 	
-	NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"war3.exe",@"Storm.dll",@"game.dll",@"War3Patch.mpq",nil];
+	//NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"war3.exe",@"Storm.dll",@"game.dll",@"War3Patch.mpq",nil];
+	NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"War3Patch.mpq",nil];
 	NSMutableArray *filesNotFound = [NSMutableArray arrayWithArray:requiredFiles];
 	
 	// create directory to hold warcraft 3 windows files
@@ -333,12 +339,12 @@
 	}
 	
 	if ([filesNotFound count] > 0 && NSRunAlertPanel(@"Required files missing!",
-																	 @"Some files that are required to run GHost have not been installed yet. Although this is a pure Mac application, GHost++ needs some files from an original Warcraft 3 Windows installation.\nThe files missing are:\n%@\nDo you want to install them now?",
+																	 @"Some files that are required to run GHost have not been installed yet. I can fetch those files from your Warcraft II installtion.\nThe files missing are:\n%@\nDo you want me to install them now?",
 																	 @"Yes", @"No", nil, filesNotFound) == NSAlertDefaultReturn) {
 		
 		// Create the File Open Dialog class.
 		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setTitle:@"Select Windows Wacraft 3 Installation"];
+		[openDlg setTitle:@"Select Wacraft 3 Directory"];
 		// Disable the selection of files in the dialog.
 		[openDlg setCanChooseFiles:NO];
 		

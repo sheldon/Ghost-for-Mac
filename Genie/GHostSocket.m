@@ -37,7 +37,7 @@
 		[cmdSock release];
 	cmdSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
 	[cmdSock connectToHost:@"localhost" onPort:port error:nil];
-	//[cmdSock receiveWithTimeout:500 tag:0];
+	[cmdSock receiveWithTimeout:500 tag:0];
 	[self sendCommand:@"\n"];
 }
 

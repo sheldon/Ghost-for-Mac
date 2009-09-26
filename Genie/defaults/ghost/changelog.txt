@@ -2,6 +2,207 @@
 GHost++ Changelog
 =================
 
+Version 15.0
+ - added support for "replay stitching" (stitching together replays from before and after the game is saved)
+  * see the new readme.replay_stitcher.txt for more information
+ - added new project replay_stitcher
+ - partial (unusable) replays are now created when hosting from a saved game
+ - added player enforcement in saved games
+  * see the "Using Saved Games" section of the readme for more information
+ - added new command in battle.net and admin game !enforcesg
+ - whispers sent by mutual friends when they join your game are now considered valid spoof checks regardless of language
+ - whispers sent by battle.net when mutual friends join your game on PVPGN realms are now considered valid spoof checks
+ - added new config value bnet*_custom_pvpgnrealmname
+ - it is now much less likely for a player to be marked as a name spoofer after rehosting the game under a new name
+ - added support for spoof checking only potential admins instead of every player (bot_spoofchecks = 2)
+ - bot_spoofchecks now defaults to 2
+ - the bot will now tell players how to spoof check in !autohostmm games if necessary
+ - printed a more detailed message to the console/log when there's a path mismatch between a saved game and a map
+ - replay_buildnumber now defaults to 6059 again (the previous 6374 value was incorrect)
+ - increased the hard coded maximum map download speed to 1400 KB/sec in most cases (it depends on player ping)
+ - the bot now automatically adds your system's path seperator to the following config values:
+  * bot_war3path
+  * bot_mapcfgpath
+  * bot_savegamepath
+  * bot_mappath
+  * bot_replaypath
+ - fixed a very old bug where the bot would sometimes pick a random player to talk through instead of the game owner
+ - fixed a crash bug with !sp when observers/referees were present
+ - fixed some compiler warnings with sha1.cpp with Visual C++
+ - update_dota_elo now outputs release exe's to the main ghost directory when compiling with Visual C++
+ - update_w3mmd_elo now outputs release exe's to the main ghost directory when compiling with Visual C++
+ - replay_stitcher now outputs release exe's to the main ghost directory when compiling with Visual C++
+ - added spanish language config made by azglenad
+ - updated russian language config
+ - added some new entries to language.cfg
+
+Version 14.7
+ - clarified some comments in ghost.cfg regarding bot_requirespoofchecks
+ - fixed a bug where it was only possible to ban spoofchecked players once the game started
+ - fixed a crash bug when bot_requirespoofchecks was enabled and bot_spoofchecks was disabled
+ - added russian language config made by Jilizart
+
+Version 14.6
+ - the countdown will no longer start if a player left the game less than two seconds ago (use "force" to skip this check)
+ - IP bans are once again properly checked on ALL battle.net realms rather than just one
+ - autokicking players who don't spoofcheck is now only enabled in autohosted games
+ - the bot no longer tries to unqueue spoofchecks if the player already spoofchecked
+ - updated the default replay_buildnumber to match Warcraft III version 1.24b
+ - fixed a bug where the meaning of bot_requirespoofchecks was reversed
+ - fixed a crash bug that would sometimes happen when bot_spoofchecks was enabled
+ - added turkish language config made by HellGuy
+
+Version 14.5
+ - added new config value db_mysql_botid to identify which bot the data came from when using MySQL with multiple bots
+ - added new config value bot_matchmakingmethod
+ - added new config value bot_requirespoofchecks
+   * modified bot_spoofchecks so it only controls whether automatic spoof checks are done or not
+ - added new command !reload in battle.net and the admin game to reload the main configuration files
+ - banned players are now kicked back to the chat channel rather than told the game is full when they try to join
+ - the !ban and !banlast commands now only ban on the realm the player joined from
+ - players are now only considered banned if they are banned on the realm they joined from
+ - complete ban messages are now printed when a banned player joins the game
+ - added automatic kicking of desynced players
+ - players can now spoofcheck by whispering the bot "s", "sc", "spoof", "check", or "spoofcheck"
+ - the bot now only sends the player spoofcheck message on the realm they joined from rather than all realms (network optimization)
+ - spoofcheck failures are now displayed in the game lobby even when using multiple realms
+ - spoofcheck failures on players who joined then left the game are now hidden
+ - when spoofchecks are disabled but required the bot will tell new players how to spoofcheck
+ - the bot now considers players who joined the game from the LAN screen to be spoofchecked (rather than from a LAN address)
+ - the game will now start even if some reserved players have not been pinged 3 times yet
+ - printed W3MMD Event messages to the server console in a more readable format
+ - removed the 1-realm requirement for !autohostmm
+ - unqueued battle.net spoofcheck messages for players who are no longer in the game (network optimization)
+ - fixed a bug where observers/referees were shuffled when !sp was used
+ - fixed a bug where queued spoof checks would be ignored when the game is changed from public to private 
+ - fixed a bug where colour terminators were sometimes not added correctly when printing !ping and !from responses
+ - fixed a bug with the team balancing algorithm where it wouldn't properly arrange the players according to the best balance
+ - fixed a bug where the bot would spam the chat with up to 12 nonexisting team scores when team balancing was complete
+ - made several small changes to language.cfg to make the messages make more sense
+
+Version 14.4
+ - implemented the team balancing algorithm when using !autohostmm
+  * the algorithm cannot be used with 4 teams of 3 players as it is too slow in this case
+  * this code has not been tested and should be considered experimental for now
+ - added new map config value map_defaultplayerscore
+ - the default player score is used for balancing unrated players when using !autohostmm
+ - added a previously hardcoded message when using !autohostmm to language.cfg
+ - added new command !messages to game lobbies and in game
+ - added new command !say to the admin game
+ - added new command !say to game lobbies and in game (this command is HIDDEN from other players)
+ - optimized parsing of dota and w3mmd stats while the game is running
+ - removed warden responses from the battle.net packet queue (they are now sent immediately)
+  * this should result in fewer disconnects from battle.net and a slightly more responsive bot
+ - added a colour terminator to coloured player names when printing !ping and !from responses
+ - fixed a crash bug when a desync was detected (introduced in version 14.3)
+
+Version 14.3
+ - players joining the game from a local IP address are now considered spoof checked automatically
+ - added support for configuring the replay version and build number
+ - added new config value replay_war3version
+ - added new config value replay_buildnumber
+ - updated default replay version to Warcraft 3 version 1.24
+ - added support for MySQL databases to the admin game
+ - added new command !checkban to the admin game
+ - added new command !countbans to the admin game
+ - added new command !delban/!unban to the admin game
+ - added support for whispering players on battle.net from within the admin game and game lobbies and games when using the admin game
+ - added new command !w to the admin game
+ - added new command !w to the lobby and in game (this command is HIDDEN from other players)
+ - added support for printing battle.net emote messages to the server console
+ - added support for printing battle.net whispers, chat messages, and emotes to the admin game
+ - added support for printing battle.net whispers, chat messages, and emotes to local game owners in the lobby or in game
+ - added new config value bnet*_serveralias
+ - console messages originating from battle.net now use the server alias instead of the server address for identification (this is a cosmetic change only)
+ - added new config value autohost_owner
+ - automatically raised the process priority to "above normal" on startup when running on Windows
+ - major optimizations to some internal data handling (there should be a noticeable reduction in CPU requirements)
+ - printed a message identifying the players in each game state when the game desyncs
+ - printed a message to the console when auto hosting is stopped due to a game name that is too long
+ - the bot's lobby messages are now printed to the console and saved to the log
+ - split the "non-admin sent command" console message into two different messages to make it more obvious when not spoof checking is the problem
+ - blank HCL command strings are no longer included in the welcome message
+ - fixed a bug where it was impossible to use commands on a player when their name was a subset of another player's name
+
+Version 14.2
+ - the bot now accepts default maps with or without the ".cfg" extension in ghost.cfg
+ - added support for specifying a different admin game map
+ - added new config value admingame_map
+ - added support for disabling Nagle's algorithm on game sockets
+ - added new config value tcp_nodelay
+ - fixed a bug where UDP broadcasts would sometimes fail when not using a broadcast target
+ - fixed a bug where the bot would not allow you to join the admin game with Warcraft 3 version 1.24
+ - fixed a crash bug when using !autohostmm
+ - updated the admin game welcome message
+
+Version 14.1
+ - updated SQLite to SQLite 3.6.16
+ - added new config value lan_war3version
+ - used the lan_war3version instead of a hard coded value when broadcasting games to the LAN
+ - updated the default Warcraft 3 version to 1.24
+ - sent a text message to the current game lobby when a battle.net connection's status changes (e.g. connected or disconnected)
+ - modified some console messages to make it more clear when a player is banned but is still permitted to join the game
+ - the bot now waits 60 seconds for (database) threads to finish when exiting nicely
+ - removed outdated map configs
+ - updated wormwar.cfg to work with Warcraft 3 version 1.24
+ - changed the default map to wormwar in ghost.cfg
+
+Version 14.0
+ - added support for the "HostBot Command Library" (HCL) system
+ - added new lobby command !hcl to set the HCL string
+ - added new lobby command !clearhcl to clear the HCL string
+ - added new map config value map_defaulthcl to specify the default HCL string to use
+ - added new project update_w3mmd_elo
+ - IMPORTANT: REMOVED/RENAMED THE !RLOAD/!RMAP COMMANDS
+  *** the !load command now loads map config files (".cfg" files) just like the old !load/!map commands
+  *** the !map command now loads map files (".w3m" and ".w3x" files) just like the old !rload/!rmap commands
+ - updated ip-to-country.csv to the latest version from June 3, 2009
+ - added new config value udp_broadcasttarget
+ - added new config value udp_dontroute
+ - added new config value bnet*_publiccommands to enable or disable anonymous access to public commands such as !stats
+ - added support for automatically starting the autohost system when the bot starts up without requiring an explicit command
+ - added new config value autohost_maxgames
+ - added new config value autohost_startplayers
+ - added new config value autohost_gamename
+ - rewrote the way maps are handled internally to allow map changes while a game is in the lobby (the map change will affect subsequent games)
+  * this requires GHost++ to duplicate some map data internally and will result in a slight increase in memory usage
+ - players joining the game via LAN are now considered spoof checked automatically
+ - game owners are no longer considered spoof checked automatically
+ - autohosted games once again have a game owner defined as the player who ran the !autohost command
+ - fixed a crash bug when the map config's map_size was larger than the actual map size and a player tried to download the map
+ - fixed a crash bug when saving W3MMD stats
+ - fixed a bug where the bot would frequently reject W3MMD messages sent by maps using the W3MMD system
+ - fixed a bug where autohosted games would sometimes get "stuck" when the bot was disconnected from battle.net
+ - fixed a bug where !ping and !from responses would sometimes be truncated when used in game
+ - fixed a bug where the !map/!load and !rmap/!rload commands would sometimes fail to load a file
+ - fixed a bug where the !map/!load commands could be used to load files without a ".cfg" extension
+ - fixed a bug where everyone would be dropped from the lobby when the fake player was used in a full 12 player game
+ - fixed a bug where player names were not forced to lowercase when using MySQL databases
+ - fixed a bug where "player was autokicked for excessive ping" messages could be printed more than once for a player in some cases
+ - fixed a bug where changing the map while the autohost was between games would change the autohosted map
+ - the "player is trying to join the game but is banned" messages will now only be printed once per player per game
+ - added new "player is trying to join the game but is banned" messages to distinguish whether the ban was by name or by IP
+ - added new "player is connecting with a banned name/ip" messages when the ban method permits the player to join
+ - chat responses to the !votekick command are now sent privately unless the vote was started successfully
+ - added a chat response when rehosting games with !pub and !priv
+ - added a chat response when rehosting is successful on at least one realm
+ - the bot now tries to kick a player who is downloading the map first when a reserved player joins and there aren't any empty slots
+ - adjusted the battle.net flood protection code again
+ - printed some more information messages to the server console (e.g. when a player finishes loading)
+
+Version 13.3
+ - committed nindoja's modifications to bncsutil/StormLib/GHost++ to compile on OS X
+ - added a new feature "load in game" - credit goes to Strilanc for the idea
+  * see the "Load In Game" section of the readme for more information
+ - added new map config value map_loadingame
+ - added new command !downloads to change the bot_allowdownloads value while the bot is running
+ - adjusted the battle.net flood protection code
+ - cached battle.net IP addresses on first connect to eliminate resolver lag on reconnect
+ - fixed a bug where autohosting wouldn't work anymore after the map was changed (introduced in 13.2)
+ - fixed a minor bug where the bot would include the kicked player's score in the spread when using matchmaking
+ - updated the readme with an overview and some optimization tips
+ - modified language.cfg
+
 Version 13.2
  - GHost++ now requires the boost system, filesystem, and regex libraries (ONLY NECESSARY IF YOU ARE COMPILING GHOST++ YOURSELF)
   * removed precompiled boost libraries from the release

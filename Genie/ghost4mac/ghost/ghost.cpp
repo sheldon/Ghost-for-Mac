@@ -443,6 +443,8 @@ CGHost :: CGHost( CConfig *CFG )
 		bool HoldClan = CFG->GetInt( Prefix + "holdclan", 1 ) == 0 ? false : true;
 		bool PublicCommands = CFG->GetInt( Prefix + "publiccommands", 1 ) == 0 ? false : true;
 		string BNLSServer = CFG->GetString( Prefix + "bnlsserver", string( ) );
+		string RHServers = CFG->GetString( Prefix + "rhservers", string( ) );
+		string RHVersion = CFG->GetString( Prefix + "rhversion", "0" );
 		int BNLSPort = CFG->GetInt( Prefix + "bnlsport", 9367 );
 		int BNLSWardenCookie = CFG->GetInt( Prefix + "bnlswardencookie", 0 );
 		unsigned char War3Version = CFG->GetInt( Prefix + "custom_war3version", 24 );
@@ -480,7 +482,7 @@ CGHost :: CGHost( CConfig *CFG )
 		}
 
 		CONSOLE_Print( "[GHOST] found battle.net connection #" + UTIL_ToString( i ) + " for server [" + Server + "]" );
-		m_BNETs.push_back( new CBNET( this, Server, ServerAlias, BNLSServer, (uint16_t)BNLSPort, (uint32_t)BNLSWardenCookie, CDKeyROC, CDKeyTFT, CountryAbbrev, Country, UserName, UserPassword, FirstChannel, RootAdmin, BNETCommandTrigger[0], HoldFriends, HoldClan, PublicCommands, War3Version, EXEVersion, EXEVersionHash, PasswordHashType, PVPGNRealmName, MaxMessageLength, i ) );
+		m_BNETs.push_back( new CBNET( this, Server, ServerAlias, RHServers, RHVersion, BNLSServer, (uint16_t)BNLSPort, (uint32_t)BNLSWardenCookie, CDKeyROC, CDKeyTFT, CountryAbbrev, Country, UserName, UserPassword, FirstChannel, RootAdmin, BNETCommandTrigger[0], HoldFriends, HoldClan, PublicCommands, War3Version, EXEVersion, EXEVersionHash, PasswordHashType, PVPGNRealmName, MaxMessageLength, i ) );
 		CONSOLE_Print( "[GHOST] using commandtrigger [" + string( 1, BNETCommandTrigger[0] ) + "] for server [" + m_BNETs.back( )->GetServerAlias( ) + "]" );
 	}
 

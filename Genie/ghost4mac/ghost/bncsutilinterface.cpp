@@ -28,7 +28,8 @@
 // CBNCSUtilInterface
 //
 
-CBNCSUtilInterface :: CBNCSUtilInterface( string userName, string userPassword )
+CBNCSUtilInterface :: CBNCSUtilInterface( string userName, string userPassword ) :
+	m_Status( Idle )
 {
 	// m_nls = (void *)nls_init( userName.c_str( ), userPassword.c_str( ) );
 	m_NLS = new NLS( userName, userPassword );
@@ -37,14 +38,17 @@ CBNCSUtilInterface :: CBNCSUtilInterface( string userName, string userPassword )
 CBNCSUtilInterface :: ~CBNCSUtilInterface( )
 {
 	// nls_free( (nls_t *)m_nls );
-	delete (NLS *)m_NLS;
+	if(m_NLS)
+		delete (NLS *)m_NLS;
 }
 
 void CBNCSUtilInterface :: Reset( string userName, string userPassword )
 {
+	m_Status = Idle;
 	// nls_free( (nls_t *)m_nls );
 	// m_nls = (void *)nls_init( userName.c_str( ), userPassword.c_str( ) );
-	delete (NLS *)m_NLS;
+	if(m_NLS)
+		delete (NLS *)m_NLS;
 	m_NLS = new NLS( userName, userPassword );
 }
 
@@ -79,7 +83,10 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( string war3Path, string keyROC, 
 		m_KeyInfoTFT = CreateKeyInfo( keyTFT, UTIL_ByteArrayToUInt32( clientToken, false ), UTIL_ByteArrayToUInt32( serverToken, false ) );
 
 		if( m_KeyInfoROC.size( ) == 36 && m_KeyInfoTFT.size( ) == 36 )
+		{
+			m_Status = Success;
 			return true;
+		}
 		else
 		{
 			if( m_KeyInfoROC.size( ) != 36 )
@@ -100,7 +107,7 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( string war3Path, string keyROC, 
 		if( !ExistsGameDLL )
 			CONSOLE_Print( "[BNCSUI] unable to open [" + FileGameDLL + "]" );
 	}
-
+	m_Status = Error;
 	return false;
 }
 
