@@ -27,12 +27,12 @@
 
 enum HashStatus
 {
-	Idle,
-	Connecting,
-	Connected,
-	Disconnected,
-	Success,
-	Error
+	BNCSIdle,
+	BNCSConnecting,
+	BNCSConnected,
+	BNCSDisconnected,
+	BNCSSuccess,
+	BNCSError,
 };
 
 class CBNCSUtilInterface
@@ -72,6 +72,7 @@ public:
 	virtual bool HELP_SID_AUTH_ACCOUNTLOGONPROOF( BYTEARRAY salt, BYTEARRAY serverKey );
 	virtual bool HELP_PvPGNPasswordHash( string userPassword );
 	HashStatus GetStatus( ) const { return m_Status; }
+	virtual void ResetStatus( ) { m_Status = BNCSIdle; }
 	virtual string GetErrorString( ) { return "logon failed - bncsutil key hash failed (check your Warcraft 3 path and cd keys), disconnecting"; }
 protected:
 	HashStatus m_Status;

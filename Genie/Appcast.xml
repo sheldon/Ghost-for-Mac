@@ -6,6 +6,37 @@
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
 		<item>
+			<title>Version 0.5.3</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.3.dmg" sparkle:version="0.5.3" length="10280279" type="application/octet-stream" sparkle:dsaSignature="MCwCFEnRPE/XJCKhwj9z75sF2lCnxBa6AhQ1yIAZrUBgh523837TUWICM9WsbA==" />
+			<description><![CDATA[
+			<b>Genie 0.5.3</b>
+			<ul>
+				<li>fixed server parsing bug in remote hasher</li>
+				<li>switched from dynamic to static linking in ghost executable for all external dependencies</li>
+				<li>packed ghost executable with upx</li>
+				<li>changed startup import process to make use of Spotlight for convenience</li>
+				<li>added Growl support for chat events</li>
+			</ul>
+			<b>Genie 0.5.2</b>
+			<ul>
+				<li>updated ghost core to version 15.0</li>
+				<li>added remote hashing capability to ghost core. This means you don't need wc3 files from windows anymore if you set bnet_rhservers</li>
+			</ul>
+			<b>Genie 0.5.1</b>
+			<ul>
+				<li>Fixed a bug with chat output stalling the whole app</li>
+			</ul>
+			<b>Genie 0.5</b>
+			<ul>
+				<li>Updated GHost core to 14.2</li>
+				<li>Changed UI layout</li>
+				<li>Added 'chat' tab</li>
+				<li>Added map auto-load</li>
+				<li>Added Kqueue watching of config directories</li>
+			</ul>
+			]]></description>
+		</item>
+		<item>
 			<title>Version 0.5.2</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.2.dmg" sparkle:version="0.5.2" length="14462411" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCHYgOOZWq9+crDoXDjqJKiy3PRAwIUaL3HktWWm8XIgCpaktsSP2gah8o=" />
 			<description><![CDATA[

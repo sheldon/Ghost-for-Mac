@@ -37,6 +37,7 @@
 		A02812380FF6A62F00664D23 /* TCMPortMapper.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A028114E0FF69E0400664D23 /* TCMPortMapper.framework */; };
 		A0293B00102821E400067788 /* PreferencesMessages.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0293AFF102821E400067788 /* PreferencesMessages.xib */; };
 		A0293B031028221100067788 /* MessagesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0293B021028221100067788 /* MessagesController.m */; };
+		A02B4FB6107619A700C11E5F /* GHostMetaConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A02B4FB5107619A700C11E5F /* GHostMetaConfig.m */; };
 		A02C9BB60FED3AB000F5E8C9 /* Language.strings in Resources */ = {isa = PBXBuildFile; fileRef = A02C9BB50FED3AB000F5E8C9 /* Language.strings */; };
 		A031AD6410273D3C00575255 /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD5C10273D3C00575255 /* UKFileWatcher.m */; };
 		A031AD6510273D3C00575255 /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD5E10273D3C00575255 /* UKFNSubscribeFileWatcher.m */; };
@@ -45,6 +46,8 @@
 		A031AD6810273D3C00575255 /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AD6310273D3C00575255 /* UKMainThreadProxy.m */; };
 		A031AF7110274E0000575255 /* GHostConfigFile.m in Sources */ = {isa = PBXBuildFile; fileRef = A031AF7010274E0000575255 /* GHostConfigFile.m */; };
 		A031B012102758C700575255 /* Map128.png in Resources */ = {isa = PBXBuildFile; fileRef = A031B011102758C700575255 /* Map128.png */; };
+		A03EA5AB106F9CC300609964 /* PanelStartupController.m in Sources */ = {isa = PBXBuildFile; fileRef = A03EA5AA106F9CC300609964 /* PanelStartupController.m */; };
+		A03EA5C3106FA3C100609964 /* PanelStartup.xib in Resources */ = {isa = PBXBuildFile; fileRef = A03EA5C2106FA3C100609964 /* PanelStartup.xib */; };
 		A04A0CF9101B7F3800F1D6D9 /* ChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */; };
 		A05D495C100E7BE1004C089B /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A05D495B100E7BE1004C089B /* ChatViewController.m */; };
 		A064AFF410619F5B001AC4CC /* GHostController.h in Headers */ = {isa = PBXBuildFile; fileRef = A064948110619E16001AC4CC /* GHostController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -53,14 +56,6 @@
 		A064AFF710619F5B001AC4CC /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A064948410619E16001AC4CC /* TaskWrapper.m */; };
 		A064B0061061A63A001AC4CC /* ghost4mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A064AFAA10619F43001AC4CC /* ghost4mac.framework */; };
 		A064B01E1061ACE4001AC4CC /* ghost++ in Resources */ = {isa = PBXBuildFile; fileRef = A064B01D1061AC14001AC4CC /* ghost++ */; };
-		A064B02F1061ADA3001AC4CC /* libbncsutil.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0221061AD8D001AC4CC /* libbncsutil.dylib */; };
-		A064B0301061ADA3001AC4CC /* libboost_date_time-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0231061AD8D001AC4CC /* libboost_date_time-mt.dylib */; };
-		A064B0311061ADA3001AC4CC /* libboost_filesystem-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0241061AD8D001AC4CC /* libboost_filesystem-mt.dylib */; };
-		A064B0321061ADA3001AC4CC /* libboost_regex-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0251061AD8D001AC4CC /* libboost_regex-mt.dylib */; };
-		A064B0331061ADA3001AC4CC /* libboost_system-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0261061AD8D001AC4CC /* libboost_system-mt.dylib */; };
-		A064B0341061ADA3001AC4CC /* libboost_thread-mt.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0271061AD8D001AC4CC /* libboost_thread-mt.dylib */; };
-		A064B0361061ADA3001AC4CC /* libgmp.3.4.4.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B0291061AD8D001AC4CC /* libgmp.3.4.4.dylib */; };
-		A064B03B1061ADA3001AC4CC /* libStorm.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A064B02E1061AD8D001AC4CC /* libStorm.dylib */; };
 		A079BAD610028982007E18C5 /* ViewConsole.xib in Resources */ = {isa = PBXBuildFile; fileRef = A079BAD510028982007E18C5 /* ViewConsole.xib */; };
 		A079BAFA1002B8CE007E18C5 /* LRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A079BAF91002B8CE007E18C5 /* LRViewController.m */; };
 		A079BB171002BB8B007E18C5 /* ConsoleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A079BB161002BB8B007E18C5 /* ConsoleViewController.m */; };
@@ -70,8 +65,11 @@
 		A08142990FE9ABF3007FF74F /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08142980FE9ABF3007FF74F /* MapController.m */; };
 		A081429C0FE9AC02007FF74F /* ConfigController.m in Sources */ = {isa = PBXBuildFile; fileRef = A081429B0FE9AC02007FF74F /* ConfigController.m */; };
 		A08143400FE9B4D2007FF74F /* PreferencesConfig.xib in Resources */ = {isa = PBXBuildFile; fileRef = A081433F0FE9B4D2007FF74F /* PreferencesConfig.xib */; };
+		A084AFA51079566C00388D3B /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A084AFA41079566C00388D3B /* Growl.framework */; };
+		A084AFB2107959B600388D3B /* Growl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A084AFA41079566C00388D3B /* Growl.framework */; };
+		A084AFDB10795B9200388D3B /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = A084AFA81079586F00388D3B /* Growl Registration Ticket.growlRegDict */; };
+		A084B1DB107A643F00388D3B /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = A084B1DA107A643F00388D3B /* UserDefaults.plist */; };
 		A09EE6B9106259E200E04EEE /* ghost4mac.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A064AFAA10619F43001AC4CC /* ghost4mac.framework */; };
-		A09EE6C610625AE400E04EEE /* libmysqlclient_r.16.dylib in Copy libs */ = {isa = PBXBuildFile; fileRef = A09EE6911062594000E04EEE /* libmysqlclient_r.16.dylib */; };
 		A0BB69A40FDBFE2500B9A3FC /* BadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A0BB69A30FDBFE2500B9A3FC /* BadgeView.m */; };
 		A0BB69A80FDBFF5F00B9A3FC /* GreenBanner.png in Resources */ = {isa = PBXBuildFile; fileRef = A0BB69A70FDBFF5F00B9A3FC /* GreenBanner.png */; };
 		A0C1F02C0FE5B919001CBBC2 /* defaults in Resources */ = {isa = PBXBuildFile; fileRef = A0C1F02B0FE5B919001CBBC2 /* defaults */; };
@@ -123,6 +121,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A084AFB2107959B600388D3B /* Growl.framework in Copy Frameworks */,
 				A09EE6B9106259E200E04EEE /* ghost4mac.framework in Copy Frameworks */,
 				A02812380FF6A62F00664D23 /* TCMPortMapper.framework in Copy Frameworks */,
 				A0F8C4970FE531DE0047352B /* RegexKit.framework in Copy Frameworks */,
@@ -137,15 +136,6 @@
 			dstPath = lib;
 			dstSubfolderSpec = 7;
 			files = (
-				A09EE6C610625AE400E04EEE /* libmysqlclient_r.16.dylib in Copy libs */,
-				A064B02F1061ADA3001AC4CC /* libbncsutil.dylib in Copy libs */,
-				A064B0301061ADA3001AC4CC /* libboost_date_time-mt.dylib in Copy libs */,
-				A064B0311061ADA3001AC4CC /* libboost_filesystem-mt.dylib in Copy libs */,
-				A064B0321061ADA3001AC4CC /* libboost_regex-mt.dylib in Copy libs */,
-				A064B0331061ADA3001AC4CC /* libboost_system-mt.dylib in Copy libs */,
-				A064B0341061ADA3001AC4CC /* libboost_thread-mt.dylib in Copy libs */,
-				A064B0361061ADA3001AC4CC /* libgmp.3.4.4.dylib in Copy libs */,
-				A064B03B1061ADA3001AC4CC /* libStorm.dylib in Copy libs */,
 			);
 			name = "Copy libs";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -174,6 +164,8 @@
 		A0293AFF102821E400067788 /* PreferencesMessages.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesMessages.xib; sourceTree = "<group>"; };
 		A0293B011028221100067788 /* MessagesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagesController.h; sourceTree = "<group>"; };
 		A0293B021028221100067788 /* MessagesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessagesController.m; sourceTree = "<group>"; };
+		A02B4FB4107619A700C11E5F /* GHostMetaConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostMetaConfig.h; sourceTree = "<group>"; };
+		A02B4FB5107619A700C11E5F /* GHostMetaConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostMetaConfig.m; sourceTree = "<group>"; };
 		A02C9BB30FED3AA800F5E8C9 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Language.strings; sourceTree = "<group>"; };
 		A02C9BB70FED3ABD00F5E8C9 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Language.strings; sourceTree = "<group>"; };
 		A031AD5B10273D3C00575255 /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
@@ -188,6 +180,9 @@
 		A031AF6F10274E0000575255 /* GHostConfigFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHostConfigFile.h; sourceTree = "<group>"; };
 		A031AF7010274E0000575255 /* GHostConfigFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHostConfigFile.m; sourceTree = "<group>"; };
 		A031B011102758C700575255 /* Map128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Map128.png; sourceTree = "<group>"; };
+		A03EA5A9106F9CC300609964 /* PanelStartupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelStartupController.h; sourceTree = "<group>"; };
+		A03EA5AA106F9CC300609964 /* PanelStartupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelStartupController.m; sourceTree = "<group>"; };
+		A03EA5C2106FA3C100609964 /* PanelStartup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PanelStartup.xib; sourceTree = "<group>"; };
 		A04A0CF7101B7F3800F1D6D9 /* ChatMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessage.h; sourceTree = "<group>"; };
 		A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessage.m; sourceTree = "<group>"; };
 		A05D495A100E7BE1004C089B /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
@@ -291,6 +286,9 @@
 		A081429A0FE9AC02007FF74F /* ConfigController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigController.h; sourceTree = "<group>"; };
 		A081429B0FE9AC02007FF74F /* ConfigController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigController.m; sourceTree = "<group>"; };
 		A08143000FE9B12E007FF74F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PreferencesConfig.xib; sourceTree = "<group>"; };
+		A084AFA41079566C00388D3B /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
+		A084AFA81079586F00388D3B /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
+		A084B1DA107A643F00388D3B /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		A09EE6911062594000E04EEE /* libmysqlclient_r.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmysqlclient_r.16.dylib; sourceTree = "<group>"; };
 		A0AB3C76106997380011FE5B /* rhasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rhasher.h; sourceTree = "<group>"; };
 		A0AB3C77106997380011FE5B /* rhasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rhasher.cpp; sourceTree = "<group>"; };
@@ -328,6 +326,7 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				A07FB6400FE3F2960019EF5F /* RegexKit.framework in Frameworks */,
 				A02812140FF6A20500664D23 /* TCMPortMapper.framework in Frameworks */,
+				A084AFA51079566C00388D3B /* Growl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +357,8 @@
 				A04A0CF8101B7F3800F1D6D9 /* ChatMessage.m */,
 				A031AF6F10274E0000575255 /* GHostConfigFile.h */,
 				A031AF7010274E0000575255 /* GHostConfigFile.m */,
+				A02B4FB4107619A700C11E5F /* GHostMetaConfig.h */,
+				A02B4FB5107619A700C11E5F /* GHostMetaConfig.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -369,6 +370,7 @@
 				A07FB63F0FE3F2960019EF5F /* RegexKit.framework */,
 				A016ABA70FDBE423008B0151 /* Sparkle.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				A084AFA41079566C00388D3B /* Growl.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -445,6 +447,9 @@
 				A02C9BB50FED3AB000F5E8C9 /* Language.strings */,
 				A079BAD510028982007E18C5 /* ViewConsole.xib */,
 				A079BCB4100342E2007E18C5 /* ViewChat.xib */,
+				A03EA5C2106FA3C100609964 /* PanelStartup.xib */,
+				A084AFA81079586F00388D3B /* Growl Registration Ticket.growlRegDict */,
+				A084B1DA107A643F00388D3B /* UserDefaults.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -605,6 +610,8 @@
 				A079BB161002BB8B007E18C5 /* ConsoleViewController.m */,
 				A05D495A100E7BE1004C089B /* ChatViewController.h */,
 				A05D495B100E7BE1004C089B /* ChatViewController.m */,
+				A03EA5A9106F9CC300609964 /* PanelStartupController.h */,
+				A03EA5AA106F9CC300609964 /* PanelStartupController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -747,6 +754,9 @@
 				A0293B00102821E400067788 /* PreferencesMessages.xib in Resources */,
 				A0DCC6C710376D46001B5D39 /* heart32.png in Resources */,
 				A01521B910645A5B00880857 /* WarcraftData.plist in Resources */,
+				A03EA5C3106FA3C100609964 /* PanelStartup.xib in Resources */,
+				A084AFDB10795B9200388D3B /* Growl Registration Ticket.growlRegDict in Resources */,
+				A084B1DB107A643F00388D3B /* UserDefaults.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -773,7 +783,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $BUILT_PRODUCTS_DIR\ncd $UNLOCALIZED_RESOURCES_FOLDER_PATH\ncd lib\nln -fs libgmp.3.4.4.dylib libgmp.3.dylib\nln -fs libmysqlclient_r.16.dylib libmysqlclient_r.dylib";
+			shellScript = "#cd $BUILT_PRODUCTS_DIR\n#cd $UNLOCALIZED_RESOURCES_FOLDER_PATH\n#cd lib\n#ln -fs libgmp.3.4.4.dylib libgmp.3.dylib\n#ln -fs libmysqlclient_r.16.dylib libmysqlclient_r.dylib";
 		};
 		A0F9BDED0FDB351200C9F2D9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -815,6 +825,8 @@
 				A031AD6810273D3C00575255 /* UKMainThreadProxy.m in Sources */,
 				A031AF7110274E0000575255 /* GHostConfigFile.m in Sources */,
 				A0293B031028221100067788 /* MessagesController.m in Sources */,
+				A03EA5AB106F9CC300609964 /* PanelStartupController.m in Sources */,
+				A02B4FB6107619A700C11E5F /* GHostMetaConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1009,6 +1021,7 @@
 					"\"$(SRCROOT)/opt/local/lib/mysql5/mysql\"",
 					"\"$(SRCROOT)/lib\"",
 				);
+				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Genie;
 			};
 			name = Debug;

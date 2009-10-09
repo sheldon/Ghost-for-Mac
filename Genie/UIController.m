@@ -23,9 +23,35 @@
 #import "RegexKit/RegexKit.h"
 #import "TCMPortMapper/TCMPortMapper.h"
 #import "GHostSocket.h"
+#import "Growl/GrowlApplicationBridge.h"
+//#import "PanelStartupController.h"
 
 @implementation UIController
 @synthesize lines;
+
++(void)initialize
+{
+	NSString *userDefaultsValuesPath;
+    NSDictionary *userDefaultsValuesDict;
+    //NSDictionary *initialValuesDict;
+    //NSArray *resettableUserDefaultsKeys;
+	
+    // load the default values for the user defaults
+    userDefaultsValuesPath=[[NSBundle mainBundle] pathForResource:@"UserDefaults" ofType:@"plist"];
+    userDefaultsValuesDict=[NSDictionary dictionaryWithContentsOfFile:userDefaultsValuesPath];
+	
+    // set them in the standard user defaults
+    [[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+	
+    // if your application supports resetting a subset of the defaults to
+    // factory values, you should set those values
+    // in the shared user defaults controller
+    //resettableUserDefaultsKeys=[NSArray arrayWithObjects:@"Value1",@"Value2",@"Value3",nil];
+    //initialValuesDict=[userDefaultsValuesDict dictionaryWithValuesForKeys:resettableUserDefaultsKeys];
+	
+    // Set the initial values in the shared user defaults controller
+    //[[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:initialValuesDict];
+}
 
 -(NSRect)newFrameForNewContentView:(NSView *)view {
     NSWindow *window = mainWindow;
@@ -83,6 +109,15 @@
 	 selector:@selector(doTerminate:)
 	 name:NSApplicationWillTerminateNotification
 	 object:NSApp];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStarted:) name:GHProcessStarted object:ghost];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStopped:) name:GHProcessStopped object:ghost];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appendOutputNotify:) name:GHConsoleOutput object:ghost];
+	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidStartWork:) 
+												 name:TCMPortMapperDidStartWorkNotification object:pm];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidFinishWork:)
+												 name:TCMPortMapperDidFinishWorkNotification object:pm];
+	
 	[badge bind:@"running" toObject:ghost withKeyPath:@"running" options:nil];
 	
 	// set badge as dock icon
@@ -96,9 +131,25 @@
 	newWindowFrame.size.height += [mainWindow contentBorderThicknessForEdge:NSMinYEdge];
 	newWindowFrame.origin = [mainWindow frame].origin;
 	newWindowFrame.origin.y -= newWindowFrame.size.height - [mainWindow frame].size.height;
-	[mainWindow setFrame:newWindowFrame display:YES animate:YES];
+	NSRect oldRect = [mainWindow frame];
+	[mainWindow setFrame:newWindowFrame display:NO animate:NO];
 	[mainView addSubview:[consoleView view]];
+	[mainWindow setFrame:oldRect display:NO animate:NO];
 	
+	BOOL enableUPnP = [[[userDefaultsController values] valueForKey:@"enableUPnPPortMapping"] boolValue];
+	if (enableUPnP)
+	{
+		[portMapProgress setHidden:YES];
+		[portMapStatus setHidden:NO];
+		[portMapText setHidden:NO];
+	}
+	else
+	{
+		[portMapProgress setHidden:NO];
+		[portMapStatus setHidden:NO];
+		[portMapText setHidden:NO];
+	}
+
 	//[ rearrangeObjects];
 	//[self appendOutput:@"[GENIE] Genie started"];
 	//[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]
@@ -184,6 +235,11 @@
 
 - (void)gotHostPortInfo:(NSInteger)port
 {
+	//BOOL enableUPnP = [[theDefaultsController values] valueForKey:@"userName"];
+	BOOL enableUPnP = [[[userDefaultsController values] valueForKey:@"enableUPnPPortMapping"] boolValue];
+	if (!enableUPnP)
+		return;
+	
 	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
 	[pm addPortMapping:
 	 [TCMPortMapping portMappingWithLocalPort:port 
@@ -199,7 +255,7 @@
 
 - (void)ghostStarted:(NSString *)version
 {
-	NSString *startupMap = [[NSUserDefaults standardUserDefaults] stringForKey:@"startupMap"];
+	NSString *startupMap = [[[NSUserDefaults standardUserDefaults] valueForKey:@"startupMap"] stringValue];
 	if (startupMap)
 		[[GHostSocket sharedSocket] sendCommand:[@"map " stringByAppendingString:startupMap]];
 	[ghostVersion setStringValue:[@"GHost++ " stringByAppendingString:version]];
@@ -208,13 +264,6 @@
 
 - (void)appendOutput:(NSString *)output
 {
-	//NSLog(output);
-	/*NSInteger count = [[listController arrangedObjects] count];
-	[listController addObject:[LogEntry logEntryWithLine:output]];
-	
-	NSInteger newcount = [[listController arrangedObjects] count];
-	*/
-	
 	const NSString* hostExpression = @"^\\[GHOST\\] using bot_hostport \\[(\\d+)\\]";
 	const NSString* ghostStarted = @"^\\[GHOST\\] GHost\\+\\+ Version (\\d+\\.\\d+)";
 	const NSString* rconStarted = @"^\\[RCON\\] Listening at \\[.*?\\] on port \\[(\\d+)\\]";
@@ -235,8 +284,6 @@
 	}
 	[consoleView addCoreOutput:output];
 	[chatView parseConsoleOutput:output];
-	
-	
 }
 
 - (void)appendOutputNotify:(NSNotification*)note
@@ -262,18 +309,13 @@
 
 - (id)init
 {
-	[super init];
-	ghost = [GHostController sharedController];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStarted:) name:GHProcessStarted object:ghost];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processStopped:) name:GHProcessStopped object:ghost];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appendOutputNotify:) name:GHConsoleOutput object:ghost];
-	//lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
-	lines = [NSMutableArray array];
-	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidStartWork:) 
-												 name:TCMPortMapperDidStartWorkNotification object:pm];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(portMapperDidFinishWork:)
-												 name:TCMPortMapperDidFinishWorkNotification object:pm];
+	if ([super init])
+	{
+		ghost = [GHostController sharedController];
+		//lines = [NSMutableArray arrayWithObject:[LogEntry logEntryWithText:@"Genie started" sender:@"GENIE" date:[NSDate date] image:[NSImage imageNamed:@"ghost.png"]]];
+		lines = [NSMutableArray array];
+		[GrowlApplicationBridge setGrowlDelegate:self];
+	}
 	return self;
 }
 
@@ -286,25 +328,11 @@
 	
 }
 
-- (void)doStuffOnMainGUIThread:(id)arg {
-	BOOL startGHost = ([[NSUserDefaults standardUserDefaults] integerForKey:@"runGHostOnStartup"] == 1);
-    if (startGHost)
-		[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]]];
-}
-
 - (void)copyFilesAsync:(id)arg {
 	/*check for necessary files*/
 	NSError *error;
 	NSString *appSupportDir = [UIController applicationSupportFolder];
 	NSString *resDir = [[NSBundle mainBundle] resourcePath];
-	/*NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:[[resDir stringByAppendingPathComponent:@"bin"] stringByAppendingPathComponent:@"version.plist"]];
-	 
-	 if (prefs != nil) {
-	 //TODO: check GHost core version?
-	 //[prefs objectForKey:@"Client"];
-	 } else {
-	 NSLog(@"Could not read version.plist!");
-	 }*/
 	NSFileManager *fm = [NSFileManager defaultManager];
 	if ([fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] == nil || [[fm contentsOfDirectoryAtPath:[UIController getConfigDir] error:nil] count] < 1) {
 		[fm createDirectoryAtPath:[UIController getConfigDir] withIntermediateDirectories:YES attributes:nil error:nil];
@@ -326,79 +354,8 @@
 	}
 	
 	//NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"war3.exe",@"Storm.dll",@"game.dll",@"War3Patch.mpq",nil];
-	NSMutableArray *requiredFiles = [NSMutableArray arrayWithObjects:@"War3Patch.mpq",nil];
-	NSMutableArray *filesNotFound = [NSMutableArray arrayWithArray:requiredFiles];
 	
-	// create directory to hold warcraft 3 windows files
-	NSString *war3dir = [appSupportDir stringByAppendingPathComponent:@"war3files"];
-	[fm createDirectoryAtPath:war3dir withIntermediateDirectories:YES attributes:nil error:nil];
-	NSArray *existingFiles = [fm contentsOfDirectoryAtPath:war3dir error:nil];
-	for (NSString *file in requiredFiles) {
-		if ([existingFiles containsObject:file])
-			[filesNotFound removeObject:file];
-	}
-	
-	if ([filesNotFound count] > 0 && NSRunAlertPanel(@"Required files missing!",
-																	 @"Some files that are required to run GHost have not been installed yet. I can fetch those files from your Warcraft II installtion.\nThe files missing are:\n%@\nDo you want me to install them now?",
-																	 @"Yes", @"No", nil, filesNotFound) == NSAlertDefaultReturn) {
-		
-		// Create the File Open Dialog class.
-		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setTitle:@"Select Wacraft 3 Directory"];
-		// Disable the selection of files in the dialog.
-		[openDlg setCanChooseFiles:NO];
-		
-		[openDlg setAllowsMultipleSelection:NO];
-		
-		//[openDlg setAllowedFileTypes:[NSArray arrayWithArray:requiredFiles]];
-		
-		// Enable the selection of directories in the dialog.
-		[openDlg setCanChooseDirectories:YES];
-		
-		BOOL abort = YES;
-		// retry selection if required files are missing
-		do {
-			[requiredFiles setArray:filesNotFound];
-			// Display the dialog.  If the OK button was pressed,
-			// process the files.
-			if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
-			{
-				// Get an array containing the full filenames of all
-				// files and directories selected.
-				NSArray* files = [fm contentsOfDirectoryAtPath:[openDlg filename] error:nil];
-				
-				// Loop through all the files and process them.
-				for( NSString *file in requiredFiles )
-				{
-					if ([files containsObject:file])
-					{
-						if ([fm copyItemAtPath:[[openDlg filename] stringByAppendingPathComponent:file] toPath:[war3dir stringByAppendingPathComponent:file] error:&error])
-						{
-							//success in moving
-							[filesNotFound removeObject:file];
-						}
-						else
-						{
-							//failure
-							NSAlert *errorDlg = [NSAlert alertWithError:error];
-							[errorDlg runModal];
-						}
-					}
-				}
-				
-				if ([filesNotFound count] > 0) {
-					NSAlert *alert = [NSAlert alertWithMessageText:@"Missing files!" defaultButton:@"Retry" alternateButton:@"Abort" otherButton:nil informativeTextWithFormat:@"Some required files were not present at the location you specified.\nThe missing files are:\n%@",filesNotFound];
-					NSInteger result = [alert runModal];
-					if (result == NSAlertDefaultReturn) {
-						// User didn't click ok
-						abort = NO;
-					}
-				}
-			}
-		} while (!abort);
-	}
-	
-	[NSApp endSheet:progressPanel returnCode:0];
+	[NSApp endSheet:progressPanel.window returnCode:0];
 }
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)item {
@@ -414,16 +371,18 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-	BOOL startHidden = ([[NSUserDefaults standardUserDefaults] integerForKey:@"startHidden"] == 1);
+	BOOL startHidden = [[[userDefaultsController values] valueForKey:@"startHidden"] boolValue];
 	if (!startHidden)
 		[mainWindow orderFront: mainWindow];
-	[progressBar startAnimation:self];
-	[NSApp beginSheet: progressPanel
-	   modalForWindow: mainWindow
-		modalDelegate: self
-	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-		  contextInfo: nil];
-	[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
+	[progressPanel showSheet:mainWindow];
+	[configController reloadConfigList];
+	BOOL startGHost = [[[userDefaultsController values] valueForKey:@"runGHostOnStartup"] boolValue];
+    if (startGHost)
+		[ghost startWithConfig:[[UIController getConfigDir] stringByAppendingPathComponent:[configSelector title]]];
+	//[progressBar startAnimation:self];
+	//NSLog("MainWindow: %s", mainWindow);
+	
+	//[self performSelectorInBackground:@selector(copyFilesAsync:) withObject:nil];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {

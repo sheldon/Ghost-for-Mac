@@ -29,7 +29,7 @@
 //
 
 CBNCSUtilInterface :: CBNCSUtilInterface( string userName, string userPassword ) :
-	m_Status( Idle )
+	m_Status( BNCSIdle )
 {
 	// m_nls = (void *)nls_init( userName.c_str( ), userPassword.c_str( ) );
 	m_NLS = new NLS( userName, userPassword );
@@ -44,7 +44,6 @@ CBNCSUtilInterface :: ~CBNCSUtilInterface( )
 
 void CBNCSUtilInterface :: Reset( string userName, string userPassword )
 {
-	m_Status = Idle;
 	// nls_free( (nls_t *)m_nls );
 	// m_nls = (void *)nls_init( userName.c_str( ), userPassword.c_str( ) );
 	if(m_NLS)
@@ -84,7 +83,7 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( string war3Path, string keyROC, 
 
 		if( m_KeyInfoROC.size( ) == 36 && m_KeyInfoTFT.size( ) == 36 )
 		{
-			m_Status = Success;
+			m_Status = BNCSSuccess;
 			return true;
 		}
 		else
@@ -107,7 +106,7 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( string war3Path, string keyROC, 
 		if( !ExistsGameDLL )
 			CONSOLE_Print( "[BNCSUI] unable to open [" + FileGameDLL + "]" );
 	}
-	m_Status = Error;
+	m_Status = BNCSError;
 	return false;
 }
 

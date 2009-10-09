@@ -60,6 +60,7 @@ public:
 	bool HELP_SID_AUTH_CHECK( string version, string keyROC, string keyTFT, string valueStringFormula, string mpqFileName, BYTEARRAY clientToken, BYTEARRAY serverToken );
 	virtual void SetServers( string serverlist );
 	virtual string GetErrorString( ) { return "logon failed - retrieving hash from server failed, disconnecting"; }
+	virtual void ResetStatus( );
 private:
 	virtual void ExtractAndProcessPackets( );
 	CGHost *m_GHost;

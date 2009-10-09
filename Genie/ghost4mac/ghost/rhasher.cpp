@@ -60,6 +60,12 @@ CRemoteHasher :: ~CRemoteHasher( )
 		delete m_Socket;
 }
 
+void CRemoteHasher :: ResetStatus( ) {
+	if (m_Socket)
+		m_Socket->Reset();
+	m_Status = BNCSIdle;
+}
+
 unsigned int CRemoteHasher :: SetFD( void *fd, void *send_fd, int *nfds )
 {
 	if( !m_Socket /*|| m_Socket->HasError( )*/ )
@@ -73,26 +79,27 @@ bool CRemoteHasher :: Update( void *fd, void *send_fd )
 {
 	if( !m_Socket )
 		return true;
+
 	switch (m_Status) {
-		case Idle:
-			// do nothing
-			break;
-		case Connecting:
+		case BNCSIdle:
+			return true;
+		case BNCSConnecting:
 			if ( m_Servers.size( ) == 0 )
 			{
 				CONSOLE_Print( "[RHASH] error: no server available" );
-				m_Status = Error;
+				m_Status = BNCSError;
 			}
 			else if( m_Attempts >= 3)
 			{
 				CONSOLE_Print( "[RHASH] failed to connect after 3 tries" );
-				m_Status = Error;
+				m_Status = BNCSError;
 			}
 			else if( !m_Socket->GetConnecting( ) && GetTime( ) >= m_NextConnectTime )
 			{
 				// attempt to connect
 				sort(m_Servers.begin( ), m_Servers.end( ), sort_servers( ) );
 				m_CurrentServer = m_Servers.front();
+				m_NextConnectTime = GetTime( );
 				
 				CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] connecting to server (try #" + UTIL_ToString( m_Attempts ) + ")" );
 				
@@ -116,7 +123,7 @@ bool CRemoteHasher :: Update( void *fd, void *send_fd )
 				{
 					CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] connected" );
 					//m_WaitingToConnect = false;
-					m_Status = Connected;
+					m_Status = BNCSConnected;
 					unsigned char c = m_Request.size();
 					BYTEARRAY b = UTIL_CreateByteArray(c);
 					UTIL_AppendByteArrayFast( b, m_Request );
@@ -127,21 +134,21 @@ bool CRemoteHasher :: Update( void *fd, void *send_fd )
 				{
 					// the connection attempt timed out
 					CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] connect timed out (" + UTIL_ToString( m_Timeout ) + "s)" );
-					m_Status = Disconnected;
+					m_Status = BNCSDisconnected;
 				}
 			}
 			break;
-		case Connected:
+		case BNCSConnected:
 			if ( m_Socket->HasError( ) && m_CurrentServer)
 			{
 				CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] disconnected due to socket error" );
-				m_Status = Disconnected;
+				m_Status = BNCSDisconnected;
 			}
 			else if( !m_Socket->GetConnecting( ) && !m_Socket->GetConnected( ) && m_CurrentServer)
 			{
 				// the socket was disconnected
 				CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] disconnected due to socket not connected" );
-				m_Status = Disconnected;
+				m_Status = BNCSDisconnected;
 			}
 			else if( m_Socket->GetConnected( ) )
 			{
@@ -149,21 +156,29 @@ bool CRemoteHasher :: Update( void *fd, void *send_fd )
 				ExtractAndProcessPackets( );
 			}
 			break;
-		case Disconnected:
+		case BNCSDisconnected:
 			m_NextConnectTime = GetTime( ) + m_ReconnectInterval;
 			m_Socket->Reset( );
 			m_CurrentServer->Failed( );
 			m_Attempts++;
-			m_Status = Connecting;
+			m_Status = BNCSConnecting;
 			CONSOLE_Print( "[RHASH: " + m_CurrentServer->GetName( ) + "] waiting " + UTIL_ToString( m_ReconnectInterval ) + " seconds to reconnect" );
 			break;
-		case Error:
-			m_Status = Idle;
+		case BNCSError:
+			//m_Socket->Disconnect( );
+			m_Socket->Reset();
+			m_Status = BNCSIdle;
 			break;
-		case Success:
-			m_Status = Idle;
+		case BNCSSuccess:
+			//m_Socket->Disconnect( );
+			m_Socket->Reset();
+			m_Status = BNCSIdle;
+			break;
+		default:
+			m_Status = BNCSError;
 			break;
 	}
+	return false;
 }
 
 void CRemoteHasher :: ExtractAndProcessPackets( )
@@ -175,13 +190,7 @@ void CRemoteHasher :: ExtractAndProcessPackets( )
 		CONSOLE_Print( "[RHASH] got response" );
 		//packet complete
 		vector<string> values;
-		/*string::const_iterator s = RecvBuffer->begin();
-        do {
-            string::const_iterator begin = s;
-            while (*s != '\t' && s != RecvBuffer->end()) { ++s; }
-			values.push_back(string(begin, s));
-			//s++;
-        } while( ++s != RecvBuffer->end() );*/
+
 		char c='\t';
 		string::const_iterator s = RecvBuffer->begin();
         while (true) {
@@ -206,7 +215,7 @@ void CRemoteHasher :: ExtractAndProcessPackets( )
 		if (values.size( ) != 3)
 		{
 			CONSOLE_Print("[RHASH] invalid response: " + UTIL_ToString(values.size()) + " parameters");
-			m_Status = Disconnected;
+			m_Status = BNCSDisconnected;
 			return;
 		}
 		// number of data elements is valid
@@ -219,7 +228,7 @@ void CRemoteHasher :: ExtractAndProcessPackets( )
 		ss >> EXEVersion;
 		if (ss.fail()) {
 			CONSOLE_Print("[RHASH] invalid response: "+ values[0] +" is not valid for EXEVersion");
-			m_Status = Disconnected;
+			m_Status = BNCSDisconnected;
 			return;
 		}
 		
@@ -230,7 +239,7 @@ void CRemoteHasher :: ExtractAndProcessPackets( )
 		ss >> EXEVersionHash;
 		if (ss.fail()) {
 			CONSOLE_Print("[RHASH] invalid response: "+ values[2] +" is not valid for EXEVersionHash");
-			m_Status = Disconnected;
+			m_Status = BNCSDisconnected;
 			return;
 		}
 		
@@ -240,14 +249,12 @@ void CRemoteHasher :: ExtractAndProcessPackets( )
 		m_KeyInfoROC = CreateKeyInfo( m_KeyROC, UTIL_ByteArrayToUInt32( m_ClientToken, false ), UTIL_ByteArrayToUInt32( m_ServerToken, false ) );
 		m_KeyInfoTFT = CreateKeyInfo( m_KeyTFT, UTIL_ByteArrayToUInt32( m_ClientToken, false ), UTIL_ByteArrayToUInt32( m_ServerToken, false ) );
 		
-		m_Status = Success;
-		//m_Success = true;
-		//m_Retrieving = false;
+		m_Status = BNCSSuccess;
 		CONSOLE_Print( "[RHASH] FINISHED!" );
 	} else if( RecvBuffer->size( ) > 128 ) {
 		// so much data and still no \n? something is wrong
 		CONSOLE_Print("[RHASH] invalid response: too much data");
-		m_Status = Disconnected;
+		m_Status = BNCSDisconnected;
 	}
 }
 
@@ -265,15 +272,15 @@ void CRemoteHasher :: SetServers( string serverlist )
 		ss >> server;
 		if( ss.fail( ) )
 			continue;
+		
 		pos = server.find( ":" );
-		if( pos != string::npos && pos == server.size() )
+		if( pos != string::npos && pos != server.size() )
 		{
-			server = server.substr(0, pos);
-			parser.clear();
-			parser.str( server.substr(pos+1, server.size( ) - (pos + 1)) );
+			parser.clear( );
+			parser.str( server.substr( pos+1 ) );
 			parser >> port;
 		}
-		m_Servers.push_back( new CRHServer( server, port ) );
+		m_Servers.push_back( new CRHServer( server.substr(0, pos), port ) );
 	}
 }
 
@@ -287,17 +294,5 @@ bool CRemoteHasher :: HELP_SID_AUTH_CHECK( string version, string keyROC, string
 	m_Request = version + "\t" + UTIL_ToString( extractMPQNumber( mpqFileName.c_str( ) ) ) + "\t" + valueStringFormula + "\n";
 	//m_WaitingToConnect = true;
 	//m_Success = false;
-	m_Status = Connecting;
+	m_Status = BNCSConnecting;
 }
-
-/*void CRemoteHasher :: GetHash( string keyROC, string keyTFT, string version, string formula, string ix86_file_ver, BYTEARRAY clientToken, BYTEARRAY serverToken )
-{
-	CONSOLE_Print( "[RHASH] initiating hash request" );
-	m_KeyROC = keyROC;
-	m_KeyTFT = keyTFT;
-	m_ClientToken = clientToken;
-	m_ServerToken = serverToken;
-	m_Request = version + "\t" + UTIL_ToString( extractMPQNumber( ix86_file_ver.c_str( ) ) ) + "\t" + formula + "\n";
-	m_WaitingToConnect = true;
-	m_Success = false;
-}*/

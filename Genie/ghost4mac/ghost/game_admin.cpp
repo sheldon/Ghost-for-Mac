@@ -911,7 +911,9 @@ bool CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 				try
 				{
 					path MapCFGPath( m_GHost->m_MapCFGPath );
+#ifdef REGEX
 					boost :: regex Regex( Payload );
+#endif
 					string Pattern = Payload;
 					transform( Pattern.begin( ), Pattern.end( ), Pattern.begin( ), (int(*)(int))tolower );
 
@@ -933,13 +935,15 @@ bool CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 							transform( FileName.begin( ), FileName.end( ), FileName.begin( ), (int(*)(int))tolower );
 							transform( Stem.begin( ), Stem.end( ), Stem.begin( ), (int(*)(int))tolower );
 							bool Matched = false;
-
+#ifdef REGEX
 							if( m_GHost->m_UseRegexes )
 							{
 								if( boost :: regex_match( FileName, Regex ) )
 									Matched = true;
 							}
-							else if( FileName.find( Pattern ) != string :: npos )
+							else
+#endif
+								if( FileName.find( Pattern ) != string :: npos )
 								Matched = true;
 
 							if( !is_directory( i->status( ) ) && i->path( ).extension( ) == ".cfg" && Matched )
@@ -1032,7 +1036,9 @@ bool CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 				try
 				{
 					path MapPath( m_GHost->m_MapPath );
+#ifdef REGEX
 					boost :: regex Regex( Payload );
+#endif
 					string Pattern = Payload;
 					transform( Pattern.begin( ), Pattern.end( ), Pattern.begin( ), (int(*)(int))tolower );
 
@@ -1054,13 +1060,15 @@ bool CAdminGame :: EventPlayerBotCommand( CGamePlayer *player, string command, s
 							transform( FileName.begin( ), FileName.end( ), FileName.begin( ), (int(*)(int))tolower );
 							transform( Stem.begin( ), Stem.end( ), Stem.begin( ), (int(*)(int))tolower );
 							bool Matched = false;
-
+#ifdef REGEX
 							if( m_GHost->m_UseRegexes )
 							{
 								if( boost :: regex_match( FileName, Regex ) )
 									Matched = true;
 							}
-							else if( FileName.find( Pattern ) != string :: npos )
+							else
+#endif
+								if( FileName.find( Pattern ) != string :: npos )
 								Matched = true;
 
 							if( !is_directory( i->status( ) ) && Matched )

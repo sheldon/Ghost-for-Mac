@@ -1,10 +1,12 @@
 SHELL = /bin/sh
+UPX = /opt/local/bin/upx
 SYSTEM = $(shell uname)
 C++ = g++
 CC = gcc
 DFLAGS = -DGHOST_MYSQL
 OFLAGS = -Os
-LFLAGS = -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lmysqlclient_r -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt -lboost_regex-mt
+#LFLAGS = -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -L. -L../bncsutil/src/bncsutil/ -L../StormLib/stormlib/ -lbncsutil -lpthread -ldl -lz -lStorm -lmysqlclient_r -lboost_date_time-mt -lboost_thread-mt -lboost_system-mt -lboost_filesystem-mt
+LFLAGS = -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -L. -lmysqlclient_r  -lbncsutil -lpthread -ldl -lbz2 -lz -lStorm -lboost_ghost -framework CoreServices -lcrypto -lssl
 CFLAGS = -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
 
 ifeq ($(SYSTEM),Darwin)
@@ -33,6 +35,9 @@ endif
 OBJS = bncsutilinterface.o bnet.o bnetprotocol.o bnlsclient.o bnlsprotocol.o commandpacket.o config.o crc32.o csvparser.o game.o game_admin.o game_base.o gameplayer.o gameprotocol.o gameslot.o ghost.o ghostdb.o ghostdbmysql.o ghostdbsqlite.o language.o map.o packed.o rcon.o rhasher.o replay.o savegame.o sha1.o socket.o stats.o statsdota.o statsw3mmd.o util.o
 COBJS = sqlite3.o
 PROGS = ./ghost++
+
+upx: all
+	- $(UPX) --brute $(PROGS)
 
 all: $(OBJS) $(COBJS) $(PROGS)
 

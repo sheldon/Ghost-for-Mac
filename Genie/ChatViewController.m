@@ -10,6 +10,7 @@
 #import "RegexKit/RegexKit.h"
 #import "ChatMessage.h"
 #import "GHostSocket.h"
+#import "Growl/GrowlApplicationBridge.h"
 
 
 @implementation ChatViewController
@@ -113,8 +114,20 @@
 	//TODO: this sucks! why do we have to clear the filterPredicate upon adding new items?
 	[self updatePredicate];
 	NSInteger newcount = [[listController arrangedObjects] count];
-	if (newcount > count && autoScroll)
-		[messageTable scrollRowToVisible:newcount - 1];
+	if (newcount > count) {
+		NSString *notificationName = @"ChannelMessage";
+		if (msg.isWhisper)
+			notificationName = @"Whisper";
+		[GrowlApplicationBridge notifyWithTitle:msg.sender /* notifyWithTitle is a required parameter */
+									description:msg.text /* description is a required parameter */
+							   notificationName:notificationName /* notification name is a required parameter, and must exist in the dictionary we registered with growl */
+									   iconData:nil /* not required, growl defaults to using the application icon, only needed if you want to specify an icon. */ 
+									   priority:0 /* how high of priority the alert is, 0 is default */
+									   isSticky:NO /* indicates if we want the alert to stay on screen till clicked */
+								   clickContext:nil]; /* click context is the method we want called when the alert is clicked, nil for none */
+		if (autoScroll)
+			[messageTable scrollRowToVisible:newcount - 1];
+	}
 }
 
 - (IBAction)inputCommand:(id)sender {
@@ -185,7 +198,6 @@ const NSString *reMessage = @"(?m)^\\[(LOCAL|WHISPER): (.*?)\\] \\[(.*?)\\] (.*?
 	if (msg) {
 		//msg.image = favIcon;
 		[self addMessage:msg];
-		
 	}
 }
 

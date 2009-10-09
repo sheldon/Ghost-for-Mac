@@ -28,8 +28,10 @@
 #import "ConsoleViewController.h"
 #import	"ChatViewController.h"
 #import "MessagesController.h"
+#import "PanelStartupController.h"
+#import "Growl/GrowlApplicationBridge.h"
 
-@interface UIController : NSObject {
+@interface UIController : NSObject <GrowlApplicationBridgeDelegate> {
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *prefWindow;
 	IBOutlet NSPopUpButton *configSelector;
@@ -37,7 +39,8 @@
 	IBOutlet NSToolbarItem *startStopButton;
 	IBOutlet NSProgressIndicator *progressBar;
 	IBOutlet BadgeView *badge;
-	IBOutlet NSPanel *progressPanel;
+	IBOutlet PanelStartupController *progressPanel;
+	IBOutlet NSUserDefaultsController *userDefaultsController;
 	IBOutlet NSArrayController *listController;
 	IBOutlet ConfigController *configController;
 	IBOutlet GeneralController *generalController;
