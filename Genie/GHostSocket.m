@@ -19,7 +19,7 @@
 
 - (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
 	//NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 1)];
-	NSString *msg = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	NSString *msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	if(msg)
 	{
 		if ([msg isEqualToString:@"PING"])

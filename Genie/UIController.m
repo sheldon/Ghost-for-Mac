@@ -255,7 +255,7 @@
 
 - (void)ghostStarted:(NSString *)version
 {
-	NSString *startupMap = [[[NSUserDefaults standardUserDefaults] valueForKey:@"startupMap"] stringValue];
+	NSString *startupMap = [[NSUserDefaults standardUserDefaults] valueForKey:@"startupMap"];
 	if (startupMap)
 		[[GHostSocket sharedSocket] sendCommand:[@"map " stringByAppendingString:startupMap]];
 	[ghostVersion setStringValue:[@"GHost++ " stringByAppendingString:version]];
