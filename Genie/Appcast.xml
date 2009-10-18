@@ -15,149 +15,79 @@
 		<item>
 			<title>Version 0.5.3</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.3.dmg" sparkle:version="0.5.3" length="10280279" type="application/octet-stream" sparkle:dsaSignature="MCwCFEnRPE/XJCKhwj9z75sF2lCnxBa6AhQ1yIAZrUBgh523837TUWICM9WsbA==" />
-			<description><![CDATA[
-			<b>Genie 0.5.3</b>
-			<ul>
-				<li>fixed server parsing bug in remote hasher</li>
-				<li>switched from dynamic to static linking in ghost executable for all external dependencies</li>
-				<li>packed ghost executable with upx</li>
-				<li>changed startup import process to make use of Spotlight for convenience</li>
-				<li>added Growl support for chat events</li>
-			</ul>
-			<b>Genie 0.5.2</b>
-			<ul>
-				<li>updated ghost core to version 15.0</li>
-				<li>added remote hashing capability to ghost core. This means you don't need wc3 files from windows anymore if you set bnet_rhservers</li>
-			</ul>
-			<b>Genie 0.5.1</b>
-			<ul>
-				<li>Fixed a bug with chat output stalling the whole app</li>
-			</ul>
-			<b>Genie 0.5</b>
-			<ul>
-				<li>Updated GHost core to 14.2</li>
-				<li>Changed UI layout</li>
-				<li>Added 'chat' tab</li>
-				<li>Added map auto-load</li>
-				<li>Added Kqueue watching of config directories</li>
-			</ul>
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.5.2</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.2.dmg" sparkle:version="0.5.2" length="14462411" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCHYgOOZWq9+crDoXDjqJKiy3PRAwIUaL3HktWWm8XIgCpaktsSP2gah8o=" />
-			<description><![CDATA[
-			<b>Genie 0.5.2</b>
-			<ul>
-			<li>updated ghost core to version 15.0</li>
-			<li>added remote hashing capability to ghost core. This means you don't need wc3 files from windows anymore if you set bnet_rhservers</li>
-			</ul>
-			<b>Genie 0.5.1</b>
-			<ul>
-			<li>Fixed a bug with chat output stalling the whole app</li>
-			</ul>
-			<b>Genie 0.5</b>
-			<ul>
-			<li>Updated GHost core to 14.2</li>
-			<li>Changed UI layout</li>
-			<li>Added 'chat' tab</li>
-			<li>Added map auto-load</li>
-			<li>Added Kqueue watching of config directories</li>
-			</ul>
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.5.1</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.1.dmg" sparkle:version="0.5.1" length="15461783" type="application/octet-stream" sparkle:dsaSignature="MC0CFCcz1Jf76HBAY9oqMP9TQ0G7Vk6hAhUAm7MIuYvI8qwGYcZLEL/XPdwWZkk=" />
-			<description><![CDATA[
-			<b>Genie 0.5.1</b>
-			<ul>
-			<li>Fixed a bug with chat output stalling the whole app</li>
-			</ul>
-			<b>Genie 0.5</b>
-			<ul>
-			<li>Updated GHost core to 14.2</li>
-			<li>Changed UI layout</li>
-			<li>Added 'chat' tab</li>
-			<li>Added map auto-load</li>
-			<li>Added Kqueue watching of config directories</li>
-			</ul>
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.5</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.5.dmg" sparkle:version="0.5" length="15460736" type="application/octet-stream" sparkle:dsaSignature="MC0CFEUYALCgKFBAp4gK1eYRjMaGRq10AhUAkPGTbMpd3u463ZyumMFUG75cdTE=" />
-			<description><![CDATA[
-			<b>Genie 0.5</b>
-			<ul>
-			<li>Updated GHost core to 14.2</li>
-			<li>Changed UI layout</li>
-			<li>Added 'chat' tab</li>
-			<li>Added map auto-load</li>
-			<li>Added Kqueue watching of config directories</li>
-			</ul>
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.4.4</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.4.dmg" sparkle:version="0.4.4" length="15198852" type="application/octet-stream" sparkle:dsaSignature="MCwCFDOpLtwupwtr88KafiF31mVRiXmvAhQub6W3pdIVOCo8TAMCa6t5PwDroA==" />
-			<description><![CDATA[
-			Fixed bugs with autosetup
-			<ul>
-			<li>Default config was not being copied</li>
-			<li>Required WC3 files not being copied correctly</li>
-			</ul>
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.4.3</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.3.dmg" sparkle:version="0.4.3" length="15197703" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCa/Zbs52FdyZgCqs1B3h9/w5P+/AIUX6Uq82hdQLk32lC0tHNNK7memRk=" />
-			<description><![CDATA[
-				Fixed a few bugs with lib requisites<br>
-				Redesigned main window layout (not really visible yet)<br>
-				Search not working because of restructuring<br>
-				Fixed bug with default config not being copied
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.4.2</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.2.dmg" sparkle:version="0.4.2" length="15163142" type="application/octet-stream" sparkle:dsaSignature="MCwCFE2yXsb4cvPKCU6OnecB71r6soJdAhRrSk9O0jo+eTqUCqH9pCtmC4/mPA==" />
-			<description><![CDATA[
-				Made columns hideable in console output<br/>
-				Implemented UPNP port mapper for hosting (untested, needs feedback)
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.4.1 (bugfix release)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.1.dmg" sparkle:version="0.4.1" length="13410434" type="application/octet-stream" sparkle:dsaSignature="MC4CFQCJ7rkw7ycjI+crzYPCXE9rnbSsDgIVAJh8Vg07YvCPz2ZWH6DuIj/+3gY8" />
-			<description><![CDATA[
-				Fixed a bug with sending the wrong commandtrigger when executing commands<br/>
-				Recompiled ghost core with optimization level -O2 instead of -O3
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.4 (command input)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.4.dmg" sparkle:version="0.4" length="13473386" type="application/octet-stream" sparkle:dsaSignature="MC0CFQCbtmHz6KXk68wDLX56Q4xEJTIWnQIUB/bpjRrmw3Ia0HSGE+o3/m0Aato=" />
-			<description><![CDATA[
-				Added the ability to control the bot without opening Warcraft III<br/>
-				Compressed GHost core with UPX
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.3.3 (changed ghost core)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.3.dmg" sparkle:version="0.3.3" length="15055718" type="application/octet-stream" sparkle:dsaSignature="MCwCFDxZMc/d8vk1i81Wt/+7hIhtGx8dAhRQRtHj9Thzf6Rm89WVp4w0m45kYw==" />
-			<description><![CDATA[
-				Updated GHost core to 13.3<br/>
-				Removed unnecessary libs (libgcc and libstdc++)
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.3.2 (only minor changes)</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-0.3.2.dmg" sparkle:version="0.3.2" length="16145210" type="application/octet-stream" sparkle:dsaSignature="MCwCFGVZt2xGW5XXs283EbpH51E0V14wAhQe8DcKHvRkLQ3uYN4CCu9sUHCHpg==" />
-			<description><![CDATA[
-				Changed the layout of Genie and the Preferences window<br/>
-				Fixed a bug with loading and saving configs
-			]]></description>
+			<sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
 		</item>
 		<item>
 			<title>Version 0.3.1 (Bugfix release)</title>
