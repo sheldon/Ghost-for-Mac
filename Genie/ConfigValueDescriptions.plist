@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bot_log</key>
+	<dict/>
+	<key>bot_logmethod</key>
+	<dict>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>0</string>
+				<key>title</key>
+				<string>Don&apos;t lock log file (slower)</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>1</string>
+				<key>title</key>
+				<string>Lock log file</string>
+			</dict>
+		</array>
+	</dict>
+	<key>tcp_nodelay</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_tft</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+		<key>description</key>
+		<string>whether to act as Warcraft III: The Frozen Throne or not</string>
+	</dict>
+	<key>bot_bindaddress</key>
+	<dict>
+		<key>type</key>
+		<string>ip</string>
+		<key>description</key>
+		<string>the address GHost++ will bind to when hosting games (leave it blank to bind to all available addresses)</string>
+	</dict>
+	<key>bot_hostport</key>
+	<dict>
+		<key>type</key>
+		<string>port</string>
+		<key>description</key>
+		<string>the port GHost++ will host battle.net games on (this must be different from your admingame_port)</string>
+	</dict>
+	<key>bot_maxgames</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+		<key>description</key>
+		<string>maximum number of games to host at once</string>
+	</dict>
+	<key>bot_commandtrigger</key>
+	<dict>
+		<key>type</key>
+		<string>char</string>
+		<key>description</key>
+		<string>command trigger for ingame only (battle.net command triggers are defined later)</string>
+	</dict>
+	<key>bot_savereplays</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+		<key>description</key>
+		<string>whether to save replays or not</string>
+	</dict>
+	<key>replay_war3version</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bot_virtualhostname</key>
+	<dict>
+		<key>type</key>
+		<string>coloredstring</string>
+		<key>maxlen</key>
+		<integer>15</integer>
+	</dict>
+	<key>bot_hideipaddresses</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_checkmultipleipusage</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_spoofchecks</key>
+	<dict>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>0</string>
+				<key>title</key>
+				<string>No automatic spoof checks</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>1</string>
+				<key>title</key>
+				<string>Auto spoof check everybody</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>2</string>
+				<key>title</key>
+				<string>Auto spoof check admins only</string>
+			</dict>
+		</array>
+	</dict>
+	<key>bot_requirespoofchecks</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_reserveadmins</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_refreshmessages</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_autolock</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_autosave</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_allowdownloads</key>
+	<dict>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>0</string>
+				<key>title</key>
+				<string>Disable map downloads</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>1</string>
+				<key>title</key>
+				<string>Enable map downloads</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>2</string>
+				<key>title</key>
+				<string>Conditionally enable map downloads</string>
+			</dict>
+		</array>
+	</dict>
+	<key>bot_pingduringdownloads</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_maxdownloaders</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bot_maxdownloadspeed</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bot_lcpings</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_autokickping</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bot_banmethod</key>
+	<dict>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>1</string>
+				<key>title</key>
+				<string>By Name only</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>2</string>
+				<key>title</key>
+				<string>By IP only</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>3</string>
+				<key>title</key>
+				<string>By Name and IP</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>4</string>
+			</dict>
+		</array>
+	</dict>
+	<key>bot_lobbytimelimit</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>New item</key>
+	<string></string>
+	<key>New item - 2</key>
+	<string></string>
+	<key>New item - 3</key>
+	<string></string>
+</dict>
+</plist>
