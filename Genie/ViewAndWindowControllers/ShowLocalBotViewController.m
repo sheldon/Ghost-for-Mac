@@ -21,6 +21,7 @@
 #import "ShowLocalBotViewController.h"
 #import "BotLocal.h"
 #import "Server.h"
+#import "ConsoleMessage.h"
 
 @implementation ShowLocalBotViewController
 @synthesize selectedBot;
@@ -37,6 +38,23 @@
 		selectedBot = nil;
 	}
 	return self;
+}
+
+-(void)copyToClipboard:(NSString*)str
+{
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
+    [pb declareTypes:types owner:self];
+    [pb setString: str forType:NSStringPboardType];
+}
+
+- (IBAction)copyLines:(id)sender
+{
+	NSMutableString* output = [NSMutableString string];
+	for (ConsoleMessage *m in [messageController selectedObjects]) {
+		[output appendFormat:@"[%@] %@\n", [m.date descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil], m.text];
+	}
+	[self copyToClipboard:output];
 }
 
 - (IBAction)execCommand:sender

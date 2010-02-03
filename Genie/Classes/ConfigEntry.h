@@ -24,6 +24,7 @@
 
 @interface ConfigEntry :  NSManagedObject  
 {
+	NSDictionary *valueDict;
 }
 - (BOOL)validateName:(id *)ioValue error:(NSError **)outError;
 - (void)enableEntry;
@@ -33,6 +34,7 @@
 @property (nonatomic, retain) NSNumber * enabled;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) BotLocal * bot;
+@property (readonly) NSString * description;
 
 @end
 

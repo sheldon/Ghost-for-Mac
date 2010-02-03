@@ -29,6 +29,24 @@
 @dynamic name;
 @dynamic bot;
 
+- (void)awakeFromFetch
+{
+	valueDict = nil;
+}
+
+- (NSString*)description
+{
+	if (valueDict == nil) {
+		NSString *plistFile = [[NSBundle mainBundle] pathForResource:@"ConfigValueDescriptions"
+															  ofType:@"plist"];
+		valueDict =	[[NSDictionary dictionaryWithContentsOfFile:plistFile] retain];
+	}
+	NSDictionary *valDesc = [valueDict valueForKey:self.name];
+	if (!valDesc)
+		return nil;
+	return [valDesc valueForKey:@"description"];;
+}
+
 - (void)toggleEntry
 {
 	BOOL current = [self.enabled boolValue];

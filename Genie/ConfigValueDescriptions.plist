@@ -3,7 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>bot_log</key>
-	<dict/>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
 	<key>bot_logmethod</key>
 	<dict>
 		<key>type</key>
@@ -24,60 +27,108 @@
 			</dict>
 		</array>
 	</dict>
-	<key>tcp_nodelay</key>
+	<key>bot_language</key>
 	<dict>
-		<key>type</key>
-		<string>bool</string>
+		<key>description</key>
+		<string>This setting is overwritten by Genie</string>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_war3path</key>
+	<dict>
+		<key>description</key>
+		<string>This setting is overwritten by Genie</string>
+		<key>ignored</key>
+		<string></string>
 	</dict>
 	<key>bot_tft</key>
 	<dict>
 		<key>type</key>
 		<string>bool</string>
 		<key>description</key>
-		<string>whether to act as Warcraft III: The Frozen Throne or not</string>
+		<string>Whether to act as Warcraft III: The Frozen Throne or not</string>
 	</dict>
 	<key>bot_bindaddress</key>
 	<dict>
 		<key>type</key>
 		<string>ip</string>
 		<key>description</key>
-		<string>the address GHost++ will bind to when hosting games (leave it blank to bind to all available addresses)</string>
+		<string>The address GHost++ will bind to when hosting games (leave it blank to bind to all available addresses)</string>
 	</dict>
 	<key>bot_hostport</key>
 	<dict>
 		<key>type</key>
 		<string>port</string>
 		<key>description</key>
-		<string>the port GHost++ will host battle.net games on (this must be different from your admingame_port)</string>
+		<string>The port GHost++ will host battle.net games on (this must be different from your admingame_port) and different for GHost instances running at the same time</string>
 	</dict>
 	<key>bot_maxgames</key>
 	<dict>
 		<key>type</key>
 		<string>uint</string>
 		<key>description</key>
-		<string>maximum number of games to host at once</string>
+		<string>Maximum number of games to host at once</string>
 	</dict>
 	<key>bot_commandtrigger</key>
 	<dict>
 		<key>type</key>
 		<string>char</string>
 		<key>description</key>
-		<string>command trigger for ingame only (battle.net command triggers are defined later)</string>
+		<string>Command trigger for ingame only (battle.net command triggers are defined with bnet_ prefix)</string>
+	</dict>
+	<key>bot_mapcfgpath</key>
+	<dict>
+		<key>description</key>
+		<string>This setting is overwritten by Genie. The path to the directory where you keep your map config files. This directory can also contain common.j and blizzard.j (extracted from War3Patch.mpq)</string>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_savegamepath</key>
+	<dict>
+		<key>description</key>
+		<string>The path to the directory where you keep your savegame files</string>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_mappath</key>
+	<dict>
+		<key>description</key>
+		<string>This setting is overwritten by Genie</string>
+		<key>ignored</key>
+		<string></string>
 	</dict>
 	<key>bot_savereplays</key>
 	<dict>
 		<key>type</key>
 		<string>bool</string>
 		<key>description</key>
-		<string>whether to save replays or not</string>
+		<string>Whether to save replays or not</string>
+	</dict>
+	<key>bot_replaypath</key>
+	<dict>
+		<key>description</key>
+		<string>The path to the directory where you want GHost++ to save replays</string>
+		<key>ignored</key>
+		<string></string>
 	</dict>
 	<key>replay_war3version</key>
 	<dict>
+		<key>description</key>
+		<string>The Warcraft 3 version to save replays as</string>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>replay_buildnumber</key>
+	<dict>
+		<key>description</key>
+		<string>The Warcraft 3 build number to save replays as (this is specific to each Warcraft 3 version)</string>
 		<key>type</key>
 		<string>uint</string>
 	</dict>
 	<key>bot_virtualhostname</key>
 	<dict>
+		<key>description</key>
+		<string>The bot&apos;s virtual host name as it appears in the game lobby</string>
 		<key>type</key>
 		<string>coloredstring</string>
 		<key>maxlen</key>
@@ -85,16 +136,22 @@
 	</dict>
 	<key>bot_hideipaddresses</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to hide each player&apos;s IP address from other players or not</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_checkmultipleipusage</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to check for multiple IP address usage or not</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_spoofchecks</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to do automatic spoof checks or not. You can always manually spoof check by whispering the bot (and in fact this is required before running admin commands)</string>
 		<key>type</key>
 		<string>option</string>
 		<key>options</key>
@@ -121,31 +178,43 @@
 	</dict>
 	<key>bot_requirespoofchecks</key>
 	<dict>
+		<key>description</key>
+		<string>This controls whether the bot will require players to spoof check before starting the game</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_reserveadmins</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to consider admins and root admins as reserved players or not</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_refreshmessages</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to display game refresh messages by default (visual only). This can always be changed for a particular game with the !refresh command</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_autolock</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to automatically lock games when the owner joins</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_autosave</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to automatically save games when a player disconnects. This can always be changed for a particular game with the !autosave command</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_allowdownloads</key>
 	<dict>
+		<key>description</key>
+		<string>Whether to allow map downloads or not</string>
 		<key>type</key>
 		<string>option</string>
 		<key>options</key>
@@ -172,26 +241,36 @@
 	</dict>
 	<key>bot_pingduringdownloads</key>
 	<dict>
+		<key>description</key>
+		<string>This config value determines whether GHost++ should stop pinging *all* players when at least one player is downloading the map</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_maxdownloaders</key>
 	<dict>
+		<key>description</key>
+		<string>The maximum number of players allowed to download the map at the same time</string>
 		<key>type</key>
 		<string>uint</string>
 	</dict>
 	<key>bot_maxdownloadspeed</key>
 	<dict>
+		<key>description</key>
+		<string>The maximum combined download speed of all players downloading the map (in KB/sec)</string>
 		<key>type</key>
 		<string>uint</string>
 	</dict>
 	<key>bot_lcpings</key>
 	<dict>
+		<key>description</key>
+		<string>Use LC style pings (divide actual pings by two)</string>
 		<key>type</key>
 		<string>bool</string>
 	</dict>
 	<key>bot_autokickping</key>
 	<dict>
+		<key>description</key>
+		<string>Auto kick players with ping higher than this</string>
 		<key>type</key>
 		<string>uint</string>
 	</dict>
@@ -219,22 +298,286 @@
 				<key>title</key>
 				<string>By Name and IP</string>
 			</dict>
+		</array>
+	</dict>
+	<key>bot_ipblacklistfile</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_lobbytimelimit</key>
+	<dict>
+		<key>description</key>
+		<string>automatically close the game lobby if a reserved player (or admin) doesn&apos;t join it for this many minutes. games which are set to automatically start when enough players join are exempt from this limit (e.g. autohosted games)</string>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bot_latency</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+		<key>description</key>
+		<string>the game latency. this can always be changed for a particular game with the !latency command</string>
+	</dict>
+	<key>bot_synclimit</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+		<key>description</key>
+		<string>the maximum number of packets a player is allowed to get out of sync by before starting the lag screen</string>
+	</dict>
+	<key>bot_votekickallowed</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_votekickpercentage</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+		<key>minValue</key>
+		<integer>0</integer>
+		<key>maxValue</key>
+		<integer>100</integer>
+	</dict>
+	<key>bot_defaultmap</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_motdfile</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_gameloadedfile</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_gameoverfile</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>bot_localadminmessages</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>tcp_nodelay</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bot_matchmakingmethod</key>
+	<dict>
+		<key>description</key>
+		<string>this controls how the bot matches players when they join the game when using !autohostmm</string>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
 			<dict>
 				<key>value</key>
-				<string>4</string>
+				<string>0</string>
+				<key>title</key>
+				<string>Disable matchmaking</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>1</string>
+				<key>title</key>
+				<string>Use &quot;furthest score&quot; method</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>2</string>
+				<key>title</key>
+				<string>Use &quot;lowest score&quot; method</string>
 			</dict>
 		</array>
 	</dict>
-	<key>bot_lobbytimelimit</key>
+	<key>admingame_create</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>admingame_port</key>
+	<dict>
+		<key>type</key>
+		<string>port</string>
+	</dict>
+	<key>admingame_password</key>
+	<dict/>
+	<key>admingame_map</key>
+	<dict/>
+	<key>lan_war3version</key>
 	<dict>
 		<key>type</key>
 		<string>uint</string>
 	</dict>
-	<key>New item</key>
-	<string></string>
-	<key>New item - 2</key>
-	<string></string>
-	<key>New item - 3</key>
-	<string></string>
+	<key>udp_broadcasttarget</key>
+	<dict>
+		<key>description</key>
+		<string>if this value is blank the bot will try to broadcast LAN games on the default interface which is chosen by your operating system</string>
+		<key>type</key>
+		<string>ip</string>
+	</dict>
+	<key>udp_dontroute</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>autohost_maxgames</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>autohost_startplayers</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>autohost_gamename</key>
+	<dict/>
+	<key>autohost_owner</key>
+	<dict/>
+	<key>db_type</key>
+	<dict>
+		<key>type</key>
+		<string>option</string>
+		<key>options</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>sqlite3</string>
+				<key>title</key>
+				<string>SQLite</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>mysql</string>
+				<key>title</key>
+				<string>MySQL</string>
+			</dict>
+		</array>
+	</dict>
+	<key>db_sqlite3_file</key>
+	<dict>
+		<key>ignored</key>
+		<string></string>
+	</dict>
+	<key>db_mysql_server</key>
+	<dict/>
+	<key>db_mysql_database</key>
+	<dict/>
+	<key>db_mysql_user</key>
+	<dict/>
+	<key>db_mysqlpassword</key>
+	<dict/>
+	<key>db_mysql_port</key>
+	<dict>
+		<key>type</key>
+		<string>port</string>
+	</dict>
+	<key>db_mysql_botid</key>
+	<dict/>
+	<key>bnet_server</key>
+	<dict>
+		<key>type</key>
+		<string>suggestion</string>
+		<key>suggestions</key>
+		<array>
+			<dict>
+				<key>value</key>
+				<string>useast.battle.net</string>
+				<key>title</key>
+				<string>battle.net US East</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>uswest.battle.net</string>
+				<key>title</key>
+				<string>battle.net US West</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>asia.battle.net</string>
+				<key>title</key>
+				<string>battle.net Asia</string>
+			</dict>
+			<dict>
+				<key>value</key>
+				<string>europe.battle.net</string>
+				<key>title</key>
+				<string>battle.net Europe</string>
+			</dict>
+		</array>
+	</dict>
+	<key>bnet_serveralias</key>
+	<dict/>
+	<key>bnet_cdkeyroc</key>
+	<dict>
+		<key>type</key>
+		<string>cdkey</string>
+	</dict>
+	<key>bnet_cdkeytft</key>
+	<dict>
+		<key>type</key>
+		<string>cdkey</string>
+	</dict>
+	<key>bnet_username</key>
+	<dict/>
+	<key>bnet_password</key>
+	<dict/>
+	<key>bnet_firstchannel</key>
+	<dict/>
+	<key>bnet_rootadmin</key>
+	<dict/>
+	<key>bnet_commandtrigger</key>
+	<dict>
+		<key>type</key>
+		<string>char</string>
+	</dict>
+	<key>bnet_holdfriends</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bnet_holdclan</key>
+	<dict>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bnet_publiccommands</key>
+	<dict>
+		<key>description</key>
+		<string>whether to allow anonymous users (non admins) to use public commands such as !stats and !statsdota</string>
+		<key>type</key>
+		<string>bool</string>
+	</dict>
+	<key>bnet_bnlsserver</key>
+	<dict/>
+	<key>bnet_bnlsport</key>
+	<dict>
+		<key>type</key>
+		<string>port</string>
+	</dict>
+	<key>bnet_bnlswardencookie</key>
+	<dict/>
+	<key>bnet_custom_war3version</key>
+	<dict>
+		<key>type</key>
+		<string>uint</string>
+	</dict>
+	<key>bnet_custom_exeversion</key>
+	<dict/>
+	<key>bnet_custom_exeversionhash</key>
+	<dict/>
+	<key>bnet_custom_passwordhashtype</key>
+	<dict/>
+	<key>bnet_custom_pvpgnrealmname</key>
+	<dict/>
 </dict>
 </plist>

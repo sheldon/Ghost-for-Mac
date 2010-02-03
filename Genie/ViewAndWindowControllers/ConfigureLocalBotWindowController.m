@@ -119,18 +119,6 @@
    forTableColumn:(NSTableColumn *)tableColumn
 			  row:(NSInteger)row
 {
-	if ([[tableColumn identifier] isEqualToString:@"ValueTableInfo"]) {
-		ConfigEntry *data = [[configSettings arrangedObjects] objectAtIndex:row];
-		NSString *name = data.name;
-		NSDictionary *keyDesc = [valueDescriptions valueForKey:name];
-		if (keyDesc) {
-			NSString *description = [keyDesc valueForKey:@"description"];
-			if (description) {
-				[cell setTitle:description];
-			}
-		}
-	}
-	
     if (![[tableColumn identifier] isEqualToString: @"ValueTableValue"])
 		return;
 	ConfigEntry *data = [[configSettings arrangedObjects] objectAtIndex:row];
@@ -140,16 +128,27 @@
 		type = [keyDesc valueForKey:@"type"];
 	
 	NSDictionary *options = nil;
-	if ([type isEqualToString:@"uint"]) {
-		/*NSNumberFormatter *formatter = [[NSNumberFormatter new] autorelease];
-		[formatter setFormat:@"$#;0"];
-		[cell setFormatter:formatter];*/
+	/*if ([type isEqualToString:@"uint"]) {
+		//NSNumberFormatter *formatter = [[NSNumberFormatter new] autorelease];
+		//[formatter setFormat:@"$#;0"];
+		//[cell setFormatter:formatter];
 		options =
 		[NSDictionary dictionaryWithObject:@"ConfigIntValueTransformer"
 									forKey:NSValueTransformerNameBindingOption];
-		[cell bind: @"value" toObject:data withKeyPath: @"value" options: nil];
-	}
-	if ([cell isKindOfClass:[NSPopUpButtonCell class]]) {
+		[cell bind: @"value" toObject:data withKeyPath: @"value" options: options];
+	} else if ([cell isKindOfClass:[NSComboBoxCell class]]) {
+		NSDictionary *keyDesc = [valueDescriptions valueForKey:data.name];
+		options = [NSDictionary
+				   dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:NO], NSRaisesForNotApplicableKeysBindingOption,
+				   @"Description missing", NSNotApplicablePlaceholderBindingOption,
+				   nil];
+		
+		[cell bind:@"content" toObject:keyDesc withKeyPath:@"suggestions" options:nil];
+		//[cell bind:@"contentObjects" toObject:keyDesc withKeyPath:@"suggestions.value" options:options];
+		//[cell bind:@"contentValues" toObject:keyDesc withKeyPath:@"suggestions.value" options:options];
+		
+		[cell bind:@"value" toObject:data withKeyPath: @"value" options: nil];
+	} else */if ([cell isKindOfClass:[NSPopUpButtonCell class]]) {
 		NSDictionary *keyDesc = [valueDescriptions valueForKey:data.name];
 		options = [NSDictionary
 				   dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:NO], NSRaisesForNotApplicableKeysBindingOption,
@@ -173,20 +172,14 @@
 		[cell bind: @"value" toObject:data withKeyPath: @"value" options: nil];
 		//[cell setEditable:YES];
 	}
-
-	/*if ([data.name isEqualToString:@"tcp_nodelay"]) {
-		options =
-		[NSDictionary dictionaryWithObject:@"ConfigBoolValueTransformer"
-									forKey:NSValueTransformerNameBindingOption];
-		//[cell setAlignment:NSLeftTextAlignment];
-	}*/
 	
-	
+	[cell bind: @"enabled" toObject:data withKeyPath: @"enabled" options: nil];
 } 
 
 - (NSCell *)tableView:(NSTableView *)tableView dataCellForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
 	if ([[tableColumn identifier] isEqualToString:@"ValueTableValue"]) {
+		NSCell *dataCell = nil;
 		ConfigEntry *data = [[configSettings arrangedObjects] objectAtIndex:row];
 		NSString *name = data.name;
 		NSDictionary *keyDesc = [valueDescriptions valueForKey:name];
@@ -203,20 +196,32 @@
 					[cellBool setBordered:NO];
 					[cellBool setImage:[NSImage imageNamed:@"Off20"]];
 					[cellBool setAlternateImage:[NSImage imageNamed:@"On20"]];
-					
-					return cellBool;
+					dataCell = cellBool;
 				} else if ([type isEqualToString:@"option"]) {
 					NSPopUpButtonCell *cellPopUp = [[NSPopUpButtonCell new] autorelease];
-					//[cellPopUp addItemsWithTitles:[keyDesc valueForKey:@"options"]];
-					return cellPopUp;
+					dataCell = cellPopUp;
+				} /*else if ([type isEqualToString:@"suggestion"]) {
+					NSComboBoxCell *cellComboBox = [[NSComboBoxCell new] autorelease];
+					[cellComboBox setEditable:YES];
+					[cellComboBox setSelectable:YES];
+					//[cellComboBox setItemHeight:7];
+					[cellComboBox setFont:[NSFont fontWithDescriptor:[[cellComboBox font] fontDescriptor] size:11]];
+					//[cellComboBox setControlSize:NSSmallControlSize];
+					
+					dataCell = cellComboBox;
 				} else if ([type isEqualToString:@"uint"]) {
 					NSStepperCell *stepperCell = [[NSStepperCell new] autorelease];
 					[stepperCell setMinValue:0];
 					[stepperCell setMaxValue:-1];
-					return stepperCell;
-				}
+					dataCell = stepperCell;
+				}*/
 			}
 		}
+		
+		if (!dataCell)
+			dataCell = [tableColumn dataCell];
+		[dataCell setEditable:YES];
+		return dataCell;
 	}
 	// by default return nil to present NSTextFieldCell
 	return [tableColumn dataCell];

@@ -93,10 +93,12 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 }
 
 - (void)runLoop:(id)data {
-	// set priority to high
-	[NSThread setThreadPriority:1.0];
 	// set up autoreleasepool (needed because we are in a seperate thread)
 	NSAutoreleasePool *autoreleasepool= [[NSAutoreleasePool alloc] init];
+	
+	// set priority to high
+	[NSThread setThreadPriority:1.0];
+	
 	[self willChangeValueForKey:@"running"];
 	running = [NSNumber numberWithBool:YES];
 	[self didChangeValueForKey:@"running"];
@@ -106,7 +108,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	instance->RegisterBNETCallback(&GHostBNETMessageCallback, (void*)self);
 	
 	if (delegate) {
-		[delegate ghostCreated:instance];
+		[delegate performSelectorOnMainThread:@selector(ghostCreated:) withObject:[NSValue valueWithPointer:instance] waitUntilDone:YES];
 	}
 
 	while (!cancelled) {
@@ -144,6 +146,9 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	}
 	instance->m_ExitingNice = TRUE;
 	instance->Update(1);
+	if (delegate) {
+		[delegate performSelectorOnMainThread:@selector(ghostTerminates:) withObject:[NSValue valueWithPointer:instance] waitUntilDone:YES];
+	}
 
 	delete cfg;
 	cfg = nil;
@@ -152,6 +157,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	[self willChangeValueForKey:@"running"];
 	running = [NSNumber numberWithBool:NO];
 	[self didChangeValueForKey:@"running"];
+	
 	[autoreleasepool release];
 }
 

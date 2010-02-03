@@ -83,6 +83,8 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( bool TFT, string war3Path, strin
 		uint32_t EXEVersionHash;
 		checkRevisionFlat( valueStringFormula.c_str( ), FileWar3EXE.c_str( ), FileStormDLL.c_str( ), FileGameDLL.c_str( ), extractMPQNumber( mpqFileName.c_str( ) ), (unsigned long *)&EXEVersionHash );
 		m_EXEVersionHash = UTIL_CreateByteArray( EXEVersionHash, false );
+		CONSOLE_Print("mpqNum: " + UTIL_ToString(extractMPQNumber( mpqFileName.c_str( ) )) + " Formula: " + valueStringFormula);
+		CONSOLE_Print("EXEVersion: " + UTIL_ToString(EXEVersion) + " EXEVersionHash: " + UTIL_ToString(EXEVersionHash));
 		m_KeyInfoROC = CreateKeyInfo( keyROC, UTIL_ByteArrayToUInt32( clientToken, false ), UTIL_ByteArrayToUInt32( serverToken, false ) );
 
 		if( TFT )

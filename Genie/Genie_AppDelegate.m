@@ -209,6 +209,7 @@
 	if (!startHidden)
 		[mainWindow orderFront: mainWindow];*/
 	[importWindowController showSheet:[self window]];
+	
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification

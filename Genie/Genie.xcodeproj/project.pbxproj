@@ -1742,8 +1742,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PRODUCT_NAME = Genie;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1791,10 +1793,10 @@
 					"\"$(SRCROOT)/libghost/bncsutil/gmp/mpz/.libs\"",
 				);
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = bncsutil;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = "Debug MySQL";
@@ -1826,10 +1828,10 @@
 					"\"$(SRCROOT)/libghost/bncsutil/gmp/mpz/.libs\"",
 				);
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = bncsutil;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = "Release MySQL";
@@ -1875,7 +1877,8 @@
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1885,7 +1888,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = libghost;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				VALID_ARCHS = "i386 x86_64";
 				ZERO_LINK = NO;
@@ -1920,10 +1923,10 @@
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = ghost;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				STRIP_INSTALLED_PRODUCT = NO;
 				VALID_ARCHS = "i386 x86_64";
@@ -1950,11 +1953,11 @@
 				GCC_VERSION = 4.2;
 				INSTALL_PATH = /usr/local/lib;
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CFLAGS = "-Wl,-read_only_relocs,supress";
 				PREBINDING = NO;
 				PRODUCT_NAME = Storm;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 				ZERO_LINK = NO;
 			};
@@ -2001,8 +2004,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				PRODUCT_NAME = Genie;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2036,7 +2041,8 @@
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -2046,7 +2052,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = libghost;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -2080,10 +2086,10 @@
 					"\"$(SRCROOT)/libghost/precompiled libs\"",
 				);
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = ghost;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -2108,11 +2114,11 @@
 				GCC_VERSION = 4.2;
 				INSTALL_PATH = /usr/local/lib;
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CFLAGS = "-Wl,-read_only_relocs,supress";
 				PREBINDING = NO;
 				PRODUCT_NAME = Storm;
-				SDKROOT = "";
+				SDKROOT = macosx10.5;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = "Debug MySQL";

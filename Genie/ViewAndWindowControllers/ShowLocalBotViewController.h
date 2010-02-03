@@ -28,7 +28,8 @@
 	IBOutlet NSArrayController *serverController;
 	IBOutlet NSTableView *messageTable;
 }
-- (IBAction)execCommand:sender;
+- (IBAction)execCommand:(id)sender;
+- (IBAction)copyLines:(id)sender;
 
 @property (nonatomic, retain) BotLocal *selectedBot;
 @end

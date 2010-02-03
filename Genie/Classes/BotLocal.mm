@@ -106,7 +106,7 @@
 		}
 	}
 	
-	//TODO: make threadsafe
+	//TODO: threadsafety?
 	ghost->m_Map->Load( mapCfg, [relMapPath UTF8String] );
 	delete mapCfg;
 }
@@ -374,16 +374,26 @@
 	[self enableUndo];
 }
 
-- (void)ghostCreated:(CGHost*)ghost
+- (void)ghostTerminates:(NSValue*)ghost
 {
+	while ([self.servers count]) {
+		Server *srv = [self.servers anyObject];
+		[self removeServersObject:srv];
+		[[self managedObjectContext] deleteObject:srv];
+	}
+}
+
+- (void)ghostCreated:(NSValue*)ghost
+{
+	CGHost* ghostPtr = (CGHost*)[ghost pointerValue];
 	// get bnets
-	int count = ghost->m_BNETs.size();
+	int count = ghostPtr->m_BNETs.size();
 	for (int i=0; i<count; i++) {
-		NSString *alias = [NSString stringWithUTF8String:ghost->m_BNETs[i]->GetServerAlias().c_str()];
+		NSString *alias = [NSString stringWithUTF8String:ghostPtr->m_BNETs[i]->GetServerAlias().c_str()];
 		Server *srv = [NSEntityDescription insertNewObjectForEntityForName:@"Server" inManagedObjectContext:[self managedObjectContext]];
 		srv.name = alias;
 		srv.bot = self;
-		void* bnet = ghost->m_BNETs[i];
+		void* bnet = ghostPtr->m_BNETs[i];
 		srv.bnetObject = [NSValue valueWithPointer:bnet];
 		
 		[self addServersObject:srv];

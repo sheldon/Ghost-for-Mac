@@ -35,7 +35,8 @@ class CConfig;
 
 @protocol GHostDelegate
 /* all messages are invoked on the mainThread */
-- (void)ghostCreated:(FAKE_CXX_TYPE(CGHost*))ghost;
+- (void)ghostCreated:(NSValue*)ghost;
+- (void)ghostTerminates:(NSValue*)ghost;
 - (void)consoleOutputCallback:(NSString*)message;
 - (void)chatMessageReceived:(NSDictionary*)data;
 - (void)whisperReceived:(NSDictionary*)data;
