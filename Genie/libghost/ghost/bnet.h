@@ -124,6 +124,7 @@ public:
 	~CBNET( );
 	
 	void PrintMessage( const string &message );
+	void ProcessFileHashes( string EXEInfo, uint32_t EXEVersion, uint32_t EXEVersionHash );
 
 	bool GetExiting( )					{ return m_Exiting; }
 	string GetServer( )					{ return m_Server; }

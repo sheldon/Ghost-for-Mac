@@ -43,6 +43,7 @@
 @dynamic ipblacklist;
 @dynamic startupMap;
 @dynamic currentMap;
+@dynamic useRemoteHasher;
 
 - (NSString *)applicationSupportDirectory {
 	
@@ -337,7 +338,7 @@
 		_botInterface = [[GHostInterface alloc] init];
 		[_botInterface setDelegate:self];
 		[_botInterface addObserver:self forKeyPath:@"running" options:nil context:nil];
-		//[_botInterface bind:@"running" toObject:self withKeyPath:@"running" options:nil];
+		[_botInterface bind:@"useRemoteHasher" toObject:self withKeyPath:@"useRemoteHasher" options:nil];
 	}
 	return _botInterface;
 }

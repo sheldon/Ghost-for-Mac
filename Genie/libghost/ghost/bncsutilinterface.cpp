@@ -56,6 +56,33 @@ void CBNCSUtilInterface :: Reset( string userName, string userPassword )
 	m_NLS = new NLS( userName, userPassword );
 }
 
+bool CBNCSUtilInterface :: GenerateKeyHashes( bool TFT, string keyROC, string keyTFT, BYTEARRAY clientToken, BYTEARRAY serverToken)
+{
+	m_KeyInfoROC = CreateKeyInfo( keyROC, UTIL_ByteArrayToUInt32( clientToken, false ), UTIL_ByteArrayToUInt32( serverToken, false ) );
+	
+	if( TFT )
+		m_KeyInfoTFT = CreateKeyInfo( keyTFT, UTIL_ByteArrayToUInt32( clientToken, false ), UTIL_ByteArrayToUInt32( serverToken, false ) );
+	
+	if( m_KeyInfoROC.size( ) == 36 && ( !TFT || m_KeyInfoTFT.size( ) == 36 ) )
+		return true;
+	else
+	{
+		if( m_KeyInfoROC.size( ) != 36 )
+			CONSOLE_Print( "[BNCSUI] unable to create ROC key info - invalid ROC key" );
+		
+		if( TFT && m_KeyInfoTFT.size( ) != 36 )
+			CONSOLE_Print( "[BNCSUI] unable to create TFT key info - invalid TFT key" );
+	}
+	return false;
+}
+
+void CBNCSUtilInterface :: ProcessFileHashes( string EXEInfo, uint32_t EXEVersion, uint32_t EXEVersionHash )
+{
+	m_EXEInfo = EXEInfo;
+	m_EXEVersion = UTIL_CreateByteArray( EXEVersion, false );
+	m_EXEVersionHash = UTIL_CreateByteArray( EXEVersionHash, false );
+}
+
 bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( bool TFT, string war3Path, string keyROC, string keyTFT, string valueStringFormula, string mpqFileName, BYTEARRAY clientToken, BYTEARRAY serverToken )
 {
 	// set m_EXEVersion, m_EXEVersionHash, m_EXEInfo, m_InfoROC, m_InfoTFT
@@ -83,8 +110,9 @@ bool CBNCSUtilInterface :: HELP_SID_AUTH_CHECK( bool TFT, string war3Path, strin
 		uint32_t EXEVersionHash;
 		checkRevisionFlat( valueStringFormula.c_str( ), FileWar3EXE.c_str( ), FileStormDLL.c_str( ), FileGameDLL.c_str( ), extractMPQNumber( mpqFileName.c_str( ) ), (unsigned long *)&EXEVersionHash );
 		m_EXEVersionHash = UTIL_CreateByteArray( EXEVersionHash, false );
-		CONSOLE_Print("mpqNum: " + UTIL_ToString(extractMPQNumber( mpqFileName.c_str( ) )) + " Formula: " + valueStringFormula);
-		CONSOLE_Print("EXEVersion: " + UTIL_ToString(EXEVersion) + " EXEVersionHash: " + UTIL_ToString(EXEVersionHash));
+		//CONSOLE_Print("mpqNum: " + UTIL_ToString(extractMPQNumber( mpqFileName.c_str( ) )) + " Formula: " + valueStringFormula);
+		//CONSOLE_Print("EXEVersion: " + UTIL_ToString(EXEVersion) + " EXEVersionHash: " + UTIL_ToString(EXEVersionHash));
+		//CONSOLE_Print("ExeInfo: " + m_EXEInfo);
 		m_KeyInfoROC = CreateKeyInfo( keyROC, UTIL_ByteArrayToUInt32( clientToken, false ), UTIL_ByteArrayToUInt32( serverToken, false ) );
 
 		if( TFT )

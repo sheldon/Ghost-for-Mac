@@ -363,6 +363,8 @@
                                                 URL:url 
                                                 options:options 
                                                 error:&error]){
+		NSLog(@"Migration error: %@", [error description]);
+		NSLog(@"Migration userInfo: %@", [[error userInfo] description]);
         [[NSApplication sharedApplication] presentError:error];
         [persistentStoreCoordinator release], persistentStoreCoordinator = nil;
         return nil;

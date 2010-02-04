@@ -48,7 +48,13 @@ typedef enum BNETMessageType {
 	BNETMessageTypeChat,
 	BNETMessageTypeEmote
 } EventBNETMessageType;
+typedef struct BNETHashRequestData {
+	string formula;
+	string verString;
+	CBNET* bnet;
+} EventBNETHashRequestData;
 typedef void (*EventBNETMessageCallback)( void* callbackObject, CBNET *bnet, const string &user, const string &message, BNETMessageType type );
+typedef void (*EventBNETHashRequestCallback)( void* callbackObject, const EventBNETHashRequestData &data );
 
 class CGHost
 {
@@ -149,6 +155,10 @@ public:
 	void RegisterBNETCallback(EventBNETMessageCallback callback, void* callbackObject);
 	EventBNETMessageCallback m_BNETCallback;
 	void *m_BNETCallbackObject;
+	
+	void RegisterBNETHashCallback(EventBNETHashRequestCallback callback, void* callbackObject);
+	EventBNETHashRequestCallback m_BNETHashCallback;
+	void *m_BNETHashCallbackObject;
 
 	// processing functions
 

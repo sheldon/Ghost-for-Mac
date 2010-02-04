@@ -54,6 +54,7 @@ class CConfig;
 	NSMutableArray *cmdQueue;
 	NSLock *cmdLock;
 	NSObject <GHostDelegate> *delegate;
+	NSNumber *useRemoteHasher;
 	//NSNumber *hostPort;
 }
 extern NSString * const GOutputReceived;
@@ -63,5 +64,6 @@ extern NSString * const GOutputReceived;
 - (NSValue*)ghostInstance;
 - (void)execCommand:(NSDictionary *)cmd;
 @property (nonatomic, readonly) NSNumber* running;
+@property (nonatomic, readonly) NSNumber* useRemoteHasher;
 @property (assign) NSObject <GHostDelegate> *delegate;
 @end

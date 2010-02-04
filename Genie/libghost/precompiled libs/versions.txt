@@ -1,6 +1,11 @@
-boost: 1.41
+boost: 1.40
+compiled from sources, architectures:
+i386, ppc, x86_64, ppc64
 
 gmp: 4.3.1
-
+compiled with MacPorts, architectures:
+i386, x86_64
 
 mysql 5.1.39
+compiled from sources, architectures:
+i386, ppc, x86_64

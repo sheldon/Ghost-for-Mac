@@ -37,6 +37,7 @@
 @property (nonatomic, retain) NSString * ipblacklist;
 @property (nonatomic, retain) GMap * startupMap;
 @property (nonatomic, retain) GMap * currentMap;
+@property (nonatomic, retain) NSNumber * useRemoteHasher;
 
 @property (nonatomic, readonly) GHostInterface* botInterface;
 

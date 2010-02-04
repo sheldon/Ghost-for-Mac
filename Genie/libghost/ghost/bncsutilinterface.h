@@ -59,6 +59,8 @@ public:
 
 	void Reset( string userName, string userPassword );
 
+	bool GenerateKeyHashes( bool TFT, string keyROC, string keyTFT, BYTEARRAY clientToken, BYTEARRAY serverToken);
+	void ProcessFileHashes( string EXEInfo, uint32_t EXEVersion, uint32_t EXEVersionHash );
 	bool HELP_SID_AUTH_CHECK( bool TFT, string war3Path, string keyROC, string keyTFT, string valueStringFormula, string mpqFileName, BYTEARRAY clientToken, BYTEARRAY serverToken );
 	bool HELP_SID_AUTH_ACCOUNTLOGON( );
 	bool HELP_SID_AUTH_ACCOUNTLOGONPROOF( BYTEARRAY salt, BYTEARRAY serverKey );

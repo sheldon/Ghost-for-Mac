@@ -33,6 +33,7 @@ NSString * const GOutputReceived = @"GOutputReceived";
 
 @synthesize running;
 @synthesize delegate;
+@synthesize useRemoteHasher;
 
 - (void)ghostCleanup
 {
@@ -51,10 +52,123 @@ NSString * const GOutputReceived = @"GOutputReceived";
 							waitUntilDone:NO];
 }
 
+//simple API that encodes reserved characters according to:
+//RFC 3986
+//http://tools.ietf.org/html/rfc3986
+-(NSString *) urlencode: (NSString *) url
+{
+    NSArray *escapeChars = [NSArray arrayWithObjects:
+							@";" , @"/" , @"?" ,
+							@":" , @"@" , @"&" ,
+							@"=" , @"+" , @"$" ,
+							@"," , @"[" , @"]" ,
+							@"#" , @"!" , @"'" ,
+							@"(" , @")" , @"*" ,
+							@" " , @"^" ,
+							nil];
+	
+    NSArray *replaceChars = [NSArray arrayWithObjects:
+							 @"%3B" , @"%2F" , @"%3F" ,
+							 @"%3A" , @"%40" , @"%26" ,
+							 @"%3D" , @"%2B" , @"%24" ,
+							 @"%2C" , @"%5B" , @"%5D", 
+							 @"%23", @"%21", @"%27",
+							 @"%28", @"%29", @"%2A",
+							 @"+" , @"%5E",
+							 nil];
+	
+    int len = [escapeChars count];
+	
+    NSMutableString *temp = [url mutableCopy];
+	
+    int i;
+    for(i = 0; i < len; i++)
+    {
+		
+        [temp replaceOccurrencesOfString:[escapeChars objectAtIndex:i]
+							  withString:[replaceChars objectAtIndex:i]
+								 options:NSLiteralSearch
+								   range:NSMakeRange(0, [temp length])];
+    }
+	
+    //NSString *out = [NSString stringWithString: temp];
+	
+    return [temp autorelease];
+}
+
+- (void)processHashData:(NSDictionary*)data
+{
+	CBNET *bnet = (CBNET*)[[data valueForKey:@"bnetObject"] pointerValue];
+	NSString *exeInfo = [data valueForKey:@"EXEInfo"];
+	NSString *exeVersion = [data valueForKey:@"EXEVersion"];
+	NSString *exeVersionHash = [data valueForKey:@"EXEVersionHash"];
+	
+	if (exeInfo == nil || exeVersion == nil || exeVersionHash == nil) {
+		[self lineReceived:@"[GENIE] Error getting hash from server"];
+		bnet->ProcessFileHashes(string(), 0, 0);
+	} else {
+		[self lineReceived:@"[GENIE] Got hash from server"];
+		NSLog(@"EXEVersion: '%@'\tEXEVersionHash: '%@'\tEXEInfo: '%@'", exeVersion, exeVersionHash, exeInfo);
+		NSLog(@"EXEVersion: '%ld'\tEXEVersionHash: '%ld'\tEXEInfo: '%@'", [exeVersion longLongValue], [exeVersionHash longLongValue], exeInfo);
+		bnet->ProcessFileHashes( string([exeInfo UTF8String]), [exeVersion longLongValue], [exeVersionHash longLongValue]);
+	}
+}
+
+- (void)getHashForData:(NSDictionary*)data
+{
+	// set up autoreleasepool (needed because we are in a seperate thread)
+	NSAutoreleasePool *autoreleasepool= [[NSAutoreleasePool alloc] init];
+	
+	[self lineReceived:@"[GENIE] Requesting hash from server"];
+	
+	NSString *formula = [data valueForKey:@"formula"];
+	
+	int mpqNum = -1;
+	NSScanner *scanner = [NSScanner scannerWithString:[[data valueForKey:@"verString"] stringByDeletingPathExtension]];
+	if ([scanner scanString:@"ver-IX86-" intoString:nil]) {
+		[scanner scanInt:&mpqNum];
+	}
+	
+	//formula = @"A=573383511 C=968605472 B=4154374016 4 A=A^S B=B-C C=C-A A=A^B";
+	//mpqNum = 5;
+	
+	NSLog(@"Hash Formula: '%@'\tHash Version: '%d'", formula, mpqNum);
+	NSLog(@"Encoded Formula: '%@'", [self urlencode:formula]);
+	
+	NSString *urlString = [NSString stringWithFormat:@"http://loginhashgen.appspot.com/hashserver?f=%@&m=%d", [self urlencode:formula], mpqNum];
+	NSURL *url = [NSURL URLWithString:urlString];
+	NSLog(@"Complete URL: '%@'", url);
+	
+	NSMutableDictionary *hashInfo = [NSMutableDictionary dictionaryWithCapacity:7];
+	[hashInfo addEntriesFromDictionary:data];
+	[hashInfo addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfURL:url]];
+	
+	//[self performSelector:@selector(processHashData:) onThread:ghostThread withObject:hashInfo waitUntilDone:NO];
+	//TODO: thread safety!
+	[self processHashData:hashInfo];
+	
+	[autoreleasepool release];
+}
+
 static void GHostOutputCallback(const std::string &message, void* receiver)
 {
 	GHostInterface *_self = (GHostInterface *)receiver;
 	[_self lineReceived:[NSString stringWithUTF8String:message.c_str()]];
+}
+
+static void GHostBNETHashCallback(void* callbackObject, const EventBNETHashRequestData &data)
+{
+	GHostInterface *_self = (GHostInterface *)callbackObject;
+	NSString *formula = [NSString stringWithUTF8String:data.formula.c_str()];
+	NSString *verString = [NSString stringWithUTF8String:data.verString.c_str()];
+	NSValue *bnetObject = [NSValue valueWithPointer:data.bnet];
+	
+	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+						  formula, @"formula",
+						  verString, @"verString",
+						  bnetObject, @"bnetObject",
+						  nil];
+	[_self performSelectorInBackground:@selector(getHashForData:) withObject:dict];
 }
 
 static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const string &user, const string &message, BNETMessageType type)
@@ -106,6 +220,8 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	
 	instance = new CGHost(cfg, &GHostOutputCallback, (void*)self);
 	instance->RegisterBNETCallback(&GHostBNETMessageCallback, (void*)self);
+	if ([useRemoteHasher boolValue])
+		instance->RegisterBNETHashCallback(&GHostBNETHashCallback, (void*)self);
 	
 	if (delegate) {
 		[delegate performSelectorOnMainThread:@selector(ghostCreated:) withObject:[NSValue valueWithPointer:instance] waitUntilDone:YES];
@@ -229,6 +345,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	if (self = [super init]) {
 		instance = nil;
 		running = NO;
+		useRemoteHasher = [NSNumber numberWithBool:YES];
 		cmdQueue = [[NSMutableArray arrayWithCapacity:5] retain];
 		cmdLock = [[NSLock alloc] init];
 		delegate = nil;

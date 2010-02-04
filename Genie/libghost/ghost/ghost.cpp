@@ -316,6 +316,9 @@ CGHost :: CGHost( CConfig *CFG , OutputCallbackFunction outputCallback, void* ou
 	m_BNETCallback = NULL;
 	m_BNETCallbackObject = NULL;
 	
+	m_BNETHashCallback = NULL;
+	m_BNETHashCallbackObject = NULL;
+	
 	// setup logging
 	m_LogFile = CFG->GetString( "bot_log", string( ) );
 	m_LogMethod = CFG->GetInt( "bot_logmethod", 1 );
@@ -1552,4 +1555,10 @@ void CGHost :: RegisterBNETCallback(EventBNETMessageCallback callback, void* cal
 {
 	m_BNETCallback = callback;
 	m_BNETCallbackObject = callbackObject;
+}
+
+void CGHost :: RegisterBNETHashCallback(EventBNETHashRequestCallback callback, void* callbackObject)
+{
+	m_BNETHashCallback = callback;
+	m_BNETHashCallbackObject = callbackObject;
 }
