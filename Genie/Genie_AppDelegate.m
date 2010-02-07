@@ -34,6 +34,7 @@
 @implementation Genie_AppDelegate
 
 @synthesize window;
+@synthesize botViewController;
 
 #pragma mark Maps
 - (NSString*)mapDir
@@ -183,6 +184,7 @@
 		importWindowController = [[FileImportWindowController alloc] init];
 		prefPaneMaps = [[PreferenceMapsController alloc] initWithObjectContext:self.managedObjectContext];
 		prefPaneGeneral = [[PreferenceGeneralController alloc] init];
+		botViewController = nil;
 		
 		NSFileManager *fm = [NSFileManager defaultManager];
 		NSString *baseDir = [self applicationSupportDirectory];
@@ -208,6 +210,9 @@
 	/*BOOL startHidden = [[[userDefaultsController values] valueForKey:@"startHidden"] boolValue];
 	if (!startHidden)
 		[mainWindow orderFront: mainWindow];*/
+	NSNumber *startHidden = [[NSUserDefaults standardUserDefaults] valueForKey:@"startHidden"] ;
+	if (!startHidden || ![startHidden boolValue])
+		[[self window] orderFront: [self window]];
 	[importWindowController showSheet:[self window]];
 	
 }
@@ -239,6 +244,7 @@
 	NSManagedObject *obj = [[botsController selectedObjects] lastObject];
 	if (obj == nil) {
 		localBotView.selectedBot = nil;
+		self.botViewController = nil;
 	}
 	
 	// remove all subviews from the content view (there should only be one though)
@@ -258,6 +264,7 @@
 
 		[contentView addSubview:[localBotView view]];
 		[[localBotView view] setFrame:contentFrame];
+		self.botViewController = localBotView;
 	}
 }
 
@@ -436,9 +443,21 @@
  
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
 
-	//TODO: check for running instances
-	if (NSRunAlertPanel(@"Application Exit", @"GHost++ is still running, are you sure you want to exit?", @"No", @"Yes", nil) != NSAlertAlternateReturn)
+	// check for running instances
+	NSArray *bots = [botsController arrangedObjects];
+	NSEnumerator *e = [bots objectEnumerator];
+	Bot *b;
+	BOOL running = NO;
+	while (b = [e nextObject]) {
+		if ([b.running boolValue]) {
+			running = YES;
+			break;
+		}
+	}
+	
+	if (running && NSRunAlertPanel(@"Application Exit", @"One or more bots are still running, are you sure you want to quit?", @"Cancel", @"Quit", nil) != NSAlertAlternateReturn)
 		return NSTerminateCancel;
+	
 	
     if (!managedObjectContext) return NSTerminateNow;
 

@@ -204,7 +204,7 @@
 	NSMutableDictionary *config = [NSMutableDictionary dictionaryWithCapacity:[[self settings] count]];
 	NSEnumerator *e = [[self settings] objectEnumerator];
 	while (ConfigEntry *entry = [e nextObject]) {
-		if ([entry enabled] && [[entry name] length]) {
+		if ([[entry enabled] boolValue] && [[entry name] length]) {
 			[config setObject:[entry value] forKey:[entry name]];
 		}
 	}
@@ -280,10 +280,10 @@
 		[self start];
 }
 
-- (NSNumber*)running
+/*- (NSNumber*)running
 {
 	return _running;
-}
+}*/
 
 #pragma mark -
 #pragma mark init and dealloc
@@ -291,7 +291,7 @@
 - (void)awakeFromFetch
 {
 	_botInterface = nil;
-	_running = [NSNumber numberWithBool:NO];
+	self.running = [NSNumber numberWithBool:NO];
 	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
 	/*[[NSNotificationCenter defaultCenter]
 	 addObserver:self
@@ -319,7 +319,7 @@
 	}
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
+/*- (void)observeValueForKeyPath:(NSString *)keyPath
 					  ofObject:(id)object
 						change:(NSDictionary *)change
 					   context:(void *)context
@@ -330,15 +330,16 @@
 		_running = [[object running] copy];
 		[self didChangeValueForKey:@"running"];
 	}
-}
+}*/
 
 - (GHostInterface*)botInterface
 {
 	if (!_botInterface) {
 		_botInterface = [[GHostInterface alloc] init];
 		[_botInterface setDelegate:self];
-		[_botInterface addObserver:self forKeyPath:@"running" options:nil context:nil];
+		//[_botInterface addObserver:self forKeyPath:@"running" options:nil context:nil];
 		[_botInterface bind:@"useRemoteHasher" toObject:self withKeyPath:@"useRemoteHasher" options:nil];
+		[self bind:@"running" toObject:_botInterface withKeyPath:@"running" options:nil];
 	}
 	return _botInterface;
 }
@@ -523,6 +524,14 @@
 				ConfigEntry *cfg = [NSEntityDescription insertNewObjectForEntityForName:@"ConfigEntry" inManagedObjectContext:[self managedObjectContext]];
 				cfg.name = key;
 				cfg.value = val;
+				
+				NSEnumerator *e = [[self settings] objectEnumerator];
+				ConfigEntry *entry;
+				while (entry = [e nextObject]) {
+					if ([[entry name] isEqualToString:key]) {
+						[entry disableEntry];
+					}
+				}
 				[self addSettingsObject:cfg];
 			}
 		}

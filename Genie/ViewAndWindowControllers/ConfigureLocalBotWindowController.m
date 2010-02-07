@@ -34,8 +34,14 @@
 - (IBAction)closeWindow:(id)sender
 {
 	[self.window endEditingFor:nil];
-	[NSApp endSheet:self.window];
-	[self close];
+	NSError *error=nil;
+	if (![selectedBot.managedObjectContext save:&error]) {
+		[NSApp presentError:error];
+	} else {
+		[NSApp endSheet:self.window];
+		[self close];
+	}
+
 	//[NSApp endSheet:[self window]];
 }
 

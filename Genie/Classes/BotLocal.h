@@ -26,7 +26,7 @@
 
 @interface BotLocal : Bot <GBotProtocol,GHostDelegate> {
 	GHostInterface* _botInterface;
-	NSNumber* _running;
+	//NSNumber* _running;
 	TCMPortMapping *portMapping;
 }
 @property (nonatomic, retain) NSSet * settings;

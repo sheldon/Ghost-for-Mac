@@ -25,6 +25,17 @@
 
 @implementation ShowLocalBotViewController
 @synthesize selectedBot;
+
+- (NSInteger)selectedMode
+{
+	return [tabView indexOfTabViewItem:[tabView selectedTabViewItem]];
+}
+
+- (void)setSelectedMode:(NSInteger)value
+{
+	[tabView selectTabViewItemAtIndex:value];
+}
+
 - (void)awakeFromNib
 {
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]

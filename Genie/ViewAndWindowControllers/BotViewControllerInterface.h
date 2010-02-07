@@ -1,8 +1,8 @@
-/*	ConfigEntry.h
+/*	BotViewControllerInterface.h
  *
  *	This file is part of Genie
  *	Copyright (C) 2009-2010 Lucas Romero
- *	Created 08.01.10
+ *	Created 07.02.10
  *
  *	Genie is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,25 +18,10 @@
  * 	along with Genie.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#import <CoreData/CoreData.h>
+#import <Cocoa/Cocoa.h>
 
-@class BotLocal;
 
-@interface ConfigEntry :  NSManagedObject  
-{
-	NSDictionary *valueDict;
-}
-//- (BOOL)validateName:(id *)ioValue error:(NSError **)outError;
-- (void)enableEntry;
-- (void)disableEntry;
-- (void)toggleEntry;
-@property (nonatomic, retain) NSString * value;
-@property (nonatomic, retain) NSNumber * enabled;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) BotLocal * bot;
-@property (readonly) NSString * description;
+@protocol BotViewControllerInterface
+@property (nonatomic) NSInteger selectedMode;
 
 @end
-
-
-

@@ -134,6 +134,7 @@
 		A038FE0D10FBD594004C5080 /* ChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A038FE0910FBD594004C5080 /* ChatMessage.m */; };
 		A038FE1110FBE624004C5080 /* ip-to-country.csv in Resources */ = {isa = PBXBuildFile; fileRef = A038FE1010FBE624004C5080 /* ip-to-country.csv */; };
 		A038FE1310FBE6BF004C5080 /* ipblacklist.txt in Resources */ = {isa = PBXBuildFile; fileRef = A038FE1210FBE6BF004C5080 /* ipblacklist.txt */; };
+		A040AAC0111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m in Sources */ = {isa = PBXBuildFile; fileRef = A040AABF111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m */; };
 		A04B5ED5110BC22E009F9E74 /* Off20.png in Resources */ = {isa = PBXBuildFile; fileRef = A04B5ED3110BC22E009F9E74 /* Off20.png */; };
 		A04B5ED6110BC22E009F9E74 /* On20.png in Resources */ = {isa = PBXBuildFile; fileRef = A04B5ED4110BC22E009F9E74 /* On20.png */; };
 		A04B5EDB110BC36E009F9E74 /* ConfigBoolValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A04B5EDA110BC36E009F9E74 /* ConfigBoolValueTransformer.m */; };
@@ -461,6 +462,9 @@
 		A038FE0910FBD594004C5080 /* ChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessage.m; sourceTree = "<group>"; };
 		A038FE1010FBE624004C5080 /* ip-to-country.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "ip-to-country.csv"; path = "Resources/ip-to-country.csv"; sourceTree = "<group>"; };
 		A038FE1210FBE6BF004C5080 /* ipblacklist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ipblacklist.txt; path = Resources/ipblacklist.txt; sourceTree = "<group>"; };
+		A040AABE111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMessageStatusTextToImage.h; sourceTree = "<group>"; };
+		A040AABF111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleMessageStatusTextToImage.m; sourceTree = "<group>"; };
+		A040AB2A111E49D600C6DCC1 /* BotViewControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BotViewControllerInterface.h; sourceTree = "<group>"; };
 		A04B5ED3110BC22E009F9E74 /* Off20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Off20.png; sourceTree = "<group>"; };
 		A04B5ED4110BC22E009F9E74 /* On20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = On20.png; sourceTree = "<group>"; };
 		A04B5ED9110BC36E009F9E74 /* ConfigBoolValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigBoolValueTransformer.h; sourceTree = "<group>"; };
@@ -867,8 +871,8 @@
 		A019A71610F2AA4D00F3D4BB /* ValueTransformers */ = {
 			isa = PBXGroup;
 			children = (
-				A019A71710F2AA4D00F3D4BB /* BotRunningStatusTextTransformer.m */,
 				A019A71810F2AA4D00F3D4BB /* BotRunningStatusTextValueTransformer.h */,
+				A019A71710F2AA4D00F3D4BB /* BotRunningStatusTextTransformer.m */,
 				A019A71910F2AA4D00F3D4BB /* BotRunningValueTransformer.h */,
 				A019A71A10F2AA4D00F3D4BB /* BotRunningValueTransformer.m */,
 				A019A71B10F2AA4D00F3D4BB /* GameStatusImageValueTransformer.h */,
@@ -877,6 +881,8 @@
 				A04B5EDA110BC36E009F9E74 /* ConfigBoolValueTransformer.m */,
 				A08DBC80110CC6B800B3BB3B /* ConfigIntValueTransformer.h */,
 				A08DBC81110CC6B800B3BB3B /* ConfigIntValueTransformer.m */,
+				A040AABE111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.h */,
+				A040AABF111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m */,
 			);
 			path = ValueTransformers;
 			sourceTree = "<group>";
@@ -892,6 +898,7 @@
 				A019B08E10F61EDC00F3D4BB /* ConfigureLocalBotWindowController.m */,
 				A02E5E2710F7DAA8002CA770 /* ShowLocalBotViewController.h */,
 				A02E5E2810F7DAA8002CA770 /* ShowLocalBotViewController.m */,
+				A040AB2A111E49D600C6DCC1 /* BotViewControllerInterface.h */,
 			);
 			path = ViewAndWindowControllers;
 			sourceTree = "<group>";
@@ -1560,6 +1567,7 @@
 				A04B5EDB110BC36E009F9E74 /* ConfigBoolValueTransformer.m in Sources */,
 				A08DBC82110CC6B800B3BB3B /* ConfigIntValueTransformer.m in Sources */,
 				A08C81AE111B2CEE00ABDD92 /* Genie_DataModel1.0.3.xcmappingmodel in Sources */,
+				A040AAC0111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

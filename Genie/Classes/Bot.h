@@ -24,6 +24,7 @@
 
 @interface Bot :  NSManagedObject <GBotProtocol>
 {
+	NSNumber *running;
 }
 
 @property (nonatomic, retain) NSNumber * autoStart;
@@ -32,7 +33,7 @@
 @property (nonatomic, retain) NSNumber * adminCount;
 @property (nonatomic, retain) NSString * version;
 @property (nonatomic, retain) NSString * comment;
-@property (nonatomic, readonly) NSNumber * running;
+@property (nonatomic, retain) NSNumber * running;
 @property (nonatomic, retain) NSSet* messages;
 @property (nonatomic, retain) NSSet* games;
 @property (nonatomic, retain) NSSet* servers;

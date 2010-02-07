@@ -63,7 +63,7 @@ extern NSString * const GOutputReceived;
 - (NSNumber*)getHostPort;
 - (NSValue*)ghostInstance;
 - (void)execCommand:(NSDictionary *)cmd;
-@property (nonatomic, readonly) NSNumber* running;
+@property (nonatomic, retain) NSNumber* running;
 @property (nonatomic, readonly) NSNumber* useRemoteHasher;
 @property (assign) NSObject <GHostDelegate> *delegate;
 @end

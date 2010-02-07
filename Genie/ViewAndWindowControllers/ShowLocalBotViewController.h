@@ -19,14 +19,16 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "BotViewControllerInterface.h"
 
 @class BotLocal;
 
-@interface ShowLocalBotViewController : NSViewController {
+@interface ShowLocalBotViewController : NSViewController <BotViewControllerInterface> {
 	BotLocal *selectedBot;
 	IBOutlet NSArrayController *messageController;
 	IBOutlet NSArrayController *serverController;
 	IBOutlet NSTableView *messageTable;
+	IBOutlet NSTabView *tabView;
 }
 - (IBAction)execCommand:(id)sender;
 - (IBAction)copyLines:(id)sender;

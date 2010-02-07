@@ -6,6 +6,13 @@
       <description>Most recent changes with links to updates.</description>
       <language>en</language>
 		<item>
+			<title>Version 1.0.5</title>
+			<enclosure url="http://ghost4mac.googlecode.com/files/Genie-1.0.5.dmg" sparkle:version="1.0.5" length="14565607" type="application/octet-stream" sparkle:dsaSignature="MCwCFDPbUf/nLwhoLOCmwoEOat2QdOytAhRbdw8ChGyNn5FMwOHI2uty76bFCg==" />
+            <sparkle:releaseNotesLink>
+                http://code.google.com/p/ghost4mac/wiki/Changelog#wikiheader
+            </sparkle:releaseNotesLink>
+		</item>
+		<item>
 			<title>Version 1.0 Beta 4</title>
 			<enclosure url="http://ghost4mac.googlecode.com/files/Genie1.0-Beta4.dmg" sparkle:version="1.0.3" length="14548233" type="application/octet-stream" sparkle:dsaSignature="MCwCFDiFeSuOuH9AhVXUl5OmvuNmI9uVAhQ34/f1F+peotG+AgfQqQg/FpYl7g==" />
             <sparkle:releaseNotesLink>

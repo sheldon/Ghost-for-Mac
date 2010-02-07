@@ -67,7 +67,45 @@
 	return YES;
 }
 
-- (BOOL)validateName:(id *)ioValue error:(NSError **)outError
+- (BOOL)validateForUpdate:(NSError **)error
+{
+	NSEnumerator *e = [[[self bot] settings] objectEnumerator];
+	ConfigEntry *entry;
+	while (entry = [e nextObject]) {
+		if (entry != self && [entry.name isEqualToString:self.name] && [entry.enabled boolValue] && [self.enabled boolValue]) {
+			if (error != NULL) {
+				NSString *errorStr = NSLocalizedStringFromTable(
+																[@"Multiple enabled values by the name of " stringByAppendingString:self.name],
+																@"ConfigEntry",	@"validation: duplicate name error");
+				NSDictionary *userInfoDict = [NSDictionary dictionaryWithObject:errorStr
+																		 forKey:NSLocalizedDescriptionKey];
+				NSError *newError = [[[NSError alloc] initWithDomain:@"ConfigEntry"
+															 code:1
+														 userInfo:userInfoDict] autorelease];
+				*error = newError;
+			}
+			return NO;
+		}
+	}
+	return [super validateForUpdate:error];
+}
+
+- (BOOL)validateEnabled:(id *)ioValue error:(NSError **)outError
+{
+	NSEnumerator *e = [[[self bot] settings] objectEnumerator];
+	NSNumber *newValue = *ioValue;
+	if (![newValue boolValue])
+		return YES;
+	ConfigEntry *entry;
+	while (entry = [e nextObject]) {
+		if (entry != self && [[entry name] isEqualToString:self.name]) {
+			[entry disableEntry];
+		}
+	}
+	return YES;
+}
+
+/*- (BOOL)validateName:(id *)ioValue error:(NSError **)outError
 {
 	NSEnumerator *e = [[[self bot] settings] objectEnumerator];
 	NSString *newValue = *ioValue;
@@ -76,22 +114,10 @@
 		if (entry != self && [[entry name] isEqualToString:newValue]) {
 			[entry disableEntry];
 			[self enableEntry];
-			/*if (outError != NULL) {
-				NSString *errorStr = NSLocalizedStringFromTable(
-																@"Value name does already exist", @"ConfigEntry",
-																@"validation: duplicate name error");
-				NSDictionary *userInfoDict = [NSDictionary dictionaryWithObject:errorStr
-																		 forKey:NSLocalizedDescriptionKey];
-				NSError *error = [[[NSError alloc] initWithDomain:@"ConfigEntry"
-															 code:1
-														 userInfo:userInfoDict] autorelease];
-				*outError = error;
-			}*/
-			//return NO;
 		}
 	}
 	
 	return YES;
-}
+}*/
 
 @end

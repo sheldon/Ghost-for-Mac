@@ -29,7 +29,7 @@
 @dynamic adminCount;
 @dynamic version;
 @dynamic comment;
-@dynamic running;
+@synthesize running;
 @dynamic messages;
 @dynamic games;
 @dynamic servers;
@@ -52,9 +52,9 @@
 - (void)sendCommand:(NSDictionary *)cmd
 {
 }
-- (NSNumber*)running
+/*- (NSNumber*)running
 {
 	return [NSNumber numberWithBool:NO];
-}
+}*/
 
 @end

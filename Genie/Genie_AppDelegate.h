@@ -19,6 +19,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "BotViewControllerInterface.h"
 
 @class ConfigureLocalBotWindowController;
 @class ShowLocalBotViewController;
@@ -40,6 +41,9 @@
 	IBOutlet NSView *contentView;
 	
 	ConfigureLocalBotWindowController *localBotConfigController;
+	
+	NSViewController <BotViewControllerInterface> *botViewController;
+	
 	ShowLocalBotViewController *localBotView;
 	
 	FileImportWindowController *importWindowController;
@@ -51,6 +55,8 @@
 }
 
 @property (nonatomic, retain) IBOutlet NSWindow *window;
+
+@property (nonatomic, retain) NSViewController <BotViewControllerInterface> *botViewController;
 
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
