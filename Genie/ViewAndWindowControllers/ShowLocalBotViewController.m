@@ -26,6 +26,11 @@
 @implementation ShowLocalBotViewController
 @synthesize selectedBot;
 
+- (BOOL)supportsModes
+{
+	return YES;
+}
+
 - (NSInteger)selectedMode
 {
 	return [tabView indexOfTabViewItem:[tabView selectedTabViewItem]];

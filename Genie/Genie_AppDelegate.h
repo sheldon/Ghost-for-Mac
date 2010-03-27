@@ -22,7 +22,9 @@
 #import "BotViewControllerInterface.h"
 
 @class ConfigureLocalBotWindowController;
+@class ConfigureAdminGameWindowController;
 @class ShowLocalBotViewController;
+@class ShowAdminGameViewController;
 @class FileImportWindowController;
 @class PreferenceMapsController;
 @class PreferenceGeneralController;
@@ -41,10 +43,12 @@
 	IBOutlet NSView *contentView;
 	
 	ConfigureLocalBotWindowController *localBotConfigController;
+	ConfigureAdminGameWindowController *adminGameConfigController;
 	
 	NSViewController <BotViewControllerInterface> *botViewController;
 	
 	ShowLocalBotViewController *localBotView;
+	ShowAdminGameViewController *adminGameView;
 	
 	FileImportWindowController *importWindowController;
 	

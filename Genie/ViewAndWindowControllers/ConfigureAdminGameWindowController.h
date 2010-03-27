@@ -1,8 +1,8 @@
-/*	BotViewControllerInterface.h
+/*	ConfigureAdminGameWindowController.h
  *
  *	This file is part of Genie
  *	Copyright (C) 2009-2010 Lucas Romero
- *	Created 07.02.10
+ *	Created 08.02.10
  *
  *	Genie is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,10 +19,14 @@
  */
 
 #import <Cocoa/Cocoa.h>
+@class BotAdminGame;
 
+@interface ConfigureAdminGameWindowController : NSWindowController {
+	BotAdminGame *selectedBot;
+}
 
-@protocol BotViewControllerInterface
-@property (nonatomic) BOOL supportsModes;
-@property (nonatomic) NSInteger selectedMode;
+@property (nonatomic, retain) BotAdminGame *selectedBot;
+
+- (IBAction)closeWindow:(id)sender;
 
 @end

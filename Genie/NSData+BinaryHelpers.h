@@ -1,8 +1,8 @@
-/*	BotViewControllerInterface.h
+/*	NSDataHelpers.h
  *
  *	This file is part of Genie
  *	Copyright (C) 2009-2010 Lucas Romero
- *	Created 07.02.10
+ *	Created 08.02.10
  *
  *	Genie is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-
-@protocol BotViewControllerInterface
-@property (nonatomic) BOOL supportsModes;
-@property (nonatomic) NSInteger selectedMode;
-
+@interface NSData (BinaryHelpers)
+- (uint32_t)getInt32OffsetIncrement:(NSUInteger *)offset;
+- (uint16_t)getInt16OffsetIncrement:(NSUInteger *)offset;
+- (uint8_t)getByteOffsetIncrement:(NSUInteger *)offset;
 @end

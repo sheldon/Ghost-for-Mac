@@ -1,8 +1,8 @@
-/*	BotViewControllerInterface.h
+/*	ShowAdminGameViewController.h
  *
  *	This file is part of Genie
  *	Copyright (C) 2009-2010 Lucas Romero
- *	Created 07.02.10
+ *	Created 08.02.10
  *
  *	Genie is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,8 +21,19 @@
 #import <Cocoa/Cocoa.h>
 
 
-@protocol BotViewControllerInterface
-@property (nonatomic) BOOL supportsModes;
-@property (nonatomic) NSInteger selectedMode;
+#import "BotViewControllerInterface.h"
 
+@class BotAdminGame;
+
+@interface ShowAdminGameViewController : NSViewController <BotViewControllerInterface> {
+	BotAdminGame *selectedBot;
+	IBOutlet NSArrayController *messageController;
+	IBOutlet NSArrayController *serverController;
+	IBOutlet NSTableView *messageTable;
+	IBOutlet NSTabView *tabView;
+}
+- (IBAction)execCommand:(id)sender;
+- (IBAction)copyLines:(id)sender;
+
+@property (nonatomic, retain) BotAdminGame *selectedBot;
 @end

@@ -1,8 +1,8 @@
-/*	BotViewControllerInterface.h
+/*	NSMutableData+W3GSHelpers.h
  *
  *	This file is part of Genie
  *	Copyright (C) 2009-2010 Lucas Romero
- *	Created 07.02.10
+ *	Created 08.02.10
  *
  *	Genie is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@
 #import <Cocoa/Cocoa.h>
 
 
-@protocol BotViewControllerInterface
-@property (nonatomic) BOOL supportsModes;
-@property (nonatomic) NSInteger selectedMode;
-
+@interface NSMutableData (BinaryHelpers)
+- (void)setW3GSPacketLength;
+- (void)appendUInt16:(uint16_t)value;
+- (void)appendByte:(uint8_t)value;
+- (void)appendUInt32:(uint32_t)value;
 @end

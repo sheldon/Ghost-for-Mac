@@ -264,6 +264,15 @@
 		A0ADA0161101E07F00122E26 /* libbncsutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A019A63410F2953000F3D4BB /* libbncsutil.a */; };
 		A0ADA0171101E09900122E26 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0E41D3C10F9943300B39300 /* libboost_system.a */; };
 		A0ADA01A1101E16300122E26 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0E41D3A10F9943300B39300 /* libboost_filesystem.a */; };
+		A0C962731120845D00F7D965 /* BotAdminGame.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C962721120845D00F7D965 /* BotAdminGame.m */; };
+		A0C962761120871700F7D965 /* NSData+BinaryHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C962751120871700F7D965 /* NSData+BinaryHelpers.m */; };
+		A0C962E311208DA400F7D965 /* ConfigureAdminGameWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C962E211208DA400F7D965 /* ConfigureAdminGameWindowController.m */; };
+		A0C962ED1120901F00F7D965 /* ConfigureAdminGame.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0C962EC1120901F00F7D965 /* ConfigureAdminGame.xib */; };
+		A0C963011120929000F7D965 /* NSMutableData+BinaryHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C963001120929000F7D965 /* NSMutableData+BinaryHelpers.m */; };
+		A0C9632E112095C200F7D965 /* ShowAdminGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C9632D112095C200F7D965 /* ShowAdminGameViewController.m */; };
+		A0C96332112096B800F7D965 /* ShowAdminGameView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0C96331112096B800F7D965 /* ShowAdminGameView.xib */; };
+		A0C963971120A86A00F7D965 /* AsyncSocket Documentation.html.xhtml in Resources */ = {isa = PBXBuildFile; fileRef = A0C963941120A86A00F7D965 /* AsyncSocket Documentation.html.xhtml */; };
+		A0C963981120A86A00F7D965 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C963961120A86A00F7D965 /* AsyncSocket.m */; };
 		A0EE260710F8145A0029B8BE /* english.cfg in Resources */ = {isa = PBXBuildFile; fileRef = A0EE260210F8145A0029B8BE /* english.cfg */; };
 		A0EE260810F8145A0029B8BE /* german.cfg in Resources */ = {isa = PBXBuildFile; fileRef = A0EE260310F8145A0029B8BE /* german.cfg */; };
 		A0EE260910F8145A0029B8BE /* russian.cfg in Resources */ = {isa = PBXBuildFile; fileRef = A0EE260410F8145A0029B8BE /* russian.cfg */; };
@@ -608,6 +617,22 @@
 		A0ADA00A1101E01A00122E26 /* hasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hasher.h; sourceTree = "<group>"; };
 		A0ADA00C1101E01A00122E26 /* wc3hasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wc3hasher.cpp; sourceTree = "<group>"; };
 		A0ADA00D1101E01A00122E26 /* wc3hasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wc3hasher.h; sourceTree = "<group>"; };
+		A0C9626F112082E100F7D965 /* Genie_DataModel1.0.5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Genie_DataModel1.0.5.xcdatamodel; sourceTree = "<group>"; };
+		A0C962711120845D00F7D965 /* BotAdminGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BotAdminGame.h; path = Classes/BotAdminGame.h; sourceTree = "<group>"; };
+		A0C962721120845D00F7D965 /* BotAdminGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BotAdminGame.m; path = Classes/BotAdminGame.m; sourceTree = "<group>"; };
+		A0C962741120871700F7D965 /* NSData+BinaryHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+BinaryHelpers.h"; sourceTree = "<group>"; };
+		A0C962751120871700F7D965 /* NSData+BinaryHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+BinaryHelpers.m"; sourceTree = "<group>"; };
+		A0C962E111208DA400F7D965 /* ConfigureAdminGameWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigureAdminGameWindowController.h; sourceTree = "<group>"; };
+		A0C962E211208DA400F7D965 /* ConfigureAdminGameWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigureAdminGameWindowController.m; sourceTree = "<group>"; };
+		A0C962EC1120901F00F7D965 /* ConfigureAdminGame.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigureAdminGame.xib; sourceTree = "<group>"; };
+		A0C962FF1120929000F7D965 /* NSMutableData+BinaryHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableData+BinaryHelpers.h"; sourceTree = "<group>"; };
+		A0C963001120929000F7D965 /* NSMutableData+BinaryHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableData+BinaryHelpers.m"; sourceTree = "<group>"; };
+		A0C9632C112095C200F7D965 /* ShowAdminGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowAdminGameViewController.h; sourceTree = "<group>"; };
+		A0C9632D112095C200F7D965 /* ShowAdminGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowAdminGameViewController.m; sourceTree = "<group>"; };
+		A0C96331112096B800F7D965 /* ShowAdminGameView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowAdminGameView.xib; sourceTree = "<group>"; };
+		A0C963941120A86A00F7D965 /* AsyncSocket Documentation.html.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "AsyncSocket Documentation.html.xhtml"; sourceTree = "<group>"; };
+		A0C963951120A86A00F7D965 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
+		A0C963961120A86A00F7D965 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
 		A0E41D3A10F9943300B39300 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = "libghost/precompiled libs/libboost_filesystem.a"; sourceTree = "<group>"; };
 		A0E41D3C10F9943300B39300 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = "libghost/precompiled libs/libboost_system.a"; sourceTree = "<group>"; };
 		A0E41D3E10F9943300B39300 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_thread.a; path = "libghost/precompiled libs/libboost_thread.a"; sourceTree = "<group>"; };
@@ -759,6 +784,7 @@
 			isa = PBXGroup;
 			children = (
 				A038015810FC1432004C5080 /* Appcast.xml */,
+				A0C963931120A86A00F7D965 /* AsyncSocket */,
 				A06A8C281108C60200624B19 /* Other Sources */,
 				A032D9741107C55400F51A28 /* UKKQueue */,
 				A0A38DA310F152E5007A4260 /* libghost */,
@@ -798,6 +824,8 @@
 				A032D6111106474100F51A28 /* PreferenceMaps.xib */,
 				A06A8B891108B94F00624B19 /* PreferenceGeneral.xib */,
 				A04B6053110BE78D009F9E74 /* ConfigValueDescriptions.plist */,
+				A0C962EC1120901F00F7D965 /* ConfigureAdminGame.xib */,
+				A0C96331112096B800F7D965 /* ShowAdminGameView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -890,15 +918,12 @@
 		A019A72610F2AB1B00F3D4BB /* ViewAndWindowControllers */ = {
 			isa = PBXGroup;
 			children = (
+				A0C96330112095DE00F7D965 /* Bot Views */,
+				A0C9632F112095D200F7D965 /* Configuration windows */,
 				A032D60B1106461600F51A28 /* Preferences */,
 				A0EE267E10F8A9100029B8BE /* FileImportWindowController.h */,
 				A0EE267F10F8A9100029B8BE /* FileImportWindowController.m */,
 				A019AE0410F56BC600F3D4BB /* BotConfigViewControllerProtocol.h */,
-				A019B08D10F61EDC00F3D4BB /* ConfigureLocalBotWindowController.h */,
-				A019B08E10F61EDC00F3D4BB /* ConfigureLocalBotWindowController.m */,
-				A02E5E2710F7DAA8002CA770 /* ShowLocalBotViewController.h */,
-				A02E5E2810F7DAA8002CA770 /* ShowLocalBotViewController.m */,
-				A040AB2A111E49D600C6DCC1 /* BotViewControllerInterface.h */,
 			);
 			path = ViewAndWindowControllers;
 			sourceTree = "<group>";
@@ -968,6 +993,8 @@
 				A09A170610EE773900DB0494 /* BotLocal.mm */,
 				A019AC0510F4D71400F3D4BB /* Bot.h */,
 				A019AC0610F4D71400F3D4BB /* Bot.m */,
+				A0C962711120845D00F7D965 /* BotAdminGame.h */,
+				A0C962721120845D00F7D965 /* BotAdminGame.m */,
 			);
 			name = Bots;
 			sourceTree = "<group>";
@@ -987,6 +1014,10 @@
 			children = (
 				A0665E6D1107D69B00527FF2 /* main.m */,
 				A0665E6F1107D6AD00527FF2 /* Genie_Prefix.pch */,
+				A0C962741120871700F7D965 /* NSData+BinaryHelpers.h */,
+				A0C962751120871700F7D965 /* NSData+BinaryHelpers.m */,
+				A0C962FF1120929000F7D965 /* NSMutableData+BinaryHelpers.h */,
+				A0C963001120929000F7D965 /* NSMutableData+BinaryHelpers.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -1193,6 +1224,39 @@
 			children = (
 			);
 			path = files;
+			sourceTree = "<group>";
+		};
+		A0C9632F112095D200F7D965 /* Configuration windows */ = {
+			isa = PBXGroup;
+			children = (
+				A019B08D10F61EDC00F3D4BB /* ConfigureLocalBotWindowController.h */,
+				A019B08E10F61EDC00F3D4BB /* ConfigureLocalBotWindowController.m */,
+				A0C962E111208DA400F7D965 /* ConfigureAdminGameWindowController.h */,
+				A0C962E211208DA400F7D965 /* ConfigureAdminGameWindowController.m */,
+			);
+			name = "Configuration windows";
+			sourceTree = "<group>";
+		};
+		A0C96330112095DE00F7D965 /* Bot Views */ = {
+			isa = PBXGroup;
+			children = (
+				A02E5E2710F7DAA8002CA770 /* ShowLocalBotViewController.h */,
+				A02E5E2810F7DAA8002CA770 /* ShowLocalBotViewController.m */,
+				A0C9632C112095C200F7D965 /* ShowAdminGameViewController.h */,
+				A0C9632D112095C200F7D965 /* ShowAdminGameViewController.m */,
+				A040AB2A111E49D600C6DCC1 /* BotViewControllerInterface.h */,
+			);
+			name = "Bot Views";
+			sourceTree = "<group>";
+		};
+		A0C963931120A86A00F7D965 /* AsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				A0C963941120A86A00F7D965 /* AsyncSocket Documentation.html.xhtml */,
+				A0C963951120A86A00F7D965 /* AsyncSocket.h */,
+				A0C963961120A86A00F7D965 /* AsyncSocket.m */,
+			);
+			path = AsyncSocket;
 			sourceTree = "<group>";
 		};
 		A0EE260110F8145A0029B8BE /* languages */ = {
@@ -1502,6 +1566,9 @@
 				A04B5ED5110BC22E009F9E74 /* Off20.png in Resources */,
 				A04B5ED6110BC22E009F9E74 /* On20.png in Resources */,
 				A04B6054110BE78D009F9E74 /* ConfigValueDescriptions.plist in Resources */,
+				A0C962ED1120901F00F7D965 /* ConfigureAdminGame.xib in Resources */,
+				A0C96332112096B800F7D965 /* ShowAdminGameView.xib in Resources */,
+				A0C963971120A86A00F7D965 /* AsyncSocket Documentation.html.xhtml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1568,6 +1635,12 @@
 				A08DBC82110CC6B800B3BB3B /* ConfigIntValueTransformer.m in Sources */,
 				A08C81AE111B2CEE00ABDD92 /* Genie_DataModel1.0.3.xcmappingmodel in Sources */,
 				A040AAC0111DBE6F00C6DCC1 /* ConsoleMessageStatusTextToImage.m in Sources */,
+				A0C962731120845D00F7D965 /* BotAdminGame.m in Sources */,
+				A0C962761120871700F7D965 /* NSData+BinaryHelpers.m in Sources */,
+				A0C962E311208DA400F7D965 /* ConfigureAdminGameWindowController.m in Sources */,
+				A0C963011120929000F7D965 /* NSMutableData+BinaryHelpers.m in Sources */,
+				A0C9632E112095C200F7D965 /* ShowAdminGameViewController.m in Sources */,
+				A0C963981120A86A00F7D965 /* AsyncSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2257,6 +2330,7 @@
 				770B37EC0679A11B001EADE2 /* Genie_DataModel.xcdatamodel */,
 				A08C8070111B1D2000ABDD92 /* Genie_DataModel1.0.3.xcdatamodel */,
 				A08C81AD111B2CEE00ABDD92 /* Genie_DataModel1.0.3.xcmappingmodel */,
+				A0C9626F112082E100F7D965 /* Genie_DataModel1.0.5.xcdatamodel */,
 			);
 			currentVersion = 770B37EC0679A11B001EADE2 /* Genie_DataModel.xcdatamodel */;
 			path = Genie_DataModel.xcdatamodeld;

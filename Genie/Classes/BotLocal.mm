@@ -242,6 +242,7 @@
 	
 	NSString *ip2country = [thisBundle pathForResource:@"ip-to-country" ofType:@"csv"];
 	[config setObject:ip2country forKey:@"bot_ip2country"];
+	//[config setObject:@"../Resources/ip-to-country.csv" forKey:@"bot_ip2country"];
 	
 	
 	if([[self ipblacklist] length]) {
@@ -249,6 +250,7 @@
 		[config setObject:blacklist forKey:@"bot_ipblacklistfile"];
 	} else {
 		[config setObject:[thisBundle pathForResource:@"ipblacklist" ofType:@"txt"] forKey:@"bot_ipblacklistfile"];
+		//[config setObject:@"../Resources/ipblacklist.txt" forKey:@"bot_ipblacklistfile"];
 	}
 	
 

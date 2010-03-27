@@ -102,15 +102,18 @@ NSString * const GOutputReceived = @"GOutputReceived";
 	NSString *exeInfo = [data valueForKey:@"EXEInfo"];
 	NSString *exeVersion = [data valueForKey:@"EXEVersion"];
 	NSString *exeVersionHash = [data valueForKey:@"EXEVersionHash"];
-	
 	if (exeInfo == nil || exeVersion == nil || exeVersionHash == nil) {
 		[self lineReceived:@"[GENIE] Error getting hash from server"];
+		[mainLock lock];
 		bnet->ProcessFileHashes(string(), 0, 0);
+		[mainLock unlock];
 	} else {
 		[self lineReceived:@"[GENIE] Got hash from server"];
 		NSLog(@"EXEVersion: '%@'\tEXEVersionHash: '%@'\tEXEInfo: '%@'", exeVersion, exeVersionHash, exeInfo);
 		NSLog(@"EXEVersion: '%ld'\tEXEVersionHash: '%ld'\tEXEInfo: '%@'", [exeVersion longLongValue], [exeVersionHash longLongValue], exeInfo);
+		[mainLock lock];
 		bnet->ProcessFileHashes( string([exeInfo UTF8String]), [exeVersion longLongValue], [exeVersionHash longLongValue]);
+		[mainLock unlock];
 	}
 }
 
@@ -256,9 +259,12 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 			[cmdLock unlock];
 		}
 		//self.running = YES;
+		[mainLock lock];
 		if (instance->Update(50000)){
+			[mainLock unlock];
 			break;
 		}
+		[mainLock unlock];
 	}
 	instance->m_ExitingNice = TRUE;
 	instance->Update(1);
@@ -275,6 +281,15 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	[self didChangeValueForKey:@"running"];
 	
 	[autoreleasepool release];
+}
+
+- (void)getLock
+{
+	[mainLock lock];
+}
+- (void)releaseLock;
+{
+	[mainLock unlock];
 }
 
 /*int count = instance->m_BNETs.size();
@@ -348,6 +363,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 		useRemoteHasher = [NSNumber numberWithBool:YES];
 		cmdQueue = [[NSMutableArray arrayWithCapacity:5] retain];
 		cmdLock = [[NSLock alloc] init];
+		mainLock = [[NSLock alloc] init];
 		delegate = nil;
 	}
 	return self;

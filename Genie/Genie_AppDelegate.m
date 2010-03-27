@@ -20,7 +20,9 @@
 
 #import "Genie_AppDelegate.h"
 #import "ConfigureLocalBotWindowController.h"
+#import "ConfigureAdminGameWindowController.h"
 #import "ShowLocalBotViewController.h"
+#import "ShowAdminGameViewController.h"
 #import "FileImportWindowController.h"
 #import "MBPreferencesController.h"
 #import "PreferenceMapsController.h"
@@ -30,6 +32,7 @@
 #import "GMapFile.h"
 #import "Bot.h"
 #import "BotLocal.h"
+#import "BotAdminGame.h"
 
 @implementation Genie_AppDelegate
 
@@ -179,8 +182,12 @@
 
 -(id) init {
     if (self = [super init]) {
-		localBotConfigController = [[ConfigureLocalBotWindowController alloc] init];
+		localBotConfigController = [ConfigureLocalBotWindowController new];
+		adminGameConfigController = [ConfigureAdminGameWindowController new];
+		
 		localBotView = [[ShowLocalBotViewController alloc] init];
+		adminGameView = [ShowAdminGameViewController new];
+		
 		importWindowController = [[FileImportWindowController alloc] init];
 		prefPaneMaps = [[PreferenceMapsController alloc] initWithObjectContext:self.managedObjectContext];
 		prefPaneGeneral = [[PreferenceGeneralController alloc] init];
@@ -265,6 +272,15 @@
 		[contentView addSubview:[localBotView view]];
 		[[localBotView view] setFrame:contentFrame];
 		self.botViewController = localBotView;
+	} else if ([[[obj entity] name] isEqualToString:@"BotAdminGame"]) {
+		adminGameView.selectedBot = (BotAdminGame*)obj;
+		NSRect contentFrame = [contentView frame];
+		contentFrame.origin.x = 0;
+		contentFrame.origin.y = 0;
+		
+		[contentView addSubview:[adminGameView view]];
+		[[adminGameView view] setFrame:contentFrame];
+		self.botViewController = adminGameView;
 	}
 }
 
@@ -277,6 +293,15 @@
 			[localBotConfigController loadWindow];
 		localBotConfigController.selectedBot = (BotLocal*)obj;
 		[NSApp beginSheet: [localBotConfigController window]
+		   modalForWindow: [self window]
+			modalDelegate: nil
+		   didEndSelector: nil
+			  contextInfo: nil];
+	} else if ([[[obj entity] name] isEqualToString:@"BotAdminGame"]) {
+		if (![adminGameConfigController isWindowLoaded])
+			[adminGameConfigController loadWindow];
+		adminGameConfigController.selectedBot = (BotAdminGame*)obj;
+		[NSApp beginSheet: [adminGameConfigController window]
 		   modalForWindow: [self window]
 			modalDelegate: nil
 		   didEndSelector: nil
@@ -294,7 +319,7 @@
 - (IBAction)addRemoteBot:(id)sender
 {
 	//[[self undoManager] beginUndoGrouping];
-	[NSEntityDescription insertNewObjectForEntityForName:@"BotRemote" inManagedObjectContext:[self managedObjectContext]];
+	[NSEntityDescription insertNewObjectForEntityForName:@"BotAdminGame" inManagedObjectContext:[self managedObjectContext]];
 	//[[self undoManager] endUndoGrouping];
 	[[[self managedObjectContext] undoManager] setActionName:@"Added config"];
 }
@@ -449,7 +474,7 @@
 	Bot *b;
 	BOOL running = NO;
 	while (b = [e nextObject]) {
-		if ([b.running boolValue]) {
+		if ([b.running boolValue] && [[[b entity] name] isEqualToString:@"BotLocal"]) {
 			running = YES;
 			break;
 		}
