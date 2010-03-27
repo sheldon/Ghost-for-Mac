@@ -111,6 +111,8 @@
 		A02E5E4610F7DC04002CA770 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02E5E4510F7DC04002CA770 /* Sparkle.framework */; };
 		A02E5E5C10F7DC35002CA770 /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A02E5E4510F7DC04002CA770 /* Sparkle.framework */; };
 		A02E5E6110F7DC45002CA770 /* Growl.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A02E5E4310F7DC04002CA770 /* Growl.framework */; };
+		A02EF5FC115E615800E580BE /* messagelogger.h in Headers */ = {isa = PBXBuildFile; fileRef = A02EF5FA115E615800E580BE /* messagelogger.h */; };
+		A02EF5FD115E615800E580BE /* messagelogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A02EF5FB115E615800E580BE /* messagelogger.cpp */; };
 		A032D3DF1103F57400F51A28 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A032D3D41103F53800F51A28 /* libgmp.a */; };
 		A032D4C01104FFF400F51A28 /* libboost_program_options.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A032D4BF1104FFF400F51A28 /* libboost_program_options.a */; };
 		A032D6021106410600F51A28 /* MBPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = A032D6011106410600F51A28 /* MBPreferencesController.m */; };
@@ -436,6 +438,8 @@
 		A02E5E4110F7DBC7002CA770 /* ShowLocalBotView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowLocalBotView.xib; sourceTree = "<group>"; };
 		A02E5E4310F7DC04002CA770 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		A02E5E4510F7DC04002CA770 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		A02EF5FA115E615800E580BE /* messagelogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = messagelogger.h; sourceTree = "<group>"; };
+		A02EF5FB115E615800E580BE /* messagelogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = messagelogger.cpp; sourceTree = "<group>"; };
 		A032D3D41103F53800F51A28 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = "libghost/precompiled libs/libgmp.a"; sourceTree = "<group>"; };
 		A032D4BF1104FFF400F51A28 /* libboost_program_options.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_program_options.a; path = "libghost/precompiled libs/libboost_program_options.a"; sourceTree = "<group>"; };
 		A032D59E11051CD400F51A28 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -941,6 +945,14 @@
 			name = "ghost libs";
 			sourceTree = "<group>";
 		};
+		A02EF5F9115E612B00E580BE /* ghost-genie */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "ghost-genie";
+			path = "libghost/ghost-genie";
+			sourceTree = "<group>";
+		};
 		A032D60B1106461600F51A28 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1045,6 +1057,8 @@
 		A0A389D510F144E2007A4260 /* ghost */ = {
 			isa = PBXGroup;
 			children = (
+				A02EF5FA115E615800E580BE /* messagelogger.h */,
+				A02EF5FB115E615800E580BE /* messagelogger.cpp */,
 				A0A389D610F144E2007A4260 /* bncsutilinterface.cpp */,
 				A0A389D710F144E2007A4260 /* bncsutilinterface.h */,
 				A0A389D810F144E2007A4260 /* bnet.cpp */,
@@ -1192,6 +1206,7 @@
 		A0A38DA310F152E5007A4260 /* libghost */ = {
 			isa = PBXGroup;
 			children = (
+				A02EF5F9115E612B00E580BE /* ghost-genie */,
 				A0ADA0051101E01A00122E26 /* wc3hasher */,
 				A019A60010F2950E00F3D4BB /* bncsutil */,
 				A0A389D510F144E2007A4260 /* ghost */,
@@ -1339,6 +1354,7 @@
 				A0A38A6810F144E2007A4260 /* statsdota.h in Headers */,
 				A0A38A6A10F144E2007A4260 /* statsw3mmd.h in Headers */,
 				A0A38A6D10F144E2007A4260 /* util.h in Headers */,
+				A02EF5FC115E615800E580BE /* messagelogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1705,6 +1721,7 @@
 				A0A38A6710F144E2007A4260 /* statsdota.cpp in Sources */,
 				A0A38A6910F144E2007A4260 /* statsw3mmd.cpp in Sources */,
 				A0A38A6C10F144E2007A4260 /* util.cpp in Sources */,
+				A02EF5FD115E615800E580BE /* messagelogger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2001,6 +2018,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_CFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = ghost;
 				SDKROOT = macosx10.5;
@@ -2162,6 +2180,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_CFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = ghost;
 				SDKROOT = macosx10.5;

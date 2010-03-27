@@ -1,0 +1,1220 @@
+Index: gameprotocol.h
+===================================================================
+--- gameprotocol.h	(Revision 403)
++++ gameprotocol.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef GAMEPROTOCOL_H
+ #define GAMEPROTOCOL_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CGameProtocol
+ //
+@@ -56,7 +58,7 @@
+ class CIncomingChatPlayer;
+ class CIncomingMapSize;
+ 
+-class CGameProtocol
++class CGameProtocol : protected MessageLogger
+ {
+ public:
+ 	CGHost *m_GHost;
+Index: replay.h
+===================================================================
+--- replay.h	(Revision 403)
++++ replay.h	(Arbeitskopie)
+@@ -59,7 +59,7 @@
+ 	queue<uint32_t> m_CheckSums;
+ 
+ public:
+-	CReplay( );
++	CReplay( MessageLogger *logger );
+ 	virtual ~CReplay( );
+ 
+ 	unsigned char GetHostPID( )				{ return m_HostPID; }
+Index: stats.h
+===================================================================
+--- stats.h	(Revision 403)
++++ stats.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef STATS_H
+ #define STATS_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CStats
+ //
+@@ -35,7 +37,7 @@
+ class CIncomingAction;
+ class CGHostDB;
+ 
+-class CStats
++class CStats : protected MessageLogger
+ {
+ protected:
+ 	CBaseGame *m_Game;
+Index: game_base.h
+===================================================================
+--- game_base.h	(Revision 403)
++++ game_base.h	(Arbeitskopie)
+@@ -22,6 +22,7 @@
+ #define GAME_BASE_H
+ 
+ #include "gameslot.h"
++#include "messagelogger.h"
+ 
+ //
+ // CBaseGame
+@@ -40,7 +41,7 @@
+ class CIncomingMapSize;
+ class CCallableScoreCheck;
+ 
+-class CBaseGame
++class CBaseGame : protected MessageLogger
+ {
+ public:
+ 	CGHost *m_GHost;
+Index: bncsutilinterface.h
+===================================================================
+--- bncsutilinterface.h	(Revision 403)
++++ bncsutilinterface.h	(Arbeitskopie)
+@@ -21,11 +21,14 @@
+ #ifndef BNCSUTIL_INTERFACE_H
+ #define BNCSUTIL_INTERFACE_H
+ 
++#include "messagelogger.h"
++class CBNET;
++
+ //
+ // CBNCSUtilInterface
+ //
+ 
+-class CBNCSUtilInterface
++class CBNCSUtilInterface : protected MessageLogger
+ {
+ private:
+ 	void *m_NLS;
+@@ -39,7 +42,7 @@
+ 	BYTEARRAY m_PvPGNPasswordHash;	// set in HELP_PvPGNPasswordHash
+ 
+ public:
+-	CBNCSUtilInterface( string userName, string userPassword );
++	CBNCSUtilInterface( CBNET *bnet, string userName, string userPassword );
+ 	~CBNCSUtilInterface( );
+ 
+ 	BYTEARRAY GetEXEVersion( )								{ return m_EXEVersion; }
+Index: config.h
+===================================================================
+--- config.h	(Revision 403)
++++ config.h	(Arbeitskopie)
+@@ -21,17 +21,19 @@
+ #ifndef CONFIG_H
+ #define CONFIG_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CConfig
+ //
+ 
+-class CConfig
++class CConfig : protected MessageLogger
+ {
+ private:
+ 	map<string, string> m_CFG;
+ 
+ public:
+-	CConfig( );
++	CConfig( MessageLogger* logger );
+ 	~CConfig( );
+ 
+ 	void Read( string file );
+Index: bnetprotocol.cpp
+===================================================================
+--- bnetprotocol.cpp	(Revision 403)
++++ bnetprotocol.cpp	(Arbeitskopie)
+@@ -21,8 +21,10 @@
+ #include "ghost.h"
+ #include "util.h"
+ #include "bnetprotocol.h"
++#include "bnet.h"
+ 
+-CBNETProtocol :: CBNETProtocol( )
++CBNETProtocol :: CBNETProtocol( CBNET* bnet )
++	: MessageLogger( bnet )
+ {
+ 	unsigned char ClientToken[] = { 220, 1, 203, 7 };
+ 	m_ClientToken = UTIL_CreateByteArray( ClientToken, 4 );
+Index: map.cpp
+===================================================================
+--- map.cpp	(Revision 403)
++++ map.cpp	(Arbeitskopie)
+@@ -36,6 +36,7 @@
+ //
+ 
+ CMap :: CMap( CGHost *nGHost )
++	: MessageLogger( nGHost )
+ {
+ 	CONSOLE_Print( "[MAP] using hardcoded Emerald Gardens map data for Warcraft 3 version 1.24 & 1.24b" );
+ 	m_GHost = nGHost;
+@@ -70,6 +71,7 @@
+ }
+ 
+ CMap :: CMap( CGHost *nGHost, CConfig *CFG, string nCFGFile )
++	: MessageLogger( nGHost )
+ {
+ 	m_GHost = nGHost;
+ 	Load( CFG, nCFGFile );
+Index: ghostdbmysql.cpp
+===================================================================
+--- ghostdbmysql.cpp	(Revision 403)
++++ ghostdbmysql.cpp	(Arbeitskopie)
+@@ -39,7 +39,7 @@
+ // CGHostDBMySQL
+ //
+ 
+-CGHostDBMySQL :: CGHostDBMySQL( CConfig *CFG ) : CGHostDB( CFG )
++CGHostDBMySQL :: CGHostDBMySQL( MessageLogger *logger, CConfig *CFG ) : CGHostDB( logger, CFG )
+ {
+ 	m_Server = CFG->GetString( "db_mysql_server", string( ) );
+ 	m_Database = CFG->GetString( "db_mysql_database", "ghost" );
+Index: bnlsprotocol.h
+===================================================================
+--- bnlsprotocol.h	(Revision 403)
++++ bnlsprotocol.h	(Arbeitskopie)
+@@ -21,11 +21,14 @@
+ #ifndef BNLSPROTOCOL_H
+ #define BNLSPROTOCOL_H
+ 
++#include "messagelogger.h"
++class CBNLSClient;
++
+ //
+ // CBNLSProtocol
+ //
+ 
+-class CBNLSProtocol
++class CBNLSProtocol : protected MessageLogger
+ {
+ public:
+ 	enum Protocol {
+@@ -60,7 +63,7 @@
+ 	};
+ 
+ public:
+-	CBNLSProtocol( );
++	CBNLSProtocol( CBNLSClient *parent );
+ 	~CBNLSProtocol( );
+ 
+ 	// receive functions
+Index: language.h
+===================================================================
+--- language.h	(Revision 403)
++++ language.h	(Arbeitskopie)
+@@ -21,17 +21,19 @@
+ #ifndef LANGUAGE_H
+ #define LANGUAGE_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CLanguage
+ //
+ 
+-class CLanguage
++class CLanguage : protected MessageLogger
+ {
+ private:
+ 	CConfig *m_CFG;
+ 
+ public:
+-	CLanguage( string nCFGFile );
++	CLanguage( MessageLogger *logger, string nCFGFile );
+ 	~CLanguage( );
+ 
+ 	string UnableToCreateGameTryAnotherName( string server, string gamename );
+Index: gameprotocol.cpp
+===================================================================
+--- gameprotocol.cpp	(Revision 403)
++++ gameprotocol.cpp	(Arbeitskopie)
+@@ -30,6 +30,7 @@
+ //
+ 
+ CGameProtocol :: CGameProtocol( CGHost *nGHost )
++	: MessageLogger( nGHost )
+ {
+ 	m_GHost = nGHost;
+ }
+Index: bnet.h
+===================================================================
+--- bnet.h	(Revision 403)
++++ bnet.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef BNET_H
+ #define BNET_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CBNET
+ //
+@@ -54,7 +56,7 @@
+ typedef pair<string,CCallableGamePlayerSummaryCheck *> PairedGPSCheck;
+ typedef pair<string,CCallableDotAPlayerSummaryCheck *> PairedDPSCheck;
+ 
+-class CBNET
++class CBNET : protected MessageLogger
+ {
+ public:
+ 	CGHost *m_GHost;
+Index: game_base.cpp
+===================================================================
+--- game_base.cpp	(Revision 403)
++++ game_base.cpp	(Arbeitskopie)
+@@ -44,15 +44,16 @@
+ //
+ 
+ CBaseGame :: CBaseGame( CGHost *nGHost, CMap *nMap, CSaveGame *nSaveGame, uint16_t nHostPort, unsigned char nGameState, string nGameName, string nOwnerName, string nCreatorName, string nCreatorServer )
++	: MessageLogger( nGHost )
+ {
+ 	m_GHost = nGHost;
+-	m_Socket = new CTCPServer( );
++	m_Socket = new CTCPServer( this );
+ 	m_Protocol = new CGameProtocol( m_GHost );
+ 	m_Map = new CMap( *nMap );
+ 	m_SaveGame = nSaveGame;
+ 
+ 	if( m_GHost->m_SaveReplays && !m_SaveGame )
+-		m_Replay = new CReplay( );
++		m_Replay = new CReplay( this );
+ 	else
+ 		m_Replay = NULL;
+ 
+Index: config.cpp
+===================================================================
+--- config.cpp	(Revision 403)
++++ config.cpp	(Arbeitskopie)
+@@ -27,7 +27,8 @@
+ // CConfig
+ //
+ 
+-CConfig :: CConfig( )
++CConfig :: CConfig( MessageLogger *logger )
++	: MessageLogger( logger )
+ {
+ 
+ }
+Index: includes.h
+===================================================================
+--- includes.h	(Revision 403)
++++ includes.h	(Arbeitskopie)
+@@ -64,9 +64,12 @@
+ #define FD_SETSIZE 512
+ 
+ // output
+-
+-void CONSOLE_Print( string message );
+-void DEBUG_Print( string message );
++#ifndef GHOST_LIB
++void CONSOLE_Print( const string &message );
++#else
++#define CONSOLE_Print(a) WriteLine(a)
++#endif
++void DEBUG_Print( const string &message );
+ void DEBUG_Print( BYTEARRAY b );
+ 
+ #endif
+Index: ghostdbsqlite.cpp
+===================================================================
+--- ghostdbsqlite.cpp	(Revision 403)
++++ ghostdbsqlite.cpp	(Arbeitskopie)
+@@ -103,7 +103,7 @@
+ // CGHostDBSQLite
+ //
+ 
+-CGHostDBSQLite :: CGHostDBSQLite( CConfig *CFG ) : CGHostDB( CFG )
++CGHostDBSQLite :: CGHostDBSQLite( MessageLogger *logger, CConfig *CFG ) : CGHostDB( logger, CFG )
+ {
+ 	m_File = CFG->GetString( "db_sqlite3_file", "ghost.dbs" );
+ 	CONSOLE_Print( "[SQLITE3] version " + string( SQLITE_VERSION ) );
+Index: bnetprotocol.h
+===================================================================
+--- bnetprotocol.h	(Revision 403)
++++ bnetprotocol.h	(Arbeitskopie)
+@@ -21,6 +21,9 @@
+ #ifndef BNETPROTOCOL_H
+ #define BNETPROTOCOL_H
+ 
++#include "messagelogger.h"
++class CBNET;
++
+ //
+ // CBNETProtocol
+ //
+@@ -32,7 +35,7 @@
+ class CIncomingFriendList;
+ class CIncomingClanList;
+ 
+-class CBNETProtocol
++class CBNETProtocol : protected MessageLogger
+ {
+ public:
+ 	enum Protocol {
+@@ -101,7 +104,7 @@
+ 	BYTEARRAY m_UniqueName;				// set in RECEIVE_SID_ENTERCHAT
+ 
+ public:
+-	CBNETProtocol( );
++	CBNETProtocol( CBNET *bnet );
+ 	~CBNETProtocol( );
+ 
+ 	BYTEARRAY GetClientToken( )				{ return m_ClientToken; }
+Index: game_admin.cpp
+===================================================================
+--- game_admin.cpp	(Revision 403)
++++ game_admin.cpp	(Arbeitskopie)
+@@ -831,7 +831,7 @@
+ 				if( UTIL_FileExists( File ) )
+ 				{
+ 					SendChat( player, m_GHost->m_Language->LoadingReplay( File ) );
+-					CReplay *Replay = new CReplay( );
++					CReplay *Replay = new CReplay( this );
+ 					Replay->Load( File, false );
+ 					Replay->ParseReplay( false );
+ 					m_GHost->m_EnforcePlayers = Replay->GetPlayers( );
+@@ -957,7 +957,7 @@
+ 						{
+ 							string File = LastMatch.filename( );
+ 							SendChat( player, m_GHost->m_Language->LoadingConfigFile( m_GHost->m_MapCFGPath + File ) );
+-							CConfig MapCFG;
++							CConfig MapCFG( this );
+ 							MapCFG.Read( LastMatch.string( ) );
+ 							m_GHost->m_Map->Load( &MapCFG, m_GHost->m_MapCFGPath + File );
+ 						}
+@@ -1071,7 +1071,7 @@
+ 
+ 							// hackhack: create a config file in memory with the required information to load the map
+ 
+-							CConfig MapCFG;
++							CConfig MapCFG( this );
+ 							MapCFG.Set( "map_path", "Maps\\Download\\" + File );
+ 							MapCFG.Set( "map_localpath", File );
+ 							m_GHost->m_Map->Load( &MapCFG, File );
+Index: language.cpp
+===================================================================
+--- language.cpp	(Revision 403)
++++ language.cpp	(Arbeitskopie)
+@@ -27,9 +27,10 @@
+ // CLanguage
+ //
+ 
+-CLanguage :: CLanguage( string nCFGFile )
++CLanguage :: CLanguage( MessageLogger *logger, string nCFGFile )
++	: MessageLogger( logger )
+ {
+-	m_CFG = new CConfig( );
++	m_CFG = new CConfig( this );
+ 	m_CFG->Read( nCFGFile );
+ }
+ 
+Index: messagelogger.cpp
+===================================================================
+--- messagelogger.cpp	(Revision 0)
++++ messagelogger.cpp	(Revision 0)
+@@ -0,0 +1,11 @@
++/*
++ *  loggingclass.cpp
++ *  Genie
++ *
++ *  Created by Lucas on 27.03.10.
++ *  Copyright 2010 Lucas Romero. All rights reserved.
++ *
++ */
++
++#include "messagelogger.h"
++
+Index: ghost.cpp
+===================================================================
+--- ghost.cpp	(Revision 403)
++++ ghost.cpp	(Arbeitskopie)
+@@ -140,6 +140,8 @@
+ #endif
+ }
+ 
++#ifndef GHOST_LIB
++
+ void SignalCatcher2( int s )
+ {
+ 	CONSOLE_Print( "[!!!] caught signal " + UTIL_ToString( s ) + ", exiting NOW" );
+@@ -168,7 +170,7 @@
+ 		exit( 1 );
+ }
+ 
+-void CONSOLE_Print( string message )
++void CONSOLE_Print( const string &message )
+ {
+ 	cout << message << endl;
+ 
+@@ -210,7 +212,7 @@
+ 	}
+ }
+ 
+-void DEBUG_Print( string message )
++void DEBUG_Print( const string &message )
+ {
+ 	cout << message << endl;
+ }
+@@ -231,6 +233,7 @@
+ 
+ int main( int argc, char **argv )
+ {
++	MessageLogger logger( *CONSOLE_Print );
+ 	gCFGFile = "ghost.cfg";
+ 
+ 	if( argc > 1 && argv[1] )
+@@ -238,7 +241,7 @@
+ 
+ 	// read config file
+ 
+-	CConfig CFG;
++	CConfig CFG( &logger );
+ 	CFG.Read( gCFGFile );
+ 	gLogFile = CFG.GetString( "bot_log", string( ) );
+ 	gLogMethod = CFG.GetInt( "bot_logmethod", 1 );
+@@ -345,7 +348,7 @@
+ 
+ 	// initialize ghost
+ 
+-	gGHost = new CGHost( &CFG );
++	gGHost = new CGHost( &logger, &CFG );
+ 
+ 	while( 1 )
+ 	{
+@@ -384,13 +387,16 @@
+ 	return 0;
+ }
+ 
++#endif //#ifdndef GHOST_LIB
++
+ //
+ // CGHost
+ //
+ 
+-CGHost :: CGHost( CConfig *CFG )
++CGHost :: CGHost( MessageLogger *logger, CConfig *CFG )
++	: MessageLogger( logger )
+ {
+-	m_UDPSocket = new CUDPSocket( );
++	m_UDPSocket = new CUDPSocket( this );
+ 	m_UDPSocket->SetBroadcastTarget( CFG->GetString( "udp_broadcasttarget", string( ) ) );
+ 	m_UDPSocket->SetDontRoute( CFG->GetInt( "udp_dontroute", 0 ) == 0 ? false : true );
+ 	m_ReconnectSocket = NULL;
+@@ -405,17 +411,17 @@
+ 	if( DBType == "mysql" )
+ 	{
+ #ifdef GHOST_MYSQL
+-		m_DB = new CGHostDBMySQL( CFG );
++		m_DB = new CGHostDBMySQL( this, CFG );
+ #else
+ 		CONSOLE_Print( "[GHOST] warning - this binary was not compiled with MySQL database support, using SQLite database instead" );
+-		m_DB = new CGHostDBSQLite( CFG );
++		m_DB = new CGHostDBSQLite( this, CFG );
+ #endif
+ 	}
+ 	else
+-		m_DB = new CGHostDBSQLite( CFG );
++		m_DB = new CGHostDBSQLite( this, CFG );
+ 
+ 	CONSOLE_Print( "[GHOST] opening secondary (local) database" );
+-	m_DBLocal = new CGHostDBSQLite( CFG );
++	m_DBLocal = new CGHostDBSQLite( this, CFG );
+ 
+ 	// get a list of local IP addresses
+ 	// this list is used elsewhere to determine if a player connecting to the bot is local or not
+@@ -627,7 +633,7 @@
+ 		CONSOLE_Print( "[GHOST] adding \".cfg\" to default map -> new default is [" + m_DefaultMap + "]" );
+ 	}
+ 
+-	CConfig MapCFG;
++	CConfig MapCFG( this );
+ 	MapCFG.Read( m_MapCFGPath + m_DefaultMap );
+ 	m_Map = new CMap( this, &MapCFG, m_MapCFGPath + m_DefaultMap );
+ 
+@@ -640,7 +646,7 @@
+ 		}
+ 
+ 		CONSOLE_Print( "[GHOST] trying to load default admin game map" );
+-		CConfig AdminMapCFG;
++		CConfig AdminMapCFG( this );
+ 		AdminMapCFG.Read( m_MapCFGPath + m_AdminGameMap );
+ 		m_AdminMap = new CMap( this, &AdminMapCFG, m_MapCFGPath + m_AdminGameMap );
+ 
+@@ -658,7 +664,7 @@
+ 	}
+ 
+ 	m_AutoHostMap = new CMap( *m_Map );
+-	m_SaveGame = new CSaveGame( );
++	m_SaveGame = new CSaveGame( this );
+ 
+ 	// load the iptocountry data
+ 
+@@ -815,7 +821,7 @@
+ 	{
+ 		if( !m_ReconnectSocket )
+ 		{
+-			m_ReconnectSocket = new CTCPServer( );
++			m_ReconnectSocket = new CTCPServer( this );
+ 
+ 			if( m_ReconnectSocket->Listen( m_BindAddress, m_ReconnectPort ) )
+ 				CONSOLE_Print( "[GHOST] listening for GProxy++ reconnects on port " + UTIL_ToString( m_ReconnectPort ) );
+@@ -1310,7 +1316,7 @@
+ 
+ void CGHost :: ReloadConfigs( )
+ {
+-	CConfig CFG;
++	CConfig CFG( this );
+ 	CFG.Read( gCFGFile );
+ 	SetConfigs( &CFG );
+ }
+@@ -1322,7 +1328,7 @@
+ 
+ 	m_LanguageFile = CFG->GetString( "bot_language", "language.cfg" );
+ 	delete m_Language;
+-	m_Language = new CLanguage( m_LanguageFile );
++	m_Language = new CLanguage( this, m_LanguageFile );
+ 	m_Warcraft3Path = UTIL_AddPathSeperator( CFG->GetString( "bot_war3path", "C:\\Program Files\\Warcraft III\\" ) );
+ 	m_BindAddress = CFG->GetString( "bot_bindaddress", string( ) );
+ 	m_ReconnectWaitTime = CFG->GetInt( "bot_reconnectwaittime", 3 );
+Index: ghostdbmysql.h
+===================================================================
+--- ghostdbmysql.h	(Revision 403)
++++ ghostdbmysql.h	(Arbeitskopie)
+@@ -178,7 +178,7 @@
+ 	uint32_t m_OutstandingCallables;
+ 
+ public:
+-	CGHostDBMySQL( CConfig *CFG );
++	CGHostDBMySQL( MessageLogger *logger, CConfig *CFG );
+ 	virtual ~CGHostDBMySQL( );
+ 
+ 	virtual string GetStatus( );
+Index: ghostdb.cpp
+===================================================================
+--- ghostdb.cpp	(Revision 403)
++++ ghostdb.cpp	(Arbeitskopie)
+@@ -27,7 +27,8 @@
+ // CGHostDB
+ //
+ 
+-CGHostDB :: CGHostDB( CConfig *CFG )
++CGHostDB :: CGHostDB( MessageLogger *logger, CConfig *CFG )
++	: MessageLogger( logger )
+ {
+ 	m_HasError = false;
+ }
+Index: packed.h
+===================================================================
+--- packed.h	(Revision 403)
++++ packed.h	(Arbeitskopie)
+@@ -21,13 +21,15 @@
+ #ifndef PACKED_H
+ #define PACKED_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CPacked
+ //
+ 
+ class CCRC32;
+ 
+-class CPacked
++class CPacked : protected MessageLogger
+ {
+ public:
+ 	CCRC32 *m_CRC;
+@@ -48,7 +50,7 @@
+ 	uint32_t m_ReplayLength;
+ 
+ public:
+-	CPacked( );
++	CPacked( MessageLogger *logger );
+ 	virtual ~CPacked( );
+ 
+ 	virtual bool GetValid( )				{ return m_Valid; }
+Index: bnlsclient.h
+===================================================================
+--- bnlsclient.h	(Revision 403)
++++ bnlsclient.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef BNLSCLIENT_H
+ #define BNLSCLIENT_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CBNLSClient
+ //
+@@ -29,7 +31,7 @@
+ class CBNLSProtocol;
+ class CCommandPacket;
+ 
+-class CBNLSClient
++class CBNLSClient : protected MessageLogger
+ {
+ private:
+ 	CTCPClient *m_Socket;							// the connection to the BNLS server
+@@ -46,7 +48,7 @@
+ 	uint32_t m_TotalWardenOut;
+ 
+ public:
+-	CBNLSClient( string nServer, uint16_t nPort, uint32_t nWardenCookie );
++	CBNLSClient( CBNET *bnet, string nServer, uint16_t nPort, uint32_t nWardenCookie );
+ 	~CBNLSClient( );
+ 
+ 	BYTEARRAY GetWardenResponse( );
+Index: ghostdbsqlite.h
+===================================================================
+--- ghostdbsqlite.h	(Revision 403)
++++ ghostdbsqlite.h	(Arbeitskopie)
+@@ -199,7 +199,7 @@
+ 	void *FromAddStmt;
+ 
+ public:
+-	CGHostDBSQLite( CConfig *CFG );
++	CGHostDBSQLite( MessageLogger *logger, CConfig *CFG );
+ 	virtual ~CGHostDBSQLite( );
+ 
+ 	virtual void Upgrade1_2( );
+Index: gameplayer.cpp
+===================================================================
+--- gameplayer.cpp	(Revision 403)
++++ gameplayer.cpp	(Arbeitskopie)
+@@ -35,6 +35,7 @@
+ //
+ 
+ CPotentialPlayer :: CPotentialPlayer( CGameProtocol *nProtocol, CBaseGame *nGame, CTCPSocket *nSocket )
++	: MessageLogger( nGame )
+ {
+ 	m_Protocol = nProtocol;
+ 	m_Game = nGame;
+Index: packed.cpp
+===================================================================
+--- packed.cpp	(Revision 403)
++++ packed.cpp	(Arbeitskopie)
+@@ -66,7 +66,8 @@
+ // CPacked
+ //
+ 
+-CPacked :: CPacked( )
++CPacked :: CPacked( MessageLogger *logger )
++	: MessageLogger( logger )
+ {
+ 	m_CRC = new CCRC32( );
+ 	m_CRC->Initialize( );
+Index: savegame.cpp
+===================================================================
+--- savegame.cpp	(Revision 403)
++++ savegame.cpp	(Arbeitskopie)
+@@ -27,7 +27,7 @@
+ // CSaveGame
+ //
+ 
+-CSaveGame :: CSaveGame( ) : CPacked( )
++CSaveGame :: CSaveGame( MessageLogger* logger ) : CPacked( logger )
+ {
+ 	m_NumSlots = 0;
+ 	m_RandomSeed = 0;
+Index: socket.cpp
+===================================================================
+--- socket.cpp	(Revision 403)
++++ socket.cpp	(Arbeitskopie)
+@@ -32,7 +32,8 @@
+ // CSocket
+ //
+ 
+-CSocket :: CSocket( )
++CSocket :: CSocket( MessageLogger* logger )
++	: MessageLogger( logger )
+ {
+ 	m_Socket = INVALID_SOCKET;
+ 	memset( &m_SIN, 0, sizeof( m_SIN ) );
+@@ -40,7 +41,8 @@
+ 	m_Error = 0;
+ }
+ 
+-CSocket :: CSocket( SOCKET nSocket, struct sockaddr_in nSIN )
++CSocket :: CSocket( MessageLogger* logger, SOCKET nSocket, struct sockaddr_in nSIN )
++	: MessageLogger( logger )
+ {
+ 	m_Socket = nSocket;
+ 	m_SIN = nSIN;
+@@ -159,7 +161,7 @@
+ // CTCPSocket
+ //
+ 
+-CTCPSocket :: CTCPSocket( ) : CSocket( )
++CTCPSocket :: CTCPSocket( MessageLogger* logger ) : CSocket( logger )
+ {
+ 	Allocate( SOCK_STREAM );
+ 	m_Connected = false;
+@@ -176,7 +178,7 @@
+ #endif
+ }
+ 
+-CTCPSocket :: CTCPSocket( SOCKET nSocket, struct sockaddr_in nSIN ) : CSocket( nSocket, nSIN )
++CTCPSocket :: CTCPSocket( MessageLogger* logger, SOCKET nSocket, struct sockaddr_in nSIN ) : CSocket( logger, nSocket, nSIN )
+ {
+ 	m_Connected = true;
+ 	m_LastRecv = GetTime( );
+@@ -354,7 +356,7 @@
+ // CTCPClient
+ //
+ 
+-CTCPClient :: CTCPClient( ) : CTCPSocket( )
++CTCPClient :: CTCPClient( MessageLogger* logger ) : CTCPSocket( logger )
+ {
+ 	m_Connecting = false;
+ }
+@@ -479,7 +481,7 @@
+ // CTCPServer
+ //
+ 
+-CTCPServer :: CTCPServer( ) : CTCPSocket( )
++CTCPServer :: CTCPServer( MessageLogger* logger ) : CTCPSocket( logger )
+ {
+ 	// set the socket to reuse the address in case it hasn't been released yet
+ 
+@@ -560,7 +562,7 @@
+ 		{
+ 			// success! return the new socket
+ 
+-			return new CTCPSocket( NewSocket, Addr );
++			return new CTCPSocket( this, NewSocket, Addr );
+ 		}
+ 	}
+ 
+@@ -571,7 +573,7 @@
+ // CUDPSocket
+ //
+ 
+-CUDPSocket :: CUDPSocket( ) : CSocket( )
++CUDPSocket :: CUDPSocket( MessageLogger* logger ) : CSocket( logger )
+ {
+ 	Allocate( SOCK_DGRAM );
+ 
+@@ -693,7 +695,7 @@
+ // CUDPServer
+ //
+ 
+-CUDPServer :: CUDPServer( ) : CUDPSocket( )
++CUDPServer :: CUDPServer( MessageLogger* logger ) : CUDPSocket( logger )
+ {
+ 	// make socket non blocking
+ 
+Index: ghost.h
+===================================================================
+--- ghost.h	(Revision 403)
++++ ghost.h	(Arbeitskopie)
+@@ -22,6 +22,7 @@
+ #define GHOST_H
+ 
+ #include "includes.h"
++#include "messagelogger.h"
+ 
+ //
+ // CGHost
+@@ -43,7 +44,7 @@
+ class CSaveGame;
+ class CConfig;
+ 
+-class CGHost
++class CGHost : protected MessageLogger
+ {
+ public:
+ 	CUDPSocket *m_UDPSocket;				// a UDP socket for sending broadcasts and other junk (used with !sendlan)
+@@ -134,7 +135,7 @@
+ 	bool m_TCPNoDelay;						// config value: use Nagle's algorithm or not
+ 	uint32_t m_MatchMakingMethod;			// config value: the matchmaking method
+ 
+-	CGHost( CConfig *CFG );
++	CGHost( MessageLogger *logger, CConfig *CFG );
+ 	~CGHost( );
+ 
+ 	// processing functions
+Index: messagelogger.h
+===================================================================
+--- messagelogger.h	(Revision 0)
++++ messagelogger.h	(Revision 0)
+@@ -0,0 +1,52 @@
++/*
++ *  loggingclass.h
++ *  Genie
++ *
++ *  Created by Lucas on 27.03.10.
++ *  Copyright 2010 Lucas Romero. All rights reserved.
++ *
++ */
++
++#ifndef LOGGINGCLASS_H
++#define LOGGINGCLASS_H
++
++#include <string>
++#include <iostream>
++using namespace std;
++
++typedef void (*LogMessageHandler)( const string &message );
++
++class MessageLogger
++{
++public:
++	MessageLogger( MessageLogger *parentLogger ) : parent( parentLogger), messageHandler( NULL )
++	{ /* empty constructor */ }
++	MessageLogger( LogMessageHandler msgHandler ) : parent( NULL ), messageHandler( msgHandler )
++	{ /* empty constructor */ }
++	
++	void LogInfo( const string &msg )
++	{
++		WriteLine( msg );
++	}
++	
++	void WriteLine( const string &msg )
++	{
++		if( parent != NULL ) {
++			// let the parent handle the message
++			parent->LogInfo( msg );
++		}
++		else if ( messageHandler != NULL ) {
++			// call function provided by user
++			messageHandler( msg );
++		}
++		else {
++			// got nowhere to log to, print to stdout
++			cout << msg << endl;
++		}
++	}
++protected:
++	MessageLogger *parent;
++	LogMessageHandler messageHandler;
++};
++
++#endif
+\ No newline at end of file
+Index: replay.cpp
+===================================================================
+--- replay.cpp	(Revision 403)
++++ replay.cpp	(Arbeitskopie)
+@@ -28,7 +28,7 @@
+ // CReplay
+ //
+ 
+-CReplay :: CReplay( ) : CPacked( )
++CReplay :: CReplay( MessageLogger *logger ) : CPacked( logger )
+ {
+ 	m_HostPID = 0;
+ 	m_PlayerCount = 0;
+Index: bnlsclient.cpp
+===================================================================
+--- bnlsclient.cpp	(Revision 403)
++++ bnlsclient.cpp	(Arbeitskopie)
+@@ -24,15 +24,17 @@
+ #include "commandpacket.h"
+ #include "bnlsprotocol.h"
+ #include "bnlsclient.h"
++#include "bnet.h"
+ 
+ //
+ // CBNLSClient
+ //
+ 
+-CBNLSClient :: CBNLSClient( string nServer, uint16_t nPort, uint32_t nWardenCookie )
++CBNLSClient :: CBNLSClient( CBNET *bnet, string nServer, uint16_t nPort, uint32_t nWardenCookie )
++	: MessageLogger( bnet )
+ {
+-	m_Socket = new CTCPClient( );
+-	m_Protocol = new CBNLSProtocol( );
++	m_Socket = new CTCPClient( this );
++	m_Protocol = new CBNLSProtocol( this );
+ 	m_WasConnected = false;
+ 	m_Server = nServer;
+ 	m_Port = nPort;
+Index: stats.cpp
+===================================================================
+--- stats.cpp	(Revision 403)
++++ stats.cpp	(Arbeitskopie)
+@@ -20,12 +20,14 @@
+ 
+ #include "ghost.h"
+ #include "stats.h"
++#include "game_base.h"
+ 
+ //
+ // CStats
+ //
+ 
+ CStats :: CStats( CBaseGame *nGame )
++	: MessageLogger( nGame )
+ {
+ 	m_Game = nGame;
+ }
+Index: ghostdb.h
+===================================================================
+--- ghostdb.h	(Revision 403)
++++ ghostdb.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef GHOSTDB_H
+ #define GHOSTDB_H
+ 
++#include "messagelogger.h"
++
+ //
+ // CGHostDB
+ //
+@@ -54,14 +56,14 @@
+ 
+ typedef pair<uint32_t,string> VarP;
+ 
+-class CGHostDB
++class CGHostDB : protected MessageLogger
+ {
+ protected:
+ 	bool m_HasError;
+ 	string m_Error;
+ 
+ public:
+-	CGHostDB( CConfig *CFG );
++	CGHostDB( MessageLogger *logger, CConfig *CFG );
+ 	virtual ~CGHostDB( );
+ 
+ 	bool HasError( )			{ return m_HasError; }
+Index: bncsutilinterface.cpp
+===================================================================
+--- bncsutilinterface.cpp	(Revision 403)
++++ bncsutilinterface.cpp	(Arbeitskopie)
+@@ -24,11 +24,14 @@
+ 
+ #include <bncsutil/bncsutil.h>
+ 
++#include "bnet.h"
++
+ //
+ // CBNCSUtilInterface
+ //
+ 
+-CBNCSUtilInterface :: CBNCSUtilInterface( string userName, string userPassword )
++CBNCSUtilInterface :: CBNCSUtilInterface( CBNET *bnet, string userName, string userPassword )
++	: MessageLogger( bnet )
+ {
+ 	// m_nls = (void *)nls_init( userName.c_str( ), userPassword.c_str( ) );
+ 	m_NLS = new NLS( userName, userPassword );
+Index: bnlsprotocol.cpp
+===================================================================
+--- bnlsprotocol.cpp	(Revision 403)
++++ bnlsprotocol.cpp	(Arbeitskopie)
+@@ -21,8 +21,10 @@
+ #include "ghost.h"
+ #include "util.h"
+ #include "bnlsprotocol.h"
++#include "bnlsclient.h"
+ 
+-CBNLSProtocol :: CBNLSProtocol( )
++CBNLSProtocol :: CBNLSProtocol( CBNLSClient *parent )
++	: MessageLogger( parent )
+ {
+ 
+ }
+Index: map.h
+===================================================================
+--- map.h	(Revision 403)
++++ map.h	(Arbeitskopie)
+@@ -42,12 +42,13 @@
+ #define MAPFLAG_RANDOMRACES		16
+ 
+ #include "gameslot.h"
++#include "messagelogger.h"
+ 
+ //
+ // CMap
+ //
+ 
+-class CMap
++class CMap : protected MessageLogger
+ {
+ public:
+ 	CGHost *m_GHost;
+Index: bnet.cpp
+===================================================================
+--- bnet.cpp	(Revision 403)
++++ bnet.cpp	(Arbeitskopie)
+@@ -45,14 +45,15 @@
+ //
+ 
+ CBNET :: CBNET( CGHost *nGHost, string nServer, string nServerAlias, string nBNLSServer, uint16_t nBNLSPort, uint32_t nBNLSWardenCookie, string nCDKeyROC, string nCDKeyTFT, string nCountryAbbrev, string nCountry, uint32_t nLocaleID, string nUserName, string nUserPassword, string nFirstChannel, string nRootAdmin, char nCommandTrigger, bool nHoldFriends, bool nHoldClan, bool nPublicCommands, unsigned char nWar3Version, BYTEARRAY nEXEVersion, BYTEARRAY nEXEVersionHash, string nPasswordHashType, string nPVPGNRealmName, uint32_t nMaxMessageLength, uint32_t nHostCounterID )
++	: MessageLogger( nGHost )
+ {
+ 	// todotodo: append path seperator to Warcraft3Path if needed
+ 
+ 	m_GHost = nGHost;
+-	m_Socket = new CTCPClient( );
+-	m_Protocol = new CBNETProtocol( );
++	m_Socket = new CTCPClient( this );
++	m_Protocol = new CBNETProtocol( this );
+ 	m_BNLSClient = NULL;
+-	m_BNCSUtil = new CBNCSUtilInterface( nUserName, nUserPassword );
++	m_BNCSUtil = new CBNCSUtilInterface( this, nUserName, nUserPassword );
+ 	m_CallableAdminList = m_GHost->m_DB->ThreadedAdminList( nServer );
+ 	m_CallableBanList = m_GHost->m_DB->ThreadedBanList( nServer );
+ 	m_Exiting = false;
+@@ -770,7 +771,7 @@
+ 						{
+ 							CONSOLE_Print( "[BNET: " + m_ServerAlias + "] creating BNLS client" );
+ 							delete m_BNLSClient;
+-							m_BNLSClient = new CBNLSClient( m_BNLSServer, m_BNLSPort, m_BNLSWardenCookie );
++							m_BNLSClient = new CBNLSClient( this, m_BNLSServer, m_BNLSPort, m_BNLSWardenCookie );
+ 							m_BNLSClient->QueueWardenSeed( UTIL_ByteArrayToUInt32( m_BNCSUtil->GetKeyInfoROC( ), false, 16 ) );
+ 						}
+ 					}
+@@ -1512,7 +1513,7 @@
+ 						if( UTIL_FileExists( File ) )
+ 						{
+ 							QueueChatCommand( m_GHost->m_Language->LoadingReplay( File ), User, Whisper );
+-							CReplay *Replay = new CReplay( );
++							CReplay *Replay = new CReplay( this );
+ 							Replay->Load( File, false );
+ 							Replay->ParseReplay( false );
+ 							m_GHost->m_EnforcePlayers = Replay->GetPlayers( );
+@@ -1692,7 +1693,7 @@
+ 								{
+ 									string File = LastMatch.filename( );
+ 									QueueChatCommand( m_GHost->m_Language->LoadingConfigFile( m_GHost->m_MapCFGPath + File ), User, Whisper );
+-									CConfig MapCFG;
++									CConfig MapCFG( this );
+ 									MapCFG.Read( LastMatch.string( ) );
+ 									m_GHost->m_Map->Load( &MapCFG, m_GHost->m_MapCFGPath + File );
+ 								}
+@@ -1806,7 +1807,7 @@
+ 
+ 									// hackhack: create a config file in memory with the required information to load the map
+ 
+-									CConfig MapCFG;
++									CConfig MapCFG( this );
+ 									MapCFG.Set( "map_path", "Maps\\Download\\" + File );
+ 									MapCFG.Set( "map_localpath", File );
+ 									m_GHost->m_Map->Load( &MapCFG, File );
+Index: gameplayer.h
+===================================================================
+--- gameplayer.h	(Revision 403)
++++ gameplayer.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef GAMEPLAYER_H
+ #define GAMEPLAYER_H
+ 
++#include "messagelogger.h"
++
+ class CTCPSocket;
+ class CCommandPacket;
+ class CGameProtocol;
+@@ -31,7 +33,7 @@
+ // CPotentialPlayer
+ //
+ 
+-class CPotentialPlayer
++class CPotentialPlayer : protected MessageLogger
+ {
+ public:
+ 	CGameProtocol *m_Protocol;
+Index: socket.h
+===================================================================
+--- socket.h	(Revision 403)
++++ socket.h	(Arbeitskopie)
+@@ -21,6 +21,8 @@
+ #ifndef SOCKET_H
+ #define SOCKET_H
+ 
++#include "messagelogger.h"
++
+ #ifdef WIN32
+  #include <winsock2.h>
+  #include <errno.h>
+@@ -99,7 +101,7 @@
+ // CSocket
+ //
+ 
+-class CSocket
++class CSocket : protected MessageLogger
+ {
+ protected:
+ 	SOCKET m_Socket;
+@@ -108,8 +110,8 @@
+ 	int m_Error;
+ 
+ public:
+-	CSocket( );
+-	CSocket( SOCKET nSocket, struct sockaddr_in nSIN );
++	CSocket( MessageLogger* logger );
++	CSocket( MessageLogger* logger, SOCKET nSocket, struct sockaddr_in nSIN );
+ 	~CSocket( );
+ 
+ 	virtual BYTEARRAY GetPort( );
+@@ -140,8 +142,8 @@
+ 	uint32_t m_LastSend;
+ 
+ public:
+-	CTCPSocket( );
+-	CTCPSocket( SOCKET nSocket, struct sockaddr_in nSIN );
++	CTCPSocket( MessageLogger* logger );
++	CTCPSocket( MessageLogger* logger, SOCKET nSocket, struct sockaddr_in nSIN );
+ 	virtual ~CTCPSocket( );
+ 
+ 	virtual void Reset( );
+@@ -170,7 +172,7 @@
+ 	bool m_Connecting;
+ 
+ public:
+-	CTCPClient( );
++	CTCPClient( MessageLogger* logger );
+ 	virtual ~CTCPClient( );
+ 
+ 	virtual void Reset( );
+@@ -187,7 +189,7 @@
+ class CTCPServer : public CTCPSocket
+ {
+ public:
+-	CTCPServer( );
++	CTCPServer( MessageLogger* logger );
+ 	virtual ~CTCPServer( );
+ 
+ 	virtual bool Listen( string address, uint16_t port );
+@@ -203,7 +205,7 @@
+ protected:
+ 	struct in_addr m_BroadcastTarget;
+ public:
+-	CUDPSocket( );
++	CUDPSocket( MessageLogger* logger );
+ 	virtual ~CUDPSocket( );
+ 
+ 	virtual bool SendTo( struct sockaddr_in sin, BYTEARRAY message );
+@@ -220,7 +222,7 @@
+ class CUDPServer : public CUDPSocket
+ {
+ public:
+-	CUDPServer( );
++	CUDPServer( MessageLogger* logger );
+ 	virtual ~CUDPServer( );
+ 
+ 	virtual bool Bind( struct sockaddr_in sin );
+Index: savegame.h
+===================================================================
+--- savegame.h	(Revision 403)
++++ savegame.h	(Arbeitskopie)
+@@ -40,7 +40,7 @@
+ 	BYTEARRAY m_MagicNumber;
+ 
+ public:
+-	CSaveGame( );
++	CSaveGame( MessageLogger* logger );
+ 	virtual ~CSaveGame( );
+ 
+ 	string GetFileName( )				{ return m_FileName; }
