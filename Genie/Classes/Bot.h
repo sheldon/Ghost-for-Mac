@@ -26,7 +26,6 @@
 {
 	NSNumber *running;
 }
-
 @property (nonatomic, retain) NSNumber * autoStart;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSNumber * hostPort;

@@ -22,14 +22,28 @@
 #import "BotLocal.h"
 #import "ConfigEntry.h"
 #import "Server.h"
+#import "ChatMessage.h"
 
-#import "ghost.h"
+#import "ghost-genie.h"
 #import "config.h"
-#import "bnet.h"
+#import "bnet-genie.h"
 #import "bnetprotocol.h"
+#import "messagelogger.h"
+
+class CGHostGenie;
+class CConfig;
+
+@interface GHostInterface (PRIVATE) 
+	CGHostGenie *instance;
+	CConfig *cfg;
+	MessageLogger *logger;
+@end
+
 
 @implementation GHostInterface
 NSString * const GOutputReceived = @"GOutputReceived";
+
+@synthesize chatUsername;
 
 @synthesize running;
 @synthesize delegate;
@@ -98,7 +112,7 @@ NSString * const GOutputReceived = @"GOutputReceived";
 
 - (void)processHashData:(NSDictionary*)data
 {
-	CBNET *bnet = (CBNET*)[[data valueForKey:@"bnetObject"] pointerValue];
+	CBNETGenie *bnet = (CBNETGenie*)[[data valueForKey:@"bnetObject"] pointerValue];
 	NSString *exeInfo = [data valueForKey:@"EXEInfo"];
 	NSString *exeVersion = [data valueForKey:@"EXEVersion"];
 	NSString *exeVersionHash = [data valueForKey:@"EXEVersionHash"];
@@ -153,7 +167,7 @@ NSString * const GOutputReceived = @"GOutputReceived";
 	[autoreleasepool release];
 }
 
-static void GHostOutputCallback(const std::string &message, void* receiver)
+static void GHostOutputCallback(void* receiver, const std::string &message)
 {
 	GHostInterface *_self = (GHostInterface *)receiver;
 	[_self lineReceived:[NSString stringWithUTF8String:message.c_str()]];
@@ -174,31 +188,71 @@ static void GHostBNETHashCallback(void* callbackObject, const EventBNETHashReque
 	[_self performSelectorInBackground:@selector(getHashForData:) withObject:dict];
 }
 
-static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const string &user, const string &message, BNETMessageType type)
+static void GHostBNETMessageCallback(void* callbackObject, const BNETEventData &data )
 {
 	GHostInterface *_self = (GHostInterface *)callbackObject;
 	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-						  [NSValue valueWithPointer:bnet],@"bnet",
-						  [NSString stringWithUTF8String:user.c_str()], @"user",
-						  [NSString stringWithUTF8String:message.c_str()], @"message", nil];
-	switch (type) {
-		case BNETMessageTypeChat:
-			[[_self delegate] performSelectorOnMainThread:@selector(chatMessageReceived:)
-											   withObject:dict
-											waitUntilDone:NO];
+						  [NSValue valueWithPointer:data.bnet],@"bnet",
+						  [NSString stringWithUTF8String:data.user.c_str()], @"user",
+						  [NSString stringWithUTF8String:data.message.c_str()], @"message", nil];
+	SEL target = nil;
+	switch (data.event) {
+		case BNETEventTypeChat:
+			target = @selector(chatMessageReceived:);
 			break;
-		case BNETMessageTypeWhisper:
-			[[_self delegate] performSelectorOnMainThread:@selector(whisperReceived:)
-											   withObject:dict
-											waitUntilDone:NO];
+		case BNETEventTypeWhisper:
+			target = @selector(whisperReceived:);
 			break;
-		case BNETMessageTypeEmote:
-			[[_self delegate] performSelectorOnMainThread:@selector(emoteReceived:)
-											   withObject:dict
-											waitUntilDone:NO];
+		case BNETEventTypeEmote:
+			target = @selector(emoteReceived:);
+			break;
+		case BNETEventTypeChannelJoined:
+		{
+			target = @selector(channelJoined:);
+			NSString *user = [dict objectForKey:@"user"];
+			
+			NSUInteger index = [user rangeOfString:@"#"].location + 1;
+			if (index < [user length]) {
+				user = [user substringFromIndex:index];
+				[_self setChatUsername:user];
+			}
+			break;
+		}
+		case BNETEventTypeChatLeft:
+			target = @selector(chatLeft:);
+			break;
+		case BNETEventTypeUserJoinedChannel:
+			target = @selector(userJoinedChannel:);
+			break;
+		case BNETEventTypeUserLeftChannel:
+			target = @selector(userLeftChannel:);
+			break;
+		case BNETEventTypeIncomingFriend:
+			target = @selector(incomingFriendInfo:);
+			break;
+		case BNETEVentTypeIncomingClanMember:
+			target = @selector(incomingClanMemberInfo:);
 			break;
 	}
+	if (target) {
+		[[_self delegate] performSelectorOnMainThread:target
+										   withObject:dict
+										waitUntilDone:NO];
+	}
+}
+
+- (void)sendChat:(NSDictionary *)cmd
+{
+	[mainLock lock];
+	Server *server = [cmd valueForKey:@"server"];
+	CBNET *bnet = (CBNET*)[[server bnetObject] pointerValue];
+	string *command = new string([[cmd valueForKey:@"text"] UTF8String]);
+	bnet->QueueChatCommand(*command);
+	delete command;
 	
+	[server channelMessage:[cmd valueForKey:@"text"] fromUser:self.chatUsername];
+	
+	[mainLock unlock];
 }
 
 - (void)execCommand:(NSDictionary *)cmd
@@ -221,10 +275,17 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 	[self didChangeValueForKey:@"running"];
 	cancelled = NO;
 	
-	instance = new CGHost(cfg, &GHostOutputCallback, (void*)self);
-	instance->RegisterBNETCallback(&GHostBNETMessageCallback, (void*)self);
+	instance = new CGHostGenie(logger, cfg);
+	// TODO: progress meter via callback
+	instance->LoadIPToCountryData(string([[[NSBundle mainBundle] pathForResource:@"ip-to-country" ofType:@"csv"] UTF8String]));
+	
+	instance->RegisterCallbackObject((void*)self);
+	instance->RegisterBNETCallback(&GHostBNETMessageCallback);
+	//instance->RegisterBNETCallback(&GHostBNETMessageCallback, (void*)self);
 	if ([useRemoteHasher boolValue])
-		instance->RegisterBNETHashCallback(&GHostBNETHashCallback, (void*)self);
+		instance->RegisterHashCallback(&GHostBNETHashCallback);
+	
+	
 	
 	if (delegate) {
 		[delegate performSelectorOnMainThread:@selector(ghostCreated:) withObject:[NSValue valueWithPointer:instance] waitUntilDone:YES];
@@ -248,8 +309,9 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 				command->insert(0, 1, trigger);
 				NSLog(@"Trying to send command '%s' to server '%s'", command->c_str(), bnet->GetServerAlias().c_str());
 				
+				// 13371337 is our magic message marker (MMM!)
 				CIncomingChatEvent *event = new CIncomingChatEvent(CBNETProtocol::EID_WHISPER,
-																   0,
+																   13371337,
 																   bnet->GetRootAdmin(),
 																   *command);
 				bnet->ProcessChatEvent( event );
@@ -358,6 +420,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 }
 - (id)init {
 	if (self = [super init]) {
+		chatUsername = nil;
 		instance = nil;
 		running = NO;
 		useRemoteHasher = [NSNumber numberWithBool:YES];
@@ -365,6 +428,7 @@ static void GHostBNETMessageCallback(void* callbackObject, CBNET *bnet, const st
 		cmdLock = [[NSLock alloc] init];
 		mainLock = [[NSLock alloc] init];
 		delegate = nil;
+		logger = new MessageLogger(&GHostOutputCallback, (void*)self);
 	}
 	return self;
 }

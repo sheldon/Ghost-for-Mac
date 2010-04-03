@@ -986,7 +986,7 @@
 													<int key="NSPeriodicInterval">75</int>
 													<object class="NSMenuItem" key="NSMenuItem" id="653964818">
 														<reference key="NSMenu" ref="420732380"/>
-														<string key="NSTitle">english</string>
+														<string key="NSTitle">English</string>
 														<string key="NSKeyEquiv"/>
 														<int key="NSKeyEquivModMask">1048576</int>
 														<int key="NSMnemonicLoc">2147483647</int>
@@ -995,6 +995,9 @@
 														<reference key="NSMixedImage" ref="606321383"/>
 														<string key="NSAction">_popUpItemAction:</string>
 														<reference key="NSTarget" ref="847719422"/>
+														<object class="NSAttributedString" key="NSAttributedTitle">
+															<string key="NSString"/>
+														</object>
 													</object>
 													<bool key="NSMenuItemRespectAlignment">YES</bool>
 													<object class="NSMenu" key="NSMenu" id="420732380">
@@ -1004,7 +1007,7 @@
 															<reference ref="653964818"/>
 															<object class="NSMenuItem" id="435199073">
 																<reference key="NSMenu" ref="420732380"/>
-																<string key="NSTitle">german</string>
+																<string key="NSTitle">German</string>
 																<string key="NSKeyEquiv"/>
 																<int key="NSKeyEquivModMask">1048576</int>
 																<int key="NSMnemonicLoc">2147483647</int>
@@ -1012,10 +1015,13 @@
 																<reference key="NSMixedImage" ref="606321383"/>
 																<string key="NSAction">_popUpItemAction:</string>
 																<reference key="NSTarget" ref="847719422"/>
+																<object class="NSAttributedString" key="NSAttributedTitle">
+																	<string key="NSString"/>
+																</object>
 															</object>
-															<object class="NSMenuItem" id="1002613355">
+															<object class="NSMenuItem" id="1010003364">
 																<reference key="NSMenu" ref="420732380"/>
-																<string key="NSTitle">spanish</string>
+																<string key="NSTitle">Russian</string>
 																<string key="NSKeyEquiv"/>
 																<int key="NSMnemonicLoc">2147483647</int>
 																<reference key="NSOnImage" ref="410165200"/>
@@ -1025,7 +1031,7 @@
 															</object>
 															<object class="NSMenuItem" id="539558508">
 																<reference key="NSMenu" ref="420732380"/>
-																<string key="NSTitle">turkish</string>
+																<string key="NSTitle">Spanish</string>
 																<string key="NSKeyEquiv"/>
 																<int key="NSKeyEquivModMask">1048576</int>
 																<int key="NSMnemonicLoc">2147483647</int>
@@ -1033,6 +1039,22 @@
 																<reference key="NSMixedImage" ref="606321383"/>
 																<string key="NSAction">_popUpItemAction:</string>
 																<reference key="NSTarget" ref="847719422"/>
+																<object class="NSAttributedString" key="NSAttributedTitle">
+																	<string key="NSString"/>
+																</object>
+															</object>
+															<object class="NSMenuItem" id="1002613355">
+																<reference key="NSMenu" ref="420732380"/>
+																<string key="NSTitle">Turkish</string>
+																<string key="NSKeyEquiv"/>
+																<int key="NSMnemonicLoc">2147483647</int>
+																<reference key="NSOnImage" ref="410165200"/>
+																<reference key="NSMixedImage" ref="606321383"/>
+																<string key="NSAction">_popUpItemAction:</string>
+																<reference key="NSTarget" ref="847719422"/>
+																<object class="NSAttributedString" key="NSAttributedTitle">
+																	<string key="NSString"/>
+																</object>
 															</object>
 														</object>
 														<reference key="NSMenuFont" ref="451484192"/>
@@ -1210,7 +1232,7 @@
 												<reference key="NSSuperview" ref="235614243"/>
 												<bool key="NSEnabled">YES</bool>
 												<object class="NSButtonCell" key="NSCell" id="964172439">
-													<int key="NSCellFlags">-2080244224</int>
+													<int key="NSCellFlags">-1543373312</int>
 													<int key="NSCellFlags2">0</int>
 													<string key="NSContents">Use remote hashing</string>
 													<reference key="NSSupport" ref="451484192"/>
@@ -1968,20 +1990,12 @@ Pg</string>
 					<int key="connectionID">338</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selectedBot.useRemoteHasher</string>
-						<reference key="source" ref="576250941"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="576250941"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: selectedBot.useRemoteHasher</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selectedBot.useRemoteHasher</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">exportConfig:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="331837651"/>
 					</object>
-					<int key="connectionID">343</int>
+					<int key="connectionID">345</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2367,8 +2381,9 @@ Pg</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="653964818"/>
 							<reference ref="435199073"/>
-							<reference ref="539558508"/>
 							<reference ref="1002613355"/>
+							<reference ref="539558508"/>
+							<reference ref="1010003364"/>
 						</object>
 						<reference key="parent" ref="847719422"/>
 					</object>
@@ -2701,6 +2716,11 @@ Pg</string>
 						<reference key="object" ref="964172439"/>
 						<reference key="parent" ref="576250941"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">344</int>
+						<reference key="object" ref="1010003364"/>
+						<reference key="parent" ref="420732380"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2788,6 +2808,7 @@ Pg</string>
 					<string>339.IBPluginDependency</string>
 					<string>34.IBPluginDependency</string>
 					<string>340.IBPluginDependency</string>
+					<string>344.IBPluginDependency</string>
 					<string>35.IBPluginDependency</string>
 					<string>36.IBPluginDependency</string>
 					<string>37.IBPluginDependency</string>
@@ -2857,7 +2878,7 @@ Pg</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{531, 443}, {177, 83}}</string>
+					<string>{{431, 271}, {177, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2905,7 +2926,8 @@ Pg</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{326, 407}, {617, 0}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{327, 467}, {617, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2939,7 +2961,7 @@ Pg</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">343</int>
+			<int key="maxID">345</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2982,6 +3004,13 @@ Pg</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">ViewAndWindowControllers/ConfigureLocalBotWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">AsyncSocket/AsyncSocket.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

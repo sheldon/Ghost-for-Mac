@@ -24,16 +24,22 @@
 #import "User.h"
 #import "ChatMessage.h"
 #import "GMap.h"
+#import "Channel.h"
+#import "FriendInfo.h"
+#import "ClanInfo.h"
+#import "MapEntry.h"
 
 #import "TCMPortMapper/TCMPortMapper.h"
 
 #import "Server.h"
-#import "ghost.h"
+#import "ghost-genie.h"
 #import "bnet.h"
 #import "config.h"
 #import "map.h"
 
 @implementation BotLocal
+
+@synthesize chatUserName;
 
 @dynamic settings;
 @dynamic databaseName;
@@ -71,7 +77,7 @@
 	
 	NSString *relMapPath = [NSString pathWithComponents:[mapFileComponents subarrayWithRange:theRange]];
 							
-	CGHost *ghost = (CGHost*)[[self.botInterface ghostInstance] pointerValue];
+	CGHostGenie *ghost = (CGHostGenie*)[[self.botInterface ghostInstance] pointerValue];
 	CConfig *mapCfg = new CConfig( ghost );
 	
 	
@@ -98,7 +104,7 @@
 	
 	//TODO: create NSManagedObject subclass for GMapValue
 	NSEnumerator *e = [[map settings] objectEnumerator];
-	while (NSManagedObject *entry = [e nextObject]) {
+	while (MapEntry *entry = [e nextObject]) {
 		if ([[entry name] length]) {
 			if([[entry value] length])
 				mapCfg->Set([[entry name] UTF8String], [[entry value] UTF8String]);
@@ -205,7 +211,11 @@
 	NSEnumerator *e = [[self settings] objectEnumerator];
 	while (ConfigEntry *entry = [e nextObject]) {
 		if ([[entry enabled] boolValue] && [[entry name] length]) {
-			[config setObject:[entry value] forKey:[entry name]];
+			if(entry.value && [entry.value length])
+				[config setObject:[entry value] forKey:[entry name]];
+			else
+				[config setObject:[NSString string] forKey:[entry name]];
+
 		}
 	}
 	
@@ -234,14 +244,21 @@
 
 	NSBundle *thisBundle = [NSBundle mainBundle];
 	NSString *langCfgPath;
-	if (langCfgPath = [thisBundle pathForResource:[self language] ofType:@"cfg"])  {
+	NSString *lang = [self.language lowercaseString];
+	if ([lang isEqualToString:@"english"]) {
+		lang = @"language";
+	} else {
+		lang = [@"language_" stringByAppendingString:lang];
+	}
+	
+	if (langCfgPath = [thisBundle pathForResource:lang ofType:@"cfg"])  {
 		[config setObject:langCfgPath forKey:@"bot_language"];
 	} else {
 		[config setObject:@"language_file_not_found" forKey:@"bot_language"];
 	}
 	
-	NSString *ip2country = [thisBundle pathForResource:@"ip-to-country" ofType:@"csv"];
-	[config setObject:ip2country forKey:@"bot_ip2country"];
+	//NSString *ip2country = [thisBundle pathForResource:@"ip-to-country" ofType:@"csv"];
+	//[config setObject:ip2country forKey:@"bot_ip2country"];
 	//[config setObject:@"../Resources/ip-to-country.csv" forKey:@"bot_ip2country"];
 	
 	
@@ -292,6 +309,7 @@
 
 - (void)awakeFromFetch
 {
+	chatUserName = nil;
 	_botInterface = nil;
 	self.running = [NSNumber numberWithBool:NO];
 	TCMPortMapper *pm = [TCMPortMapper sharedInstance];
@@ -314,9 +332,9 @@
 
 - (void)awakeFromInsert
 {
-	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
+	NSBundle *thisBundle = [NSBundle mainBundle];
 	NSString *cfgFile;
-	if (cfgFile = [thisBundle pathForResource:@"ghost_default" ofType:@"cfg"])  {
+	if (cfgFile = [thisBundle pathForResource:@"ghost" ofType:@"cfg"])  {
 		[self importConfig:cfgFile];
 	}
 }
@@ -389,7 +407,7 @@
 
 - (void)ghostCreated:(NSValue*)ghost
 {
-	CGHost* ghostPtr = (CGHost*)[ghost pointerValue];
+	CGHostGenie* ghostPtr = (CGHostGenie*)[ghost pointerValue];
 	// get bnets
 	int count = ghostPtr->m_BNETs.size();
 	for (int i=0; i<count; i++) {
@@ -431,20 +449,113 @@
 	}
 }*/
 
-- (Server*)getServerFromBNETPointer:(void*)bnet
+- (Server*)getServerFromBNETPointer:(NSValue*)bnet
 {
 	NSEnumerator *e = [[self servers] objectEnumerator];
 	while (Server* server = [e nextObject]) {
-		if([[server bnetObject] pointerValue] == bnet) {
+		if([[server bnetObject] pointerValue] == [bnet pointerValue]) {
 			return server;
 		}
 	}
 	return nil;
 }
 
+- (void)chatLeft:(NSDictionary *)data
+{
+	NSValue *bnet = [data objectForKey:@"bnet"];
+
+	Server *server = [self getServerFromBNETPointer:bnet];
+	if (server) {
+		[server.channel release]; server.channel = nil;
+	}
+}
+
+- (void)channelJoined:(NSDictionary *)data
+{
+	NSValue *bnet = [data objectForKey:@"bnet"];
+	//NSString *user = [data objectForKey:@"user"];
+	
+	NSString *channel = [data objectForKey:@"message"];
+	Server *server = [self getServerFromBNETPointer:bnet];
+	if (server) {
+		Channel *chan = server.channel;
+		if (!chan || ![chan.name isEqualToString:channel])
+		{
+			if (chan) {
+				[server removeMessages:chan.messages];
+				[chan release];
+				server.channel = nil;
+			}
+			chan = [NSEntityDescription insertNewObjectForEntityForName:@"Channel" inManagedObjectContext:[self managedObjectContext]];
+			chan.name = channel;
+			chan.server = server;
+			server.channel = chan;
+		}
+	}
+}
+
+- (void)userJoinedChannel:(NSDictionary*)data
+{
+	NSValue *bnet = [data objectForKey:@"bnet"];
+	NSString *user = [data objectForKey:@"user"];
+	//NSString *flags = [data objectForKey:@"message"];
+	Server *server = [self getServerFromBNETPointer:bnet];
+	if (server) {
+		if (server.channel)
+		{
+			User *usr = [server getUserForNick:user];
+			usr.channel = server.channel;
+			[server.channel addUsersObject:usr];
+		}
+	}
+}
+- (void)userLeftChannel:(NSDictionary*)data
+{
+	NSValue *bnet = [data objectForKey:@"bnet"];
+	NSString *user = [data objectForKey:@"user"];
+	//NSString *flags = [data objectForKey:@"message"];
+	Server *server = [self getServerFromBNETPointer:bnet];
+	if (server) {
+		if (server.channel)
+		{
+			User *usr = [server getUserForNick:user];
+			//usr.channel = nil;
+			[server.channel removeUsersObject:usr];
+		}
+	}
+}
+
+- (void)incomingFriendInfo:(NSDictionary*)data
+{
+	NSValue *bnet = [data objectForKey:@"bnet"];
+	NSString *user = [data objectForKey:@"user"];
+	NSString *status = [data objectForKey:@"message"];
+	Server *server = [self getServerFromBNETPointer:bnet];
+	if (server) {
+		User *usr = [server getUserForNick:user];
+		
+		if (!usr.friendInfo)
+			usr.friendInfo = [NSEntityDescription insertNewObjectForEntityForName:@"FriendInfo" inManagedObjectContext:[self managedObjectContext]];
+		
+		NSArray *parts = [status componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		if ([parts count] >= 4)
+		{
+			// nick is at index 0
+			usr.friendInfo.status = [parts objectAtIndex:1];
+			usr.friendInfo.area = [parts objectAtIndex:2];
+			usr.friendInfo.location = [parts objectAtIndex:3];
+		}
+	}
+}
+
+- (void)incomingClanMemberInfo:(NSDictionary*)data
+{
+	
+}
+
 - (void)chatMessageReceived:(NSDictionary*)data
 {
-	void* bnet = [[data objectForKey:@"bnet"] pointerValue];
+	NSValue *bnet = [data objectForKey:@"bnet"];
 	NSString *user = [data objectForKey:@"user"];
 	NSString *message = [data objectForKey:@"message"];
 	Server *server = [self getServerFromBNETPointer:bnet];
@@ -452,16 +563,18 @@
 		User *usrObj = [server getUserForNick:user];
 		ChatMessage *msgObj = [NSEntityDescription insertNewObjectForEntityForName:@"ChatMessage" inManagedObjectContext:[self managedObjectContext]];
 		msgObj.date = [NSDate date];
-		// TODO: set channel object
-		msgObj.channel = nil;
+		msgObj.channel = server.channel;
 		msgObj.text = message;
 		msgObj.sender = usrObj;
-		[usrObj addMessagesObject:msgObj];
+		//[usrObj addMessagesObject:msgObj];
+		[server.channel addMessagesObject:msgObj];
+		[server addMessagesObject:msgObj];
+		//[self.managedObjectContext processPendingChanges];
 	}
 }
 - (void)whisperReceived:(NSDictionary*)data
 {
-	void* bnet = [[data objectForKey:@"bnet"] pointerValue];
+	NSValue *bnet = [data objectForKey:@"bnet"];
 	NSString *user = [data objectForKey:@"user"];
 	NSString *message = [data objectForKey:@"message"];
 	Server *server = [self getServerFromBNETPointer:bnet];
@@ -473,6 +586,7 @@
 		msgObj.text = message;
 		msgObj.sender = usrObj;
 		[usrObj addMessagesObject:msgObj];
+		[server addMessagesObject:msgObj];
 	}
 }
 - (void)emoteReceived:(NSDictionary*)data
@@ -519,27 +633,52 @@
 			string :: size_type ValueStart = Line.find_first_not_of( " ", Split + 1 );
 			string :: size_type ValueEnd = Line.size( );
 			
+			NSString *key = [NSString stringWithUTF8String:Line.substr( KeyStart, KeyEnd - KeyStart ).c_str()];
+			NSString *val = nil;
 			if( ValueStart != string :: npos ) {
-				NSString *key = [NSString stringWithUTF8String:Line.substr( KeyStart, KeyEnd - KeyStart ).c_str()];
-				NSString *val = [NSString stringWithUTF8String:Line.substr( ValueStart, ValueEnd - ValueStart ).c_str()];
-				//m_CFG[Line.substr( KeyStart, KeyEnd - KeyStart )] = Line.substr( ValueStart, ValueEnd - ValueStart );
-				ConfigEntry *cfg = [NSEntityDescription insertNewObjectForEntityForName:@"ConfigEntry" inManagedObjectContext:[self managedObjectContext]];
-				cfg.name = key;
-				cfg.value = val;
-				
-				NSEnumerator *e = [[self settings] objectEnumerator];
-				ConfigEntry *entry;
+				val = [NSString stringWithUTF8String:Line.substr( ValueStart, ValueEnd - ValueStart ).c_str()];
+			}
+
+			ConfigEntry *cfg = [NSEntityDescription insertNewObjectForEntityForName:@"ConfigEntry" inManagedObjectContext:[self managedObjectContext]];
+			cfg.name = key;
+			cfg.value = val;
+			
+			NSEnumerator *e = [[self settings] objectEnumerator];
+			ConfigEntry *entry;
+			if (val) {
 				while (entry = [e nextObject]) {
 					if ([[entry name] isEqualToString:key]) {
 						[entry disableEntry];
 					}
 				}
-				[self addSettingsObject:cfg];
+			} else {
+				cfg.enabled = [NSNumber numberWithBool:NO];
 			}
+			[self addSettingsObject:cfg];
 		}
 		
 		in.close( );
 	}
+}
+
+- (NSString*)exportConfig
+{
+	NSMutableString *mutableString = [NSMutableString new];
+	NSMutableArray *entries = [NSMutableArray arrayWithArray:[self.settings allObjects]];
+	
+	NSSortDescriptor *sortDescriptor =
+	[[NSSortDescriptor alloc] initWithKey:@"name" 
+								ascending:YES
+								 selector:@selector(caseInsensitiveCompare:)];
+	
+	[entries sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	
+	NSEnumerator *e = [entries objectEnumerator];
+	ConfigEntry *entry;
+	while (entry = [e nextObject]) {
+		[mutableString appendFormat:@"%@%@ = %@\r\n", [entry.enabled boolValue] ? @"": @"# ", entry.name, entry.value ? entry.value : @""];
+	}
+	return [mutableString autorelease];
 }
 
 @end

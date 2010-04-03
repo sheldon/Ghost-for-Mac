@@ -58,7 +58,8 @@
 
 - (IBAction)execCommand:(id)sender
 {
-	
+	[selectedBot sendCommand:[sender stringValue]];
+	[sender setStringValue:@""];
 }
 
 @end

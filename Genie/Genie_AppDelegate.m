@@ -272,6 +272,8 @@
 		[contentView addSubview:[localBotView view]];
 		[[localBotView view] setFrame:contentFrame];
 		self.botViewController = localBotView;
+		[modeChanger setEnabled:YES forSegment:1];
+		
 	} else if ([[[obj entity] name] isEqualToString:@"BotAdminGame"]) {
 		adminGameView.selectedBot = (BotAdminGame*)obj;
 		NSRect contentFrame = [contentView frame];
@@ -281,6 +283,7 @@
 		[contentView addSubview:[adminGameView view]];
 		[[adminGameView view] setFrame:contentFrame];
 		self.botViewController = adminGameView;
+		[modeChanger setEnabled:NO forSegment:1];
 	}
 }
 

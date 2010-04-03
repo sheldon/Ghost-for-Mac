@@ -7,6 +7,7 @@
 //
 
 #import "Server.h"
+#import "ChatMessage.h"
 
 #import "Bot.h"
 #import "Channel.h"
@@ -20,6 +21,7 @@
 @dynamic users;
 @dynamic channel;
 @dynamic bot;
+@dynamic messages;
 
 - (User*)getUserForNick:(NSString*)nick
 {
@@ -35,6 +37,18 @@
 	usr.server = self;
 	[self addUsersObject:usr];
 	return usr;
+}
+
+- (ChatMessage*)channelMessage:(NSString*)message fromUser:(NSString*)user
+{
+	ChatMessage *msgObj = [NSEntityDescription insertNewObjectForEntityForName:@"ChatMessage" inManagedObjectContext:self.managedObjectContext];
+	msgObj.date = [NSDate date];
+	msgObj.channel = self.channel;
+	msgObj.text = message;
+	msgObj.sender = [self getUserForNick:user];
+	//[usrObj addMessagesObject:msgObj];
+	[self.channel addMessagesObject:msgObj];
+	[self addMessagesObject:msgObj];
 }
 
 @end

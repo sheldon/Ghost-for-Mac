@@ -48,13 +48,10 @@ enum WC3Protocol {
 
 @interface BotAdminGame :  Bot
 {
-	NSOutputStream *oStream;
-	NSInputStream *iStream;
 	NSMutableData *recvData;
-	NSUInteger bytesRead;
-	LANGameStatus status;
 	uint8_t pid;
-	AsyncSocket *socket;
+	AsyncSocket *aSocket;
+	NSString *cmdTrigger;
 }
 
 - (void)sendCommand:(NSString*)cmd;
@@ -62,8 +59,12 @@ enum WC3Protocol {
 @property (nonatomic, retain) NSString * password;
 @property (nonatomic, retain) NSString * host;
 @property (nonatomic, retain) NSString * user;
-@property (nonatomic, retain) NSString * commandTrigger;
 @property (nonatomic, retain) NSNumber * port;
+@property (nonatomic, retain) NSNumber * autoReconnect;
+@property (nonatomic, retain) NSNumber * reconnectInterval;
+@property (nonatomic, retain) NSNumber * timeout;
+@property (nonatomic, retain) NSNumber * loggedIn;
+@property (nonatomic, retain) NSNumber * ignoreRefreshMessages;
 
 @end
 

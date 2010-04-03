@@ -27,10 +27,14 @@
 	BotLocal *selectedBot;
 	IBOutlet NSArrayController *messageController;
 	IBOutlet NSArrayController *serverController;
+	IBOutlet NSArrayController *chatMessageController;
+	IBOutlet NSArrayController *userController;
 	IBOutlet NSTableView *messageTable;
+	IBOutlet NSTableView *chatMessageTable;
 	IBOutlet NSTabView *tabView;
 }
 - (IBAction)execCommand:(id)sender;
+- (IBAction)sendChat:(id)sender;
 - (IBAction)copyLines:(id)sender;
 
 @property (nonatomic, retain) BotLocal *selectedBot;

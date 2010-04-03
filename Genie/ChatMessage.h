@@ -16,6 +16,8 @@
 {
 }
 
+@property (nonatomic, readonly, retain) NSImage *icon;
+
 @property (nonatomic, retain) Channel * channel;
 @property (nonatomic, retain) User * sender;
 

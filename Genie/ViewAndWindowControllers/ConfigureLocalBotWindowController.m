@@ -34,6 +34,7 @@
 - (IBAction)closeWindow:(id)sender
 {
 	[self.window endEditingFor:nil];
+	[self.window makeFirstResponder:nil];
 	NSError *error=nil;
 	if (![selectedBot.managedObjectContext save:&error]) {
 		[NSApp presentError:error];
@@ -100,9 +101,24 @@
 	//}
 }
 
+-(void)copyToClipboard:(NSString*)str
+{
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
+    [pb declareTypes:types owner:self];
+    [pb setString: str forType:NSStringPboardType];
+}
+
 - (IBAction)exportConfig:(id)sender
 {
-	
+	NSString *cfg = [selectedBot exportConfig];
+	[self copyToClipboard:cfg];
+	NSAlert *alert = [NSAlert alertWithMessageText:@"Your config was copied into the clipboard."
+					defaultButton:@"OK"
+				  alternateButton:nil
+					  otherButton:nil
+		informativeTextWithFormat:@"%d config settings exported", [selectedBot.settings count]];
+	[alert runModal];
 }
 
 - (IBAction)addSetting:(id)sender

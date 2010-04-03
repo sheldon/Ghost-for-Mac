@@ -22,7 +22,7 @@
 
 
 @protocol BotViewControllerInterface
-@property (nonatomic) BOOL supportsModes;
+@property (nonatomic, readonly) BOOL supportsModes;
 @property (nonatomic) NSInteger selectedMode;
 
 @end

@@ -21,6 +21,8 @@
 #import <CoreData/CoreData.h>
 
 @class ChatMessage;
+@class ClanInfo;
+@class FriendInfo;
 
 @interface User :  NSManagedObject  
 {
@@ -30,6 +32,10 @@
 @property (nonatomic, retain) NSManagedObject * server;
 @property (nonatomic, retain) NSManagedObject * channel;
 @property (nonatomic, retain) NSSet* messages;
+@property (nonatomic, retain) ClanInfo * clanInfo;
+@property (nonatomic, retain) FriendInfo * friendInfo;
+
+@property (nonatomic, readonly, retain) NSImage *icon;
 
 @end
 

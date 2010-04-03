@@ -19,6 +19,7 @@
  */
 
 #import "User.h"
+#import "FriendInfo.h"
 
 
 @implementation User 
@@ -27,5 +28,63 @@
 @dynamic server;
 @dynamic channel;
 @dynamic messages;
+@dynamic clanInfo;
+@dynamic friendInfo;
+
+static NSImage *friendImage = nil;
+
+- (void)awakeFromFetch
+{
+	friendImage = nil;
+}
+
++ (NSImage*)getFriendImage
+{
+	if (!friendImage)
+	{
+		NSImage * userImg = [NSImage imageNamed:NSImageNameUser];
+		NSImage * favImg = [NSImage imageNamed:@"heart32.png"];
+		NSImage * compositeImage;
+		
+		NSRect rect = { 0,0, 32, 32};
+		NSSize compositeSize = rect.size;
+		
+		compositeImage = [[NSImage alloc] initWithSize:compositeSize];
+		
+		[compositeImage lockFocus];
+		
+		// this image has its own graphics context, so
+		// we need to specify high interpolation again	
+		[[NSGraphicsContext currentContext]
+		 setImageInterpolation: NSImageInterpolationHigh];
+		
+		[userImg drawInRect: rect
+				   fromRect: NSZeroRect
+				  operation: NSCompositeSourceOver
+				   fraction: 1.0];
+		
+		NSRect rect2 = { 15, 15 , 16, 16};
+		[favImg drawInRect: rect2
+				  fromRect: NSZeroRect
+				 operation: NSCompositeSourceOver
+				  fraction: 1.0];
+		
+		
+		
+		[compositeImage unlockFocus];
+		friendImage = compositeImage;
+	}
+	
+	return friendImage;
+}
+
+- (NSImage*)icon
+{
+	if (self.friendInfo)
+	{
+		return [User getFriendImage];
+	}
+	return [NSImage imageNamed:NSImageNameUser];
+}
 
 @end

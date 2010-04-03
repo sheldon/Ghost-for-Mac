@@ -92,16 +92,18 @@
 
 - (BOOL)validateEnabled:(id *)ioValue error:(NSError **)outError
 {
-	NSEnumerator *e = [[[self bot] settings] objectEnumerator];
+	
 	NSNumber *newValue = *ioValue;
 	if (![newValue boolValue])
 		return YES;
 	ConfigEntry *entry;
+	NSEnumerator *e = [[[self bot] settings] objectEnumerator];
 	while (entry = [e nextObject]) {
 		if (entry != self && [[entry name] isEqualToString:self.name]) {
 			[entry disableEntry];
 		}
 	}
+	[self.managedObjectContext processPendingChanges];
 	return YES;
 }
 

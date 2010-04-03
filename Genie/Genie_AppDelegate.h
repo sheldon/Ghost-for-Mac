@@ -41,6 +41,7 @@
 	//IBOutlet NSArrayController *messagesController;
 	IBOutlet NSArrayController *botsController;
 	IBOutlet NSView *contentView;
+	IBOutlet NSSegmentedControl *modeChanger;
 	
 	ConfigureLocalBotWindowController *localBotConfigController;
 	ConfigureAdminGameWindowController *adminGameConfigController;

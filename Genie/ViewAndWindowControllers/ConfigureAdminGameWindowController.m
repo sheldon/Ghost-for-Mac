@@ -29,6 +29,7 @@
 - (IBAction)closeWindow:(id)sender
 {
 	[self.window endEditingFor:nil];
+	[self.window makeFirstResponder:nil];
 	NSError *error=nil;
 	if (![selectedBot.managedObjectContext save:&error]) {
 		[NSApp presentError:error];

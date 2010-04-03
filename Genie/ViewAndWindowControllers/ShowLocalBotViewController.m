@@ -43,11 +43,19 @@
 
 - (void)awakeFromNib
 {
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]
-										initWithKey:@"date" ascending:NO];
+	NSSortDescriptor *sortDescriptor;
+	
+	sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO];
 	[messageController setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	[chatMessageController setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	[sortDescriptor release];
+	
+	
+	sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+	[userController setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
 	[sortDescriptor release];
 }
+
 - (id)init
 {
 	if (self = [super initWithNibName:@"ShowLocalBotView" bundle:nil]) {
@@ -85,4 +93,43 @@
 		[sender setStringValue:@""];
 	}
 }
+
+- (IBAction)sendChat:(id)sender
+{
+	NSString *cmd = [sender stringValue];
+	Server* server = [[serverController selectedObjects] lastObject];
+	if (server) {
+		[selectedBot.botInterface sendChat:[NSDictionary dictionaryWithObjectsAndKeys:
+											   cmd, @"text",
+											   server, @"server",
+											   nil]];
+		[sender setStringValue:@""];
+	}
+}
+
+- (CGFloat)tableView:(NSTableView *)tv heightOfRow:(NSInteger)row
+{
+	if (tv == chatMessageTable) {
+		// Get column for Tweet Status
+		NSTableColumn *column = [tv tableColumnWithIdentifier:@"chatText"];
+		// Create a copy of the relevant cell - retains text attributes.
+		NSCell *cell = [[column dataCellForRow:row] copyWithZone:NULL];
+		//[cell setLineBreakMode:NSLineBreakByWordWrapping];
+		// Retrieve stringvalue from XML Data
+		//NSXMLNode *node = [itemNodes objectAtIndex:row];
+		[cell setStringValue:[[[chatMessageController arrangedObjects] objectAtIndex:row] text]];
+		// Calculate height using cellSizeForBounds, limiting it to width of column. 
+		// Add 10 pixels for padding.
+		CGFloat height = [cell cellSizeForBounds:
+						  NSMakeRect(0.0, 0.0, [column width], 
+									 1000.0)].height/*+10.0*/;
+		// Profile pics are 48x48, so ensure these are fully visible with >=10px padding 
+		//height = MAX(height,58.0);
+		// Release the cell copy.
+		[cell release];
+		return height;
+	}
+	return [tv rowHeight];
+}
+
 @end

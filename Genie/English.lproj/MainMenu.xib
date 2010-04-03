@@ -12,8 +12,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="930"/>
-			<integer value="944"/>
+			<integer value="540"/>
+			<integer value="29"/>
+			<integer value="706"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -91,6 +92,7 @@
 									<int key="NSvFlags">284</int>
 									<string key="NSFrame">{{1, 14}, {48, 48}}</string>
 									<reference key="NSSuperview"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSPopUpButtonCell" key="NSCell" id="387464621">
 										<int key="NSCellFlags">-2076049856</int>
@@ -201,6 +203,7 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{0, 14}, {107, 25}}</string>
 									<reference key="NSSuperview"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSPopUpButtonCell" key="NSCell" id="514798676">
 										<int key="NSCellFlags">-2076049856</int>
@@ -261,7 +264,7 @@
 								<string key="NSToolbarItemPaletteLabel">Stop</string>
 								<string key="NSToolbarItemToolTip"/>
 								<nil key="NSToolbarItemView"/>
-								<object class="NSCustomResource" key="NSToolbarItemImage" id="1041688542">
+								<object class="NSCustomResource" key="NSToolbarItemImage">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">stop_alt</string>
 								</object>
@@ -283,7 +286,7 @@
 								<string key="NSToolbarItemPaletteLabel">Remove Bot</string>
 								<string key="NSToolbarItemToolTip"/>
 								<nil key="NSToolbarItemView"/>
-								<object class="NSCustomResource" key="NSToolbarItemImage" id="865384361">
+								<object class="NSCustomResource" key="NSToolbarItemImage">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">minus</string>
 								</object>
@@ -305,7 +308,7 @@
 								<string key="NSToolbarItemPaletteLabel">Configure Bot</string>
 								<string key="NSToolbarItemToolTip"/>
 								<nil key="NSToolbarItemView"/>
-								<object class="NSCustomResource" key="NSToolbarItemImage" id="931464577">
+								<object class="NSCustomResource" key="NSToolbarItemImage">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">advanced</string>
 								</object>
@@ -331,9 +334,10 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{0, 14}, {127, 25}}</string>
 									<reference key="NSSuperview"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSSegmentedCell" key="NSCell" id="1013038284">
-										<int key="NSCellFlags">-2080244224</int>
+										<int key="NSCellFlags">67239424</int>
 										<int key="NSCellFlags2">0</int>
 										<object class="NSFont" key="NSSupport" id="728655242">
 											<string key="NSName">LucidaGrande</string>
@@ -395,7 +399,7 @@
 								<string key="NSToolbarItemPaletteLabel">Start</string>
 								<string key="NSToolbarItemToolTip"/>
 								<nil key="NSToolbarItemView"/>
-								<object class="NSCustomResource" key="NSToolbarItemImage" id="867745050">
+								<object class="NSCustomResource" key="NSToolbarItemImage">
 									<string key="NSClassName">NSImage</string>
 									<string key="NSResourceName">play</string>
 								</object>
@@ -976,10 +980,7 @@
 											<object class="NSImageCell" key="NSCell" id="462931002">
 												<int key="NSCellFlags">67239424</int>
 												<int key="NSCellFlags2">33816576</int>
-												<object class="NSCustomResource" key="NSContents">
-													<string key="NSClassName">NSImage</string>
-													<string key="NSResourceName">NSInfo</string>
-												</object>
+												<reference key="NSContents" ref="39245563"/>
 												<object class="NSFont" key="NSSupport">
 													<string key="NSName">LucidaGrande</string>
 													<double key="NSSize">9</double>
@@ -1001,7 +1002,7 @@
 											<object class="NSTextFieldCell" key="NSCell" id="872815958">
 												<int key="NSCellFlags">67239424</int>
 												<int key="NSCellFlags2">306446336</int>
-												<string key="NSContents">Before you start hosting games, you need to add a new bot instance by using the 'Add Bot' button in the toolbar above</string>
+												<string key="NSContents">Before you start hosting games, you need to add a new bot instance by using the 'Bot' menu in Genie's menubar.</string>
 												<reference key="NSSupport" ref="728655242"/>
 												<reference key="NSControlView" ref="255877962"/>
 												<object class="NSColor" key="NSBackgroundColor">
@@ -2208,6 +2209,7 @@
 					<string>currentMap</string>
 					<string>currentMap.title</string>
 					<string>@count</string>
+					<string>supportsChat</string>
 				</object>
 				<bool key="NSEditable">YES</bool>
 				<bool key="NSAutomaticallyPreparesContent">YES</bool>
@@ -2251,7 +2253,10 @@
 						<string key="NSTitle">Start</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSImage" ref="867745050"/>
+						<object class="NSCustomResource" key="NSImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">play16</string>
+						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
 					</object>
@@ -2260,7 +2265,10 @@
 						<string key="NSTitle">Stop</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSImage" ref="1041688542"/>
+						<object class="NSCustomResource" key="NSImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">stop_alt16</string>
+						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
 					</object>
@@ -2271,7 +2279,7 @@
 						<int key="NSMnemonicLoc">2147483647</int>
 						<object class="NSCustomResource" key="NSImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">splash green</string>
+							<string key="NSResourceName">splash16</string>
 						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
@@ -2281,7 +2289,10 @@
 						<string key="NSTitle">Configure</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSImage" ref="931464577"/>
+						<object class="NSCustomResource" key="NSImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">advanced16</string>
+						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
 					</object>
@@ -2300,27 +2311,28 @@
 						<string key="NSTitle">Add</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSImage" ref="39245563"/>
+						<object class="NSCustomResource" key="NSImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">plus16</string>
+						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
 						<string key="NSAction">submenuAction:</string>
-						<object class="NSMenu" key="NSSubmenu" id="575179661">
+						<object class="NSMenu" key="NSSubmenu" id="224660211">
 							<string key="NSTitle"/>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="610040412">
-									<reference key="NSMenu" ref="575179661"/>
+								<object class="NSMenuItem" id="270805340">
+									<reference key="NSMenu" ref="224660211"/>
 									<string key="NSTitle">Local bot</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="19943675"/>
 									<reference key="NSMixedImage" ref="92899626"/>
 								</object>
-								<object class="NSMenuItem" id="873821919">
-									<reference key="NSMenu" ref="575179661"/>
-									<bool key="NSIsDisabled">YES</bool>
-									<bool key="NSIsHidden">YES</bool>
-									<string key="NSTitle">Remote bot</string>
+								<object class="NSMenuItem" id="290609068">
+									<reference key="NSMenu" ref="224660211"/>
+									<string key="NSTitle">Remote admingame</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="19943675"/>
@@ -2334,7 +2346,10 @@
 						<string key="NSTitle">Remove</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSImage" ref="865384361"/>
+						<object class="NSCustomResource" key="NSImage">
+							<string key="NSClassName">NSImage</string>
+							<string key="NSResourceName">minus16</string>
+						</object>
 						<reference key="NSOnImage" ref="19943675"/>
 						<reference key="NSMixedImage" ref="92899626"/>
 					</object>
@@ -3140,22 +3155,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">addLocalBot:</string>
-						<reference key="source" ref="612578685"/>
-						<reference key="destination" ref="610040412"/>
-					</object>
-					<int key="connectionID">758</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">addRemoteBot:</string>
-						<reference key="source" ref="612578685"/>
-						<reference key="destination" ref="873821919"/>
-					</object>
-					<int key="connectionID">759</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">remove:</string>
 						<reference key="source" ref="133949788"/>
 						<reference key="destination" ref="668643188"/>
@@ -3630,22 +3629,6 @@
 					<int key="connectionID">934</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selectedObjects.@count</string>
-						<reference key="source" ref="934187520"/>
-						<reference key="destination" ref="133949788"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="934187520"/>
-							<reference key="NSDestination" ref="133949788"/>
-							<string key="NSLabel">enabled: selectedObjects.@count</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selectedObjects.@count</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">938</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">addLocalBot:</string>
 						<reference key="source" ref="612578685"/>
@@ -3698,6 +3681,30 @@
 						</object>
 					</object>
 					<int key="connectionID">953</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">modeChanger</string>
+						<reference key="source" ref="612578685"/>
+						<reference key="destination" ref="934187520"/>
+					</object>
+					<int key="connectionID">962</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addRemoteBot:</string>
+						<reference key="source" ref="612578685"/>
+						<reference key="destination" ref="290609068"/>
+					</object>
+					<int key="connectionID">967</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addLocalBot:</string>
+						<reference key="source" ref="612578685"/>
+						<reference key="destination" ref="270805340"/>
+					</object>
+					<int key="connectionID">968</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4841,7 +4848,7 @@
 						<reference key="object" ref="6933642"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="575179661"/>
+							<reference ref="224660211"/>
 						</object>
 						<reference key="parent" ref="493101756"/>
 						<string key="objectName">Add</string>
@@ -4851,28 +4858,6 @@
 						<reference key="object" ref="970873832"/>
 						<reference key="parent" ref="493101756"/>
 						<string key="objectName">Start</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">711</int>
-						<reference key="object" ref="575179661"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="873821919"/>
-							<reference ref="610040412"/>
-						</object>
-						<reference key="parent" ref="6933642"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">713</int>
-						<reference key="object" ref="873821919"/>
-						<reference key="parent" ref="575179661"/>
-						<string key="objectName">Remote bot</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">712</int>
-						<reference key="object" ref="610040412"/>
-						<reference key="parent" ref="575179661"/>
-						<string key="objectName">Local bot</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">720</int>
@@ -5191,6 +5176,26 @@
 						<reference key="object" ref="464770457"/>
 						<reference key="parent" ref="515593828"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">964</int>
+						<reference key="object" ref="224660211"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="290609068"/>
+							<reference ref="270805340"/>
+						</object>
+						<reference key="parent" ref="6933642"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">965</int>
+						<reference key="object" ref="290609068"/>
+						<reference key="parent" ref="224660211"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">966</int>
+						<reference key="object" ref="270805340"/>
+						<reference key="parent" ref="224660211"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -5392,10 +5397,6 @@
 					<string>707.IBPluginDependency</string>
 					<string>708.IBPluginDependency</string>
 					<string>709.IBPluginDependency</string>
-					<string>711.IBEditorWindowLastContentRect</string>
-					<string>711.IBPluginDependency</string>
-					<string>712.IBPluginDependency</string>
-					<string>713.IBPluginDependency</string>
 					<string>720.IBPluginDependency</string>
 					<string>739.IBPluginDependency</string>
 					<string>74.IBPluginDependency</string>
@@ -5456,6 +5457,10 @@
 					<string>944.IBPluginDependency</string>
 					<string>945.IBPluginDependency</string>
 					<string>946.IBPluginDependency</string>
+					<string>964.IBEditorWindowLastContentRect</string>
+					<string>964.IBPluginDependency</string>
+					<string>965.IBPluginDependency</string>
+					<string>966.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -5507,7 +5512,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{331, 470}, {453, 20}}</string>
+					<string>{{339, 558}, {453, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5649,12 +5654,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{0, 767}, {247, 217}}</string>
+					<string>{{312, 851}, {196, 133}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{247, 795}, {131, 43}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5671,7 +5672,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{309, 188}, {617, 259}}</string>
+					<string>{{309, 447}, {617, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5709,12 +5710,16 @@
 					<integer value="0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{402, 407}, {146, 63}}</string>
+					<string>{{410, 495}, {146, 63}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{548, 427}, {188, 43}}</string>
+					<string>{{556, 515}, {188, 43}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{556, 515}, {188, 43}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5736,7 +5741,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">954</int>
+			<int key="maxID">968</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5773,12 +5778,14 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>botsController</string>
 							<string>contentView</string>
+							<string>modeChanger</string>
 							<string>window</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSArrayController</string>
 							<string>NSView</string>
+							<string>NSSegmentedControl</string>
 							<string>NSWindow</string>
 						</object>
 					</object>
@@ -5801,6 +5808,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">ViewAndWindowControllers/MBPreferencesController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">AsyncSocket/AsyncSocket.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

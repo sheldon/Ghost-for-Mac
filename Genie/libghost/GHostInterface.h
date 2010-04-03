@@ -19,7 +19,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 //#import "ghost.h"
 class CGHost;
 class CConfig;
@@ -29,7 +29,7 @@ class CConfig;
 #define FAKE_CXX_TYPE(type) type
 #else
 #define FAKE_CXX_TYPE(type) void *
-#endif
+#endif*/
 
 @class BotLocal;
 
@@ -41,13 +41,17 @@ class CConfig;
 - (void)chatMessageReceived:(NSDictionary*)data;
 - (void)whisperReceived:(NSDictionary*)data;
 - (void)emoteReceived:(NSDictionary*)data;
+- (void)channelJoined:(NSDictionary*)data;
+- (void)chatLeft:(NSDictionary*)data;
+- (void)userJoinedChannel:(NSDictionary*)data;
+- (void)userLeftChannel:(NSDictionary*)data;
+- (void)incomingFriendInfo:(NSDictionary*)data;
+- (void)incomingClanMemberInfo:(NSDictionary*)data;
 
 @end
 
 
 @interface GHostInterface : NSObject {
-	FAKE_CXX_TYPE(CGHost *)instance;
-	FAKE_CXX_TYPE(CConfig*)cfg;
 	NSThread* ghostThread;
 	BOOL cancelled;
 	NSNumber* running;
@@ -56,7 +60,7 @@ class CConfig;
 	NSLock *mainLock;
 	NSObject <GHostDelegate> *delegate;
 	NSNumber *useRemoteHasher;
-	//NSNumber *hostPort;
+	NSString *chatUsername;
 }
 extern NSString * const GOutputReceived;
 - (void)startBotWithConfig:(NSDictionary *)config;
@@ -66,6 +70,8 @@ extern NSString * const GOutputReceived;
 - (void)execCommand:(NSDictionary *)cmd;
 - (void)getLock;
 - (void)releaseLock;
+- (void)sendChat:(NSDictionary*)message;
+@property (nonatomic, retain) NSString * chatUsername;
 @property (nonatomic, retain) NSNumber* running;
 @property (nonatomic, readonly) NSNumber* useRemoteHasher;
 @property (assign) NSObject <GHostDelegate> *delegate;

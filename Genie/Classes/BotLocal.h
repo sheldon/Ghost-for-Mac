@@ -28,7 +28,11 @@
 	GHostInterface* _botInterface;
 	//NSNumber* _running;
 	TCMPortMapping *portMapping;
+	NSString *chatUserName;
 }
+@property (nonatomic, retain) NSString * chatUserName;
+
+
 @property (nonatomic, retain) NSSet * settings;
 @property (nonatomic, retain) NSString * databaseName;
 @property (nonatomic, retain) NSString * motd;
@@ -42,6 +46,7 @@
 @property (nonatomic, readonly) GHostInterface* botInterface;
 
 - (void)importConfig:(NSString *)path;
+- (NSString*)exportConfig;
 - (void)loadMap:(GMap*)map;
 @end
 

@@ -16,4 +16,13 @@
 @dynamic channel;
 @dynamic sender;
 
+- (NSImage*)icon
+{
+	if (self.channel)
+	{
+		return [NSImage imageNamed:NSImageNameUserGroup];
+	}
+	return [NSImage imageNamed:NSImageNameUser];
+}
+
 @end
